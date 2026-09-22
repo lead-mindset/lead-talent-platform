@@ -213,7 +213,7 @@ export default function ProfileUpdateForm({
                     <span className="text-destructive ml-0.5">*</span>
                   </label>
                   <Select value={field.value} onValueChange={field.onChange}>
-                    <SelectTrigger className="h-11" aria-label={t('personalInfo.gender')}>
+                    <SelectTrigger aria-label={t('personalInfo.gender')}>
                       <SelectValue placeholder={t('personalInfo.selectGender')} />
                     </SelectTrigger>
                     <SelectContent>

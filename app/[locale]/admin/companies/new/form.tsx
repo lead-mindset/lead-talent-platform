@@ -4,7 +4,6 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { AlertCircle, Loader2, Building, CheckCircle2 } from 'lucide-react'
 import { createCompany } from '@/lib/actions/admin/create-company'
@@ -28,17 +27,17 @@ export function CreateCompanyForm() {
       })
 
       if (!result.success) {
-        throw new Error(result.error || 'Failed to create company')
+        throw new Error(result.error || 'No se pudo crear la empresa')
       }
 
       setSuccess(true)
-      
+
       setTimeout(() => {
         router.push('/admin/companies')
         router.refresh()
       }, 1500)
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred')
+      setError(err instanceof Error ? err.message : 'Ocurrió un error')
     } finally {
       setIsLoading(false)
     }
@@ -49,7 +48,7 @@ export function CreateCompanyForm() {
       <Alert className="border-green-200 bg-green-50 dark:border-green-900 dark:bg-green-950">
         <CheckCircle2 className="h-4 w-4 text-green-600 dark:text-green-400" />
         <AlertDescription className="text-green-900 dark:text-green-100">
-          Company created successfully! Redirecting...
+          Empresa creada correctamente. Redirigiendo...
         </AlertDescription>
       </Alert>
     )
@@ -64,29 +63,19 @@ export function CreateCompanyForm() {
         </Alert>
       )}
 
-      <div className="space-y-2">
-        <Label htmlFor="companyName">
-          Company Name <span className="text-red-500">*</span>
-        </Label>
-        <div className="relative">
-          <Building className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input
-            id="companyName"
-            type="text"
-            placeholder="e.g., Acme Corporation"
-            value={companyName}
-            onChange={(e) => setCompanyName(e.target.value)}
-            required
-            disabled={isLoading}
-            className="pl-10"
-            minLength={2}
-            maxLength={100}
-          />
-        </div>
-        <p className="text-xs text-muted-foreground">
-          Enter the full legal name or commonly known name of the company
-        </p>
-      </div>
+      <Input
+        id="companyName"
+        label="Nombre de la empresa"
+        required
+        iconLeft={<Building className="h-4 w-4 text-muted-foreground" />}
+        placeholder="ej. Acme Corporation"
+        helperText="Ingresa el nombre legal completo o el nombre conocido de la empresa"
+        value={companyName}
+        onChange={(e) => setCompanyName(e.target.value)}
+        disabled={isLoading}
+        minLength={2}
+        maxLength={100}
+      />
 
       <div className="flex gap-3">
         <Button
@@ -97,12 +86,12 @@ export function CreateCompanyForm() {
           {isLoading ? (
             <>
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Creating...
+              Creando...
             </>
           ) : (
             <>
               <Building className="mr-2 h-4 w-4" />
-              Create Company
+              Crear empresa
             </>
           )}
         </Button>
@@ -112,7 +101,7 @@ export function CreateCompanyForm() {
           onClick={() => router.back()}
           disabled={isLoading}
         >
-          Cancel
+          Cancelar
         </Button>
       </div>
     </form>

@@ -243,12 +243,12 @@ export function FundingRequestForm({
             </div>
 
             <div className="space-y-2 md:col-span-2">
-              <Label htmlFor="title">Evento o iniciativa <span className="text-primary">*</span></Label>
+              <Label htmlFor="title">Evento o iniciativa <span className="text-destructive">*</span></Label>
               <Input id="title" value={title} onChange={(event) => setTitle(event.target.value)} />
             </div>
 
             <div className="space-y-2 md:col-span-2">
-              <Label htmlFor="purpose">Propósito <span className="text-primary">*</span></Label>
+              <Label htmlFor="purpose">Propósito <span className="text-destructive">*</span></Label>
               <Textarea
                 id="purpose"
                 value={purpose}
@@ -258,7 +258,7 @@ export function FundingRequestForm({
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="eventDate">Fecha <span className="text-primary">*</span></Label>
+              <Label htmlFor="eventDate">Fecha <span className="text-destructive">*</span></Label>
               <Input
                 id="eventDate"
                 type="date"
@@ -283,7 +283,7 @@ export function FundingRequestForm({
             </div>
 
             <div className="space-y-2 md:col-span-2">
-              <Label htmlFor="audience">Audiencia objetivo <span className="text-primary">*</span></Label>
+              <Label htmlFor="audience">Audiencia objetivo <span className="text-destructive">*</span></Label>
               <Input
                 id="audience"
                 value={expectedAudience}
@@ -299,7 +299,7 @@ export function FundingRequestForm({
           </CardHeader>
           <CardContent className="space-y-5">
             <div className="space-y-3">
-              <Label>OKRs relacionados <span className="text-primary">*</span></Label>
+              <Label>OKRs relacionados <span className="text-destructive">*</span></Label>
               <div className="grid gap-2 sm:grid-cols-2">
                 {FUNDING_OKR_KEYS.map(key => (
                   <label key={key} className="flex items-center gap-2 rounded-md border border-border/60 p-3 text-sm">
@@ -314,7 +314,7 @@ export function FundingRequestForm({
             </div>
 
             <div className="space-y-3">
-              <Label>Pilares relacionados <span className="text-primary">*</span></Label>
+              <Label>Pilares relacionados <span className="text-destructive">*</span></Label>
               <div className="grid gap-2 sm:grid-cols-2">
                 {FUNDING_PILLAR_KEYS.map(key => (
                   <label key={key} className="flex items-center gap-2 rounded-md border border-border/60 p-3 text-sm">
@@ -341,7 +341,7 @@ export function FundingRequestForm({
           <CardContent className="space-y-4">
             <div className="grid gap-4 md:grid-cols-[1fr_12rem]">
               <div className="space-y-2">
-                <Label htmlFor="amount">Monto solicitado <span className="text-primary">*</span></Label>
+                <Label htmlFor="amount">Monto solicitado <span className="text-destructive">*</span></Label>
                 <Input
                   id="amount"
                   inputMode="decimal"
@@ -363,7 +363,7 @@ export function FundingRequestForm({
               {budgetItems.map((item, index) => (
                 <div key={index} className="grid gap-3 rounded-md border border-border/60 p-3 md:grid-cols-[minmax(0,1fr)_13rem_8rem_auto]">
                   <div className="space-y-2">
-                    <Label htmlFor={`budget-label-${index}`}>Ítem <span className="text-primary">*</span></Label>
+                    <Label htmlFor={`budget-label-${index}`}>Ítem <span className="text-destructive">*</span></Label>
                     <Input
                       id={`budget-label-${index}`}
                       value={item.label}

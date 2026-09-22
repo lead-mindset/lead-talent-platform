@@ -243,7 +243,7 @@ export default function ResumeClient({
           ) : null}
 
           {selectedFile && !selectedFileTooLarge ? (
-            <Button type="submit" disabled={isPending} className="h-11 w-full font-semibold" size="lg">
+            <Button type="submit" disabled={isPending} className="w-full font-semibold" size="lg">
               {isPending ? (
                 <>
                   <Icons.Loader2 className="mr-2 h-4 w-4 animate-spin" />

@@ -406,7 +406,7 @@ export function CheckinScanner({
                 autoComplete="off"
                 autoCorrect="off"
                 autoCapitalize="off"
-                className="h-11 pr-10"
+                className="pr-10"
               />
               {isSearching && (
                 <Loader2 className="absolute right-3 top-3.5 h-4 w-4 animate-spin text-muted-foreground" />

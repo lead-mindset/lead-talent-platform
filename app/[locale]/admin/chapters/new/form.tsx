@@ -4,7 +4,6 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { AlertCircle, Loader2, Building2, CheckCircle2, GraduationCap, MapPin } from 'lucide-react'
 import { createChapter } from '@/lib/actions/admin/create-chapter'
@@ -42,17 +41,17 @@ export function CreateChapterForm() {
       })
 
       if (!result) {
-        throw new Error('Failed to create chapter')
+        throw new Error('No se pudo crear el capítulo')
       }
 
       setSuccess(true)
-      
+
       setTimeout(() => {
         router.push('/admin/chapters')
         router.refresh()
       }, 1500)
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred')
+      setError(err instanceof Error ? err.message : 'Ocurrió un error')
     } finally {
       setIsLoading(false)
     }
@@ -63,7 +62,7 @@ export function CreateChapterForm() {
       <Alert className="border-green-200 bg-green-50 dark:border-green-900 dark:bg-green-950">
         <CheckCircle2 className="h-4 w-4 text-green-600 dark:text-green-400" />
         <AlertDescription className="text-green-900 dark:text-green-100">
-          Chapter created successfully! Redirecting...
+          Capítulo creado correctamente. Redirigiendo...
         </AlertDescription>
       </Alert>
     )
@@ -78,105 +77,69 @@ export function CreateChapterForm() {
         </Alert>
       )}
 
-      <div className="space-y-2">
-        <Label htmlFor="id">
-          Chapter ID <span className="text-red-500">*</span>
-        </Label>
-        <Input
-          id="id"
-          type="text"
-          placeholder="e.g., lima-2024"
-          value={formData.id}
-          onChange={(e) => handleChange('id', e.target.value)}
-          required
-          disabled={isLoading}
-          minLength={2}
-          maxLength={50}
-          pattern="[a-z0-9-]+"
-        />
-        <p className="text-xs text-muted-foreground">
-          Unique identifier (lowercase letters, numbers, and hyphens only)
-        </p>
-      </div>
+      <Input
+        id="id"
+        label="ID del capítulo"
+        required
+        placeholder="ej. lima-2024"
+        helperText="Identificador único (solo minúsculas, números y guiones)"
+        value={formData.id}
+        onChange={(e) => handleChange('id', e.target.value)}
+        disabled={isLoading}
+        minLength={2}
+        maxLength={50}
+        pattern="[a-z0-9-]+"
+      />
 
-      <div className="space-y-2">
-        <Label htmlFor="name">
-          Chapter Name <span className="text-red-500">*</span>
-        </Label>
-        <div className="relative">
-          <Building2 className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input
-            id="name"
-            type="text"
-            placeholder="e.g., LEAD Lima"
-            value={formData.name}
-            onChange={(e) => handleChange('name', e.target.value)}
-            required
-            disabled={isLoading}
-            className="pl-10"
-            minLength={2}
-            maxLength={100}
-          />
-        </div>
-        <p className="text-xs text-muted-foreground">
-          The display name for this chapter
-        </p>
-      </div>
+      <Input
+        id="name"
+        label="Nombre del capítulo"
+        required
+        iconLeft={<Building2 className="h-4 w-4 text-muted-foreground" />}
+        placeholder="ej. LEAD Lima"
+        helperText="El nombre visible de este capítulo"
+        value={formData.name}
+        onChange={(e) => handleChange('name', e.target.value)}
+        disabled={isLoading}
+        minLength={2}
+        maxLength={100}
+      />
 
-      <div className="space-y-2">
-        <Label htmlFor="university">
-          University <span className="text-red-500">*</span>
-        </Label>
-        <div className="relative">
-          <GraduationCap className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input
-            id="university"
-            type="text"
-            placeholder="e.g., Universidad Nacional Mayor de San Marcos"
-            value={formData.university}
-            onChange={(e) => handleChange('university', e.target.value)}
-            required
-            disabled={isLoading}
-            className="pl-10"
-            minLength={2}
-            maxLength={200}
-          />
-        </div>
-        <p className="text-xs text-muted-foreground">
-          The university associated with this chapter
-        </p>
-      </div>
+      <Input
+        id="university"
+        label="Universidad"
+        required
+        iconLeft={<GraduationCap className="h-4 w-4 text-muted-foreground" />}
+        placeholder="ej. Universidad Nacional Mayor de San Marcos"
+        helperText="La universidad asociada a este capítulo"
+        value={formData.university}
+        onChange={(e) => handleChange('university', e.target.value)}
+        disabled={isLoading}
+        minLength={2}
+        maxLength={200}
+      />
 
       <div className="grid grid-cols-2 gap-4">
-        <div className="space-y-2">
-          <Label htmlFor="city">City</Label>
-          <div className="relative">
-            <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            <Input
-              id="city"
-              type="text"
-              placeholder="e.g., Lima"
-              value={formData.city}
-              onChange={(e) => handleChange('city', e.target.value)}
-              disabled={isLoading}
-              className="pl-10"
-              maxLength={100}
-            />
-          </div>
-        </div>
+        <Input
+          id="city"
+          label="Ciudad"
+          iconLeft={<MapPin className="h-4 w-4 text-muted-foreground" />}
+          placeholder="ej. Lima"
+          value={formData.city}
+          onChange={(e) => handleChange('city', e.target.value)}
+          disabled={isLoading}
+          maxLength={100}
+        />
 
-        <div className="space-y-2">
-          <Label htmlFor="region">Region</Label>
-          <Input
-            id="region"
-            type="text"
-            placeholder="e.g., Lima"
-            value={formData.region}
-            onChange={(e) => handleChange('region', e.target.value)}
-            disabled={isLoading}
-            maxLength={100}
-          />
-        </div>
+        <Input
+          id="region"
+          label="Región"
+          placeholder="ej. Lima"
+          value={formData.region}
+          onChange={(e) => handleChange('region', e.target.value)}
+          disabled={isLoading}
+          maxLength={100}
+        />
       </div>
 
       <div className="flex gap-3">
@@ -188,12 +151,12 @@ export function CreateChapterForm() {
           {isLoading ? (
             <>
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Creating...
+              Creando...
             </>
           ) : (
             <>
               <Building2 className="mr-2 h-4 w-4" />
-              Create Chapter
+              Crear capítulo
             </>
           )}
         </Button>
@@ -203,7 +166,7 @@ export function CreateChapterForm() {
           onClick={() => router.back()}
           disabled={isLoading}
         >
-          Cancel
+          Cancelar
         </Button>
       </div>
     </form>

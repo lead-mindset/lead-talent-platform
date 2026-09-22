@@ -61,7 +61,7 @@ export function ChapterApplicationCard({ chapters, disabled = false }: ChapterAp
           onValueChange={setChapterId}
           disabled={disabled || isPending || !hasChapters}
         >
-          <SelectTrigger id="chapter-application" className="h-11 w-full rounded-lg">
+          <SelectTrigger id="chapter-application" className="w-full">
             <SelectValue placeholder={hasChapters ? 'Elige tu capítulo' : 'No hay capítulos disponibles'} />
           </SelectTrigger>
           <SelectContent>
