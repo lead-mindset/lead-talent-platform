@@ -25,17 +25,7 @@ const buttonVariants = cva(
           "bg-muted text-foreground ring-1 ring-border shadow-xs hover:bg-muted/80",
         ghost:
           "text-muted-foreground hover:bg-muted hover:text-foreground",
-        glass:
-          "bg-card/80 text-foreground ring-1 ring-border backdrop-blur hover:bg-card",
-        brand:
-          "button-gradient-primary rounded-full font-semibold text-primary-foreground shadow-sm hover:shadow-md",
-        hero:
-          "button-gradient-primary rounded-full px-7 font-semibold text-primary-foreground shadow-sm hover:shadow-md",
         link: "h-auto rounded-none px-0 text-primary underline-offset-4 hover:underline",
-        filled: "bg-primary text-primary-foreground shadow-xs hover:bg-primary/90",
-        tonal: "bg-muted text-foreground ring-1 ring-border shadow-xs hover:bg-muted/80",
-        outlined: "border border-border bg-background shadow-xs hover:bg-muted hover:text-foreground",
-        text: "h-auto rounded-none px-0 text-primary underline-offset-4 hover:underline",
       },
       size: {
         default: "h-10 px-5 py-2 has-[>svg]:px-4",

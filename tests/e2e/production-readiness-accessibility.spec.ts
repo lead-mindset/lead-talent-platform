@@ -151,7 +151,7 @@ test('production readiness accessibility matrix', async ({ page }, testInfo) => 
     routes.push(await analyzeRoute(page, 'company dashboard', '/en/company'))
     routes.push(await analyzeRoute(page, 'company browse', '/en/company/browse'))
     routes.push(await analyzeRoute(page, 'company saved', '/en/company/saved'))
-    routes.push(await analyzeRoute(page, 'company settings', '/en/company/settings'))
+    routes.push(await analyzeRoute(page, 'company profile', '/en/company/profile'))
   }
 
   if (shouldRun('admin')) {

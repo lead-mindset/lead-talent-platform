@@ -16,16 +16,10 @@ const inputVariants = cva(
         error: "ring-destructive/50 focus:ring-destructive",
         success: "ring-success/50 focus:ring-success",
       },
-      variant: {
-        default: "",
-        filled: "bg-muted/50",
-        outlined: "bg-background",
-      },
     },
     defaultVariants: {
       size: "default",
       state: "default",
-      variant: "default",
     },
   }
 )
