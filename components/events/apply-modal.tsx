@@ -10,6 +10,14 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
+  Input,
+  Label,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+  Textarea,
 } from '@/components/ui'
 import { Loader2 } from 'lucide-react'
 import { Checkbox } from '@/components/ui/checkbox'
@@ -155,76 +163,99 @@ export function ApplyModal({
         </DialogHeader>
 
         <div className="max-h-[60vh] space-y-5 overflow-y-auto pr-1">
-          {questions.map((question, index) => (
-            <div key={question.id} className="space-y-3 rounded-lg border bg-muted/20 p-4">
-              <div className="flex flex-wrap items-start justify-between gap-2">
-                <label className="min-w-0 flex-1 text-sm font-medium leading-6">
-                  <span className="mb-1 block text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                    Pregunta {index + 1}
-                  </span>
-                  {question.question_text}
-                </label>
-                {question.is_required ? <Badge variant="outline">Obligatoria</Badge> : null}
-              </div>
+          {questions.map((question, index) => {
+            const fieldId = `apply-${question.id}`
+            const error = fieldErrors[question.id]
 
-              {question.question_type === 'long_text' ? (
-                <textarea
-                  value={(answers[question.id] as string | undefined) ?? ''}
-                  onChange={(event) => updateAnswer(question.id, event.target.value)}
-                  aria-invalid={Boolean(fieldErrors[question.id])}
-                  placeholder="Escribe tu respuesta..."
-                  className={`min-h-28 w-full rounded-md border bg-background px-3 py-2 text-sm outline-none focus-visible:ring-2 focus-visible:ring-primary ${
-                    fieldErrors[question.id] ? 'border-destructive' : 'border-input'
-                  }`}
-                />
-              ) : question.question_type === 'single_select' ? (
-                <select
-                  value={(answers[question.id] as string | undefined) ?? ''}
-                  onChange={(event) => updateAnswer(question.id, event.target.value)}
-                  aria-invalid={Boolean(fieldErrors[question.id])}
-                  className={`h-10 w-full rounded-md border bg-background px-3 text-sm ${
-                    fieldErrors[question.id] ? 'border-destructive' : 'border-input'
-                  }`}
-                >
-                  <option value="">Selecciona una opcion</option>
-                  {(question.options ?? []).map((option) => (
-                    <option key={option} value={option}>{option}</option>
-                  ))}
-                </select>
-              ) : question.question_type === 'checkbox' ? (
-                <div className="space-y-2">
-                  {(question.options ?? []).map((option) => {
-                    const selected = Array.isArray(answers[question.id]) ? answers[question.id] as string[] : []
-                    return (
-                      <label key={option} className="flex items-center gap-2 rounded-md border bg-muted/30 p-3 text-sm">
-                        <Checkbox
-                          checked={selected.includes(option)}
-                          onCheckedChange={(checked) => toggleCheckboxAnswer(question.id, option, checked === true)}
-                          aria-invalid={Boolean(fieldErrors[question.id])}
-                        />
-                        {option}
-                      </label>
-                    )
-                  })}
+            return (
+              <div key={question.id} className="space-y-3 rounded-lg border bg-muted/20 p-4">
+                <div className="flex flex-wrap items-start justify-between gap-2">
+                  {question.question_type === 'checkbox' ? (
+                    <div id={`${fieldId}-label`} className="min-w-0 flex-1 text-sm font-medium leading-6">
+                      <span className="mb-1 block text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                        Pregunta {index + 1}
+                      </span>
+                      {question.question_text}
+                    </div>
+                  ) : (
+                    <Label htmlFor={fieldId} className="min-w-0 flex-1 leading-6">
+                      <span className="mb-1 block text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                        Pregunta {index + 1}
+                      </span>
+                      {question.question_text}
+                    </Label>
+                  )}
+                  {question.is_required ? <Badge variant="outline">Obligatoria</Badge> : null}
                 </div>
-              ) : (
-                <input
-                  type={question.question_type === 'url' ? 'url' : 'text'}
-                  value={(answers[question.id] as string | undefined) ?? ''}
-                  onChange={(event) => updateAnswer(question.id, event.target.value)}
-                  aria-invalid={Boolean(fieldErrors[question.id])}
-                  placeholder={question.question_type === 'url' ? 'https://...' : 'Escribe tu respuesta...'}
-                  className={`h-10 w-full rounded-md border bg-background px-3 text-sm outline-none focus-visible:ring-2 focus-visible:ring-primary ${
-                    fieldErrors[question.id] ? 'border-destructive' : 'border-input'
-                  }`}
-                />
-              )}
 
-              {fieldErrors[question.id] ? (
-                <p className="text-xs text-destructive">{fieldErrors[question.id]}</p>
-              ) : null}
-            </div>
-          ))}
+                {question.question_type === 'long_text' ? (
+                  <Textarea
+                    id={fieldId}
+                    value={(answers[question.id] as string | undefined) ?? ''}
+                    onChange={(event) => updateAnswer(question.id, event.target.value)}
+                    aria-invalid={Boolean(error)}
+                    aria-describedby={error ? `${fieldId}-error` : undefined}
+                    placeholder="Escribe tu respuesta..."
+                    className="min-h-28"
+                  />
+                ) : question.question_type === 'single_select' ? (
+                  <Select
+                    value={(answers[question.id] as string | undefined) ?? ''}
+                    onValueChange={(value) => updateAnswer(question.id, value)}
+                  >
+                    <SelectTrigger
+                      id={fieldId}
+                      aria-invalid={Boolean(error)}
+                      aria-describedby={error ? `${fieldId}-error` : undefined}
+                      className="w-full"
+                    >
+                      <SelectValue placeholder="Selecciona una opcion" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {(question.options ?? []).map((option) => (
+                        <SelectItem key={option} value={option}>{option}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                ) : question.question_type === 'checkbox' ? (
+                  <div role="group" aria-labelledby={`${fieldId}-label`} className="space-y-2">
+                    {(question.options ?? []).map((option) => {
+                      const selected = Array.isArray(answers[question.id]) ? answers[question.id] as string[] : []
+                      return (
+                        <label key={option} className="flex items-center gap-2 rounded-md border bg-muted/30 p-3 text-sm">
+                          <Checkbox
+                            checked={selected.includes(option)}
+                            onCheckedChange={(checked) => toggleCheckboxAnswer(question.id, option, checked === true)}
+                            aria-invalid={Boolean(error)}
+                          />
+                          {option}
+                        </label>
+                      )
+                    })}
+                  </div>
+                ) : (
+                  <Input
+                    id={fieldId}
+                    type={question.question_type === 'url' ? 'url' : 'text'}
+                    value={(answers[question.id] as string | undefined) ?? ''}
+                    onChange={(event) => updateAnswer(question.id, event.target.value)}
+                    aria-invalid={Boolean(error)}
+                    errorText={error}
+                    placeholder={question.question_type === 'url' ? 'https://...' : 'Escribe tu respuesta...'}
+                  />
+                )}
+
+                {error &&
+                (question.question_type === 'long_text' ||
+                  question.question_type === 'single_select' ||
+                  question.question_type === 'checkbox') ? (
+                  <p id={`${fieldId}-error`} className="text-xs text-destructive">
+                    {error}
+                  </p>
+                ) : null}
+              </div>
+            )
+          })}
 
           {fieldErrors._form ? (
             <div className="rounded-md border border-destructive/30 bg-destructive/10 px-3 py-2 text-sm text-destructive">
