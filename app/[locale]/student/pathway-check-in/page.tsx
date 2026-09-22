@@ -2,6 +2,7 @@ import { CheckCircle2, LockKeyhole, Route } from 'lucide-react'
 import { MainContainer } from '@/components/global/main-container'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
 import { PageHeader } from '@/components/ui/page-header'
 import { Link } from '@/i18n/routing'
 import { submitPathwayCheckIn } from '@/lib/actions/student/pathway-check-in'
@@ -60,13 +61,17 @@ function RadioCardGroup({
   options: { value: string; label: string; description?: string }[]
 }) {
   return (
-    <div className="grid gap-3">
+    <div role="radiogroup" aria-label={name} className="grid gap-3">
       {options.map((option) => (
         <label
           key={option.value}
-          className="flex cursor-pointer gap-3 rounded-lg border border-border/70 bg-background p-4 transition hover:border-primary/50 hover:bg-muted/30"
+          className="flex cursor-pointer items-start gap-3 rounded-lg border border-border/70 bg-background p-4 transition hover:border-primary/50 hover:bg-muted/30 has-[input:checked]:border-primary/60 has-[input:checked]:bg-primary/5"
         >
-          <input required type="radio" name={name} value={option.value} className="mt-1" />
+          <input required type="radio" name={name} value={option.value} className="peer sr-only" />
+          <span
+            aria-hidden="true"
+            className="mt-0.5 size-4 shrink-0 rounded-full border border-input transition-colors peer-checked:border-primary peer-checked:bg-primary peer-focus-visible:ring-2 peer-focus-visible:ring-ring/50"
+          />
           <span className="space-y-1">
             <span className="block text-sm font-semibold text-foreground">{option.label}</span>
             {option.description ? (
@@ -151,12 +156,11 @@ function CheckInForm() {
           <CardTitle className="text-lg">3. Que tema quieres explorar o fortalecer?</CardTitle>
         </CardHeader>
         <CardContent>
-          <input
-            required
+          <Input
             name="study_interest"
             maxLength={120}
+            required
             placeholder="Ej. inteligencia artificial, data, producto, liderazgo, ciberseguridad..."
-            className="min-h-11 w-full rounded-lg border border-input bg-background px-3 py-2 text-sm"
           />
         </CardContent>
       </Card>
@@ -166,13 +170,17 @@ function CheckInForm() {
           <CardTitle className="text-lg">4. ¿Qué tan seguro te sientes con tu próximo paso?</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid gap-3 sm:grid-cols-5">
+          <div role="radiogroup" aria-label="Nivel de confianza" className="grid grid-cols-3 gap-3 sm:grid-cols-5">
             {[1, 2, 3, 4, 5].map((value) => (
               <label
                 key={value}
-                className="flex cursor-pointer items-center justify-center gap-2 rounded-lg border border-border/70 bg-background p-3 text-sm font-semibold transition hover:border-primary/50 hover:bg-muted/30"
+                className="flex cursor-pointer items-center justify-center gap-2 rounded-lg border border-border/70 bg-background p-3 text-sm font-semibold transition hover:border-primary/50 hover:bg-muted/30 has-[input:checked]:border-primary/60 has-[input:checked]:bg-primary/5"
               >
-                <input required type="radio" name="confidence_level" value={value} />
+                <input required type="radio" name="confidence_level" value={value} className="peer sr-only" />
+                <span
+                  aria-hidden="true"
+                  className="size-4 shrink-0 rounded-full border border-input transition-colors peer-checked:border-primary peer-checked:bg-primary peer-focus-visible:ring-2 peer-focus-visible:ring-ring/50"
+                />
                 {value}
               </label>
             ))}
