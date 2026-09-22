@@ -1,6 +1,7 @@
 import { requireChapterMember } from '@/lib/auth'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent } from '@/components/ui/card'
+import { EmptyState } from '@/components/ui/empty-state'
 import { MainContainer } from '@/components/global/main-container'
 import { Icons } from '@/components/ui/icons'
 import { PageHeader } from '@/components/ui/page-header'
@@ -134,17 +135,11 @@ export default async function ChapterMembersPage({
         <MembersTabs currentStatus={safeStatus} counts={counts} visibleStatuses={visibleStatuses} />
 
         {displayMembers.length === 0 ? (
-          <Card>
-            <CardContent className="py-12 text-center">
-              <div className="mx-auto mb-5 flex h-12 w-12 items-center justify-center rounded-full bg-muted">
-                <Icons.Users className="h-5 w-5 text-muted-foreground" />
-              </div>
-              <h2 className="text-lg font-semibold">No hay miembros en esta vista</h2>
-              <p className="mx-auto mt-2 max-w-md text-sm text-muted-foreground">
-                Cambia el filtro de estado para revisar otros registros de membresía.
-              </p>
-            </CardContent>
-          </Card>
+          <EmptyState
+            icon={Icons.Users}
+            title="No hay miembros en esta vista"
+            description="Cambia el filtro de estado para revisar otros registros de membresía."
+          />
         ) : (
           <MembersList
             members={displayMembers}

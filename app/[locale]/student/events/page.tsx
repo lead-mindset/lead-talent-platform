@@ -1,10 +1,10 @@
 import QRCode from 'qrcode'
 import Image from 'next/image'
-import type { ReactNode } from 'react'
 import { QrCode } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { EmptyState } from '@/components/ui/empty-state'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { getMyRegistrations } from '@/lib/actions/events/get-data'
 import { CancelRegistrationDialog } from '@/components/events/cancel-registration-dialog'
@@ -241,51 +241,6 @@ function EventRegistrationCard({
   )
 }
 
-function EmptyState() {
-  return (
-    <Card className="rounded-lg border-dashed">
-      <CardContent className="flex flex-col items-center gap-4 py-12 text-center">
-        <span className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 text-primary">
-          <Icons.Calendar className="h-6 w-6" />
-        </span>
-        <div className="space-y-1">
-          <h2 className="text-lg font-semibold">Aún no tienes registros a eventos</h2>
-          <p className="max-w-md text-sm text-muted-foreground">
-            Explora eventos públicos y regístrate o postula cuando encuentres algo que encaje con tus objetivos.
-          </p>
-        </div>
-        <Button asChild>
-          <Link href="/events">Explorar eventos</Link>
-        </Button>
-      </CardContent>
-    </Card>
-  )
-}
-
-function TabEmptyState({
-  description,
-  icon,
-  title,
-}: {
-  description: string
-  icon: ReactNode
-  title: string
-}) {
-  return (
-    <Card className="rounded-lg border-dashed">
-      <CardContent className="flex flex-col items-center gap-3 py-10 text-center">
-        <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-muted text-muted-foreground">
-          {icon}
-        </span>
-        <div className="space-y-1">
-          <p className="font-medium text-foreground">{title}</p>
-          <p className="max-w-md text-sm text-muted-foreground">{description}</p>
-        </div>
-      </CardContent>
-    </Card>
-  )
-}
-
 function CurrentTicket({
   registration,
   qrDataUrl,
@@ -440,7 +395,16 @@ export default async function StudentEventsPage({
         />
 
         {registrations.length === 0 ? (
-          <EmptyState />
+          <EmptyState
+            icon={Icons.Calendar}
+            title="Aún no tienes registros a eventos"
+            description="Explora eventos públicos y regístrate o postula cuando encuentres algo que encaje con tus objetivos."
+            action={
+              <Button asChild>
+                <Link href="/events">Explorar eventos</Link>
+              </Button>
+            }
+          />
         ) : (
           <div className="space-y-6">
               {currentTicket ? (
@@ -474,10 +438,10 @@ export default async function StudentEventsPage({
 
                 <TabsContent value="active" className="space-y-4">
                   {visibleActiveRegistrations.length === 0 ? (
-                    <TabEmptyState
-                      icon={<Icons.Ticket className="h-5 w-5" />}
+                    <EmptyState
+                      icon={Icons.Ticket}
                       title="No hay otros tickets activos"
-                description="Tu próximo ticket se muestra arriba. Otros registros futuros aparecerán aquí."
+                      description="Tu próximo ticket se muestra arriba. Otros registros futuros aparecerán aquí."
                     />
                   ) : (
                     <div className="grid gap-4 lg:grid-cols-2">
@@ -495,10 +459,10 @@ export default async function StudentEventsPage({
 
                 <TabsContent value="applications" className="space-y-4">
                   {applicationRegistrations.length === 0 ? (
-                    <TabEmptyState
-                      icon={<Icons.Clock className="h-5 w-5" />}
+                    <EmptyState
+                      icon={Icons.Clock}
                       title="No hay postulaciones en espera"
-                description="Los eventos con postulación aparecerán aquí mientras se revisan."
+                      description="Los eventos con postulación aparecerán aquí mientras se revisan."
                     />
                   ) : (
                     <div className="grid gap-4 lg:grid-cols-2">
@@ -516,9 +480,9 @@ export default async function StudentEventsPage({
 
                 <TabsContent value="history" className="space-y-4">
                   {historyRegistrations.length === 0 ? (
-                    <TabEmptyState
-                      icon={<Icons.Calendar className="h-5 w-5" />}
-                title="Aún no hay historial de eventos"
+                    <EmptyState
+                      icon={Icons.Calendar}
+                      title="Aún no hay historial de eventos"
                       description="Los eventos pasados y registros completados aparecerán aquí."
                     />
                   ) : (

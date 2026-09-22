@@ -1,6 +1,5 @@
 import { notFound } from 'next/navigation'
 import type { ReactNode } from 'react'
-import type { LucideIcon } from 'lucide-react'
 import {
   ArrowLeft,
   BriefcaseBusiness,
@@ -23,6 +22,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { PageHeader } from '@/components/ui/page-header'
+import { EmptyState } from '@/components/ui/empty-state'
 import { Separator } from '@/components/ui/separator'
 import { getCompanyAccessForUser, getUserById } from '@/lib/actions/admin/get-data'
 import { createClient } from '@/lib/supabase/server'
@@ -37,30 +37,6 @@ import { formatLeadDate } from '@/lib/utils/date-format'
 
 function formatDate(value: string | null | undefined) {
   return formatLeadDate(value, 'Not set')
-}
-
-function EmptyState({
-  icon: Icon,
-  title,
-  description,
-}: {
-  icon: LucideIcon
-  title: string
-  description: string
-}) {
-  return (
-    <div className="rounded-lg border border-dashed p-5">
-      <div className="flex items-start gap-3">
-        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-muted">
-          <Icon className="h-5 w-5 text-muted-foreground" />
-        </div>
-        <div>
-          <p className="font-medium">{title}</p>
-          <p className="mt-1 text-sm text-muted-foreground">{description}</p>
-        </div>
-      </div>
-    </div>
-  )
 }
 
 function InfoRow({
@@ -267,8 +243,8 @@ export default async function UserDetailPage({
               ) : (
                 <EmptyState
                   icon={UserRound}
-                  title="No person profile yet"
-                  description="This user has not completed reusable profile details. They can still have an account without chapter membership."
+                  title="Sin perfil todavía"
+                  description="Este usuario no ha completado datos de perfil reutilizables. Puede tener cuenta sin pertenecer a un capítulo."
                 />
               )}
             </CardContent>
@@ -301,8 +277,8 @@ export default async function UserDetailPage({
               ) : (
                 <EmptyState
                   icon={GraduationCap}
-                  title="No chapter membership"
-                  description="This is normal for public participants, company representatives, staff, or users who have not applied to a chapter."
+                  title="Sin membresía de capítulo"
+                  description="Es normal para participantes, representantes de empresa, staff o usuarios que no han postulado a un capítulo."
                 />
               )}
             </CardContent>
@@ -345,8 +321,8 @@ export default async function UserDetailPage({
               ) : (
                 <EmptyState
                   icon={BriefcaseBusiness}
-                  title="No company access"
-                  description="No company representative access is connected to this user or email."
+                  title="Sin acceso de empresa"
+                  description="No hay acceso de representante de empresa conectado a este usuario o correo."
                 />
               )}
             </CardContent>

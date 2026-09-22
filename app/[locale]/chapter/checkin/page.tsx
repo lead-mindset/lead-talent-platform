@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { Card, CardContent } from '@/components/ui/card'
+import { EmptyState } from '@/components/ui/empty-state'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Icons } from '@/components/ui/icons'
@@ -131,20 +131,16 @@ export default async function ChapterCheckinPage({
             </div>
           </>
         ) : (
-          <Card>
-            <CardContent className="py-12 text-center">
-              <div className="mx-auto mb-5 flex h-12 w-12 items-center justify-center rounded-full bg-muted">
-                <Icons.Calendar className="h-5 w-5 text-muted-foreground" />
-              </div>
-              <h2 className="text-xl font-semibold">No hay eventos activos para check-in</h2>
-              <p className="mx-auto mt-2 max-w-md text-sm text-muted-foreground">
-                Crea o publica un evento próximo antes de abrir el check-in.
-              </p>
-              <Button asChild className="mt-6">
+          <EmptyState
+            icon={Icons.Calendar}
+            title="No hay eventos activos para check-in"
+            description="Crea o publica un evento próximo antes de abrir el check-in."
+            action={
+              <Button asChild className="mt-2">
                 <Link href="/chapter/events">Gestionar eventos</Link>
               </Button>
-            </CardContent>
-          </Card>
+            }
+          />
         )}
       </MainContainer>
     </ComingSoon>

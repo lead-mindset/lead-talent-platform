@@ -1,5 +1,5 @@
 import { Button } from '@/components/ui/button'
-import { Card, CardContent } from '@/components/ui/card'
+import { EmptyState } from '@/components/ui/empty-state'
 import Link from 'next/link'
 import { getChapterEventPermissionFlags, getChapterEvents } from '@/lib/actions/events/get-data'
 import { EventsTable } from './_components/events-table'
@@ -95,23 +95,19 @@ export default async function ChapterEventsPage() {
         </div>
 
         {events.length === 0 ? (
-          <Card className="border-dashed">
-            <CardContent className="py-16 text-center">
-              <div className="mx-auto mb-5 flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
-                <Icons.Calendar className="h-5 w-5 text-primary" />
-              </div>
-              <h2 className="text-xl font-semibold">Todavia no hay eventos</h2>
-              <p className="mx-auto mt-2 mb-6 max-w-md text-sm text-muted-foreground">
-                Crea el primer evento del capítulo cuando tu equipo esté listo para recibir registros o postulaciones.
-              </p>
+          <EmptyState
+            icon={Icons.Calendar}
+            title="Todavía no hay eventos"
+            description="Crea el primer evento del capítulo cuando tu equipo esté listo para recibir registros o postulaciones."
+            action={
               <Button asChild>
                 <Link href="/chapter/events/new">
                   <Icons.Plus className="mr-2 h-4 w-4" />
                   Crear evento
                 </Link>
               </Button>
-            </CardContent>
-          </Card>
+            }
+          />
         ) : (
           <EventsTable
             publishedEvents={publishedEvents}
