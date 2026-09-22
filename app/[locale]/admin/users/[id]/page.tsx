@@ -22,6 +22,7 @@ import { Link } from '@/i18n/routing'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { PageHeader } from '@/components/ui/page-header'
 import { Separator } from '@/components/ui/separator'
 import { getCompanyAccessForUser, getUserById } from '@/lib/actions/admin/get-data'
 import { createClient } from '@/lib/supabase/server'
@@ -151,61 +152,62 @@ export default async function UserDetailPage({
 
   return (
     <div className="space-y-8">
-      <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
-        <div className="space-y-3">
-          <Button variant="ghost" size="sm" asChild className="w-fit px-0">
+      <PageHeader
+        title={resolvedUser.name ?? 'Usuario sin nombre'}
+        badge={
+          <>
+            <Badge className={getRoleColor(resolvedUser.role)} variant="outline">
+              {resolvedUser.role}
+            </Badge>
+            {resolvedUser.deactivated_at && <Badge variant="destructive">Desactivado</Badge>}
+          </>
+        }
+        actions={
+          <Button variant="ghost" size="sm" asChild className="px-0">
             <Link href="/admin/users" className="gap-2">
               <ArrowLeft className="h-4 w-4" />
-              Back to users
+              Volver a usuarios
             </Link>
           </Button>
-          <div className="space-y-2">
-            <div className="flex flex-wrap items-center gap-2">
-              <h1 className="text-3xl font-bold tracking-tight">{resolvedUser.name ?? 'Unnamed user'}</h1>
-              <Badge className={getRoleColor(resolvedUser.role)} variant="outline">
-                {resolvedUser.role}
-              </Badge>
-              {resolvedUser.deactivated_at && <Badge variant="destructive">Deactivated</Badge>}
-            </div>
-            <div className="flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
-              <a href={`mailto:${resolvedUser.email}`} className="inline-flex items-center gap-2 hover:text-foreground">
-                <Mail className="h-4 w-4" />
-                {resolvedUser.email}
-              </a>
-              {resolvedUser.phone && (
-                <a href={`tel:${resolvedUser.phone}`} className="inline-flex items-center gap-2 hover:text-foreground">
-                  <Phone className="h-4 w-4" />
-                  {resolvedUser.phone}
-                </a>
-              )}
-              {profile?.linkedin_url && (
-                <a
-                  href={profile.linkedin_url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 hover:text-foreground"
-                >
-                  <Linkedin className="h-4 w-4" />
-                  LinkedIn
-                </a>
-              )}
-            </div>
-          </div>
-        </div>
+        }
+      />
 
-        <div className="grid gap-2 sm:grid-cols-3 lg:min-w-[32rem]">
-          <div className="rounded-lg border bg-card p-3">
-            <p className="text-xs text-muted-foreground">Profile</p>
-            <p className="mt-2 font-semibold">{profile ? 'Present' : 'Missing'}</p>
-          </div>
-          <div className="rounded-lg border bg-card p-3">
-            <p className="text-xs text-muted-foreground">Membership</p>
-            <p className="mt-2 font-semibold">{membership?.status ?? 'None'}</p>
-          </div>
-          <div className="rounded-lg border bg-card p-3">
-            <p className="text-xs text-muted-foreground">Primary identity</p>
-            <p className="mt-2 truncate font-semibold">{primaryIdentity?.identity_type ?? 'None'}</p>
-          </div>
+      <div className="-mt-2 flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
+        <a href={`mailto:${resolvedUser.email}`} className="inline-flex items-center gap-2 hover:text-foreground">
+          <Mail className="h-4 w-4" />
+          {resolvedUser.email}
+        </a>
+        {resolvedUser.phone && (
+          <a href={`tel:${resolvedUser.phone}`} className="inline-flex items-center gap-2 hover:text-foreground">
+            <Phone className="h-4 w-4" />
+            {resolvedUser.phone}
+          </a>
+        )}
+        {profile?.linkedin_url && (
+          <a
+            href={profile.linkedin_url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 hover:text-foreground"
+          >
+            <Linkedin className="h-4 w-4" />
+            LinkedIn
+          </a>
+        )}
+      </div>
+
+      <div className="grid gap-2 sm:grid-cols-3 lg:min-w-[32rem]">
+        <div className="rounded-lg border bg-card p-3">
+          <p className="text-xs text-muted-foreground">Perfil</p>
+          <p className="mt-2 font-semibold">{profile ? 'Presente' : 'Ausente'}</p>
+        </div>
+        <div className="rounded-lg border bg-card p-3">
+          <p className="text-xs text-muted-foreground">Membresía</p>
+          <p className="mt-2 font-semibold">{membership?.status ?? 'Ninguna'}</p>
+        </div>
+        <div className="rounded-lg border bg-card p-3">
+          <p className="text-xs text-muted-foreground">Identidad principal</p>
+          <p className="mt-2 truncate font-semibold">{primaryIdentity?.identity_type ?? 'Ninguna'}</p>
         </div>
       </div>
 

@@ -14,6 +14,7 @@ import {
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { PageHeader } from '@/components/ui/page-header'
 import {
   getAdminDashboardStats,
   getChapterActivityList,
@@ -345,22 +346,20 @@ async function RecentJoinsSection() {
 export default function AdminOverviewPage() {
   return (
     <div className="space-y-6">
-      <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
-        <div className="space-y-2">
-          <h1 className="text-3xl font-bold tracking-tight">Resumen administrativo</h1>
-          <p className="max-w-3xl text-muted-foreground">
-            Monitorea colas operativas, cobertura de plataforma y accesos de gestión.
-          </p>
-        </div>
-        <div className="flex flex-wrap gap-2">
-          <Button asChild variant="outline">
-            <Link href="/admin/activity">Actividad</Link>
-          </Button>
-          <Button asChild>
-            <Link href="/admin/invites">Revisar invitaciones</Link>
-          </Button>
-        </div>
-      </div>
+      <PageHeader
+        title="Resumen administrativo"
+        description="Monitorea colas operativas, cobertura de plataforma y accesos de gestión."
+        actions={
+          <>
+            <Button asChild variant="outline">
+              <Link href="/admin/activity">Actividad</Link>
+            </Button>
+            <Button asChild>
+              <Link href="/admin/invites">Revisar invitaciones</Link>
+            </Button>
+          </>
+        }
+      />
 
       <Suspense fallback={<StatsSkeleton />}>
         <AdminStatsSection />

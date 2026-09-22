@@ -2,6 +2,7 @@ import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
+import { PageHeader } from '@/components/ui/page-header'
 import Link from 'next/link'
 import { ArrowLeft } from 'lucide-react'
 import { CreateCompanyForm } from './form'
@@ -41,24 +42,24 @@ function FormLoading() {
 export default function AdminCreateCompanyPage() {
   return (
     <div className="space-y-8">
-      <div>
-        <Button asChild variant="ghost" size="sm" className="mb-4">
-          <Link href="/admin/companies">
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Back to Companies
-          </Link>
-        </Button>
-        <h1 className="text-3xl font-bold tracking-tight">Create Company</h1>
-        <p className="text-muted-foreground mt-2">
-          Add a new partner company to the platform
-        </p>
-      </div>
+      <PageHeader
+        title="Crear empresa"
+        description="Agrega una nueva empresa socia a la plataforma."
+        actions={
+          <Button asChild variant="ghost" size="sm">
+            <Link href="/admin/companies">
+              <ArrowLeft className="mr-2 h-4 w-4" />
+              Volver a empresas
+            </Link>
+          </Button>
+        }
+      />
 
       <Card className="max-w-2xl">
         <CardHeader>
-          <CardTitle>Company Information</CardTitle>
+          <CardTitle>Información de la empresa</CardTitle>
           <CardDescription>
-            Enter the details for the new company. This company will be able to invite company representatives.
+            Ingresa los datos de la nueva empresa. Podrá invitar representantes de empresa.
           </CardDescription>
         </CardHeader>
         <CardContent>

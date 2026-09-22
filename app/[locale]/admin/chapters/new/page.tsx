@@ -2,6 +2,7 @@ import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
+import { PageHeader } from '@/components/ui/page-header'
 import Link from 'next/link'
 import { ArrowLeft } from 'lucide-react'
 import { CreateChapterForm } from './form'
@@ -45,24 +46,24 @@ function FormLoading() {
 export default function AdminCreateChapterPage() {
   return (
     <div className="space-y-8">
-      <div>
-        <Button asChild variant="ghost" size="sm" className="mb-4">
-          <Link href="/admin/chapters">
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Back to Chapters
-          </Link>
-        </Button>
-        <h1 className="text-3xl font-bold tracking-tight">Create Chapter</h1>
-        <p className="text-muted-foreground mt-2">
-          Add a new LEAD chapter to the platform
-        </p>
-      </div>
+      <PageHeader
+        title="Crear capítulo"
+        description="Agrega un nuevo capítulo de LEAD a la plataforma."
+        actions={
+          <Button asChild variant="ghost" size="sm">
+            <Link href="/admin/chapters">
+              <ArrowLeft className="mr-2 h-4 w-4" />
+              Volver a capítulos
+            </Link>
+          </Button>
+        }
+      />
 
       <Card className="max-w-2xl">
         <CardHeader>
-          <CardTitle>Chapter Information</CardTitle>
+          <CardTitle>Información del capítulo</CardTitle>
           <CardDescription>
-            Enter the details for the new chapter. Students will be able to join this chapter.
+            Ingresa los datos del nuevo capítulo. Los estudiantes podrán unirse a este capítulo.
           </CardDescription>
         </CardHeader>
         <CardContent>

@@ -1,6 +1,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
+import { PageHeader } from '@/components/ui/page-header'
 import { notFound } from 'next/navigation'
 import { Link } from '@/i18n/routing'
 import {
@@ -40,20 +41,20 @@ export default async function ChapterDetailPage({
 
   return (
     <div className="space-y-8">
-      <div className="flex items-center gap-4">
-        <Button asChild variant="ghost" size="sm">
-          <Link href="/admin/chapters">
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Volver a capitulos
-          </Link>
-        </Button>
-      </div>
+      <PageHeader
+        title={resolvedChapter.name}
+        description={resolvedChapter.university}
+        actions={
+          <Button asChild variant="ghost" size="sm">
+            <Link href="/admin/chapters">
+              <ArrowLeft className="mr-2 h-4 w-4" />
+              Volver a capítulos
+            </Link>
+          </Button>
+        }
+      />
 
       <div className="space-y-6">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">{resolvedChapter.name}</h1>
-          <p className="text-muted-foreground mt-2">{resolvedChapter.university}</p>
-        </div>
 
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           <Card>

@@ -1,15 +1,14 @@
 import { Card, CardContent } from '@/components/ui/card'
+import { PageHeader } from '@/components/ui/page-header'
 import { Settings } from 'lucide-react'
 
 export default function AdminSettingsPage() {
   return (
     <div className="space-y-8">
-      <div>
-        <h1 className="text-3xl font-bold tracking-tight">Configuración administrativa</h1>
-        <p className="text-muted-foreground mt-2">
-          Define preferencias del sistema y opciones administrativas.
-        </p>
-      </div>
+      <PageHeader
+        title="Configuración administrativa"
+        description="Define preferencias del sistema y opciones administrativas."
+      />
 
       <Card>
         <CardContent className="flex flex-col items-center justify-center py-12">

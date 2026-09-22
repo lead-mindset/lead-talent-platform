@@ -9,6 +9,7 @@ import type {
 import { EventForm } from '../_components/event-form'
 import { Badge } from '@/components/ui/badge'
 import { Breadcrumb } from '@/components/ui/breadcrumb'
+import { PageHeader } from '@/components/ui/page-header'
 import { MainContainer } from '@/components/global/main-container'
 import { Icons } from '@/components/ui/icons'
 import { assertCanAccessEvent, assertCanManageEvent } from '@/lib/actions/events/access'
@@ -91,32 +92,30 @@ export default async function ChapterEventDetailPage({
           ]}
         />
 
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-          <div className="space-y-2">
-            <div className="flex flex-wrap items-center gap-2">
-              <h1 className="text-3xl font-bold tracking-tight">Editar evento</h1>
-              <Badge variant={event.is_published ? 'success' : 'outline'}>
-                {event.is_published ? 'Publicado' : 'Borrador'}
-              </Badge>
-            </div>
-            <p className="max-w-2xl text-muted-foreground">
-              {event.title}
-            </p>
-          </div>
-          <div className="flex flex-wrap gap-2">
-            <Button asChild variant="outline">
-              <Link href={`/${locale}/chapter/events`}>
-                <Icons.ArrowLeft className="mr-2 h-4 w-4" />
-                Eventos
-              </Link>
-            </Button>
-            <Button asChild variant="outline">
-              <Link href={`/${locale}/chapter/events/${event.id}/checkin`}>
-                Check-in
-              </Link>
-            </Button>
-          </div>
-        </div>
+        <PageHeader
+          title="Editar evento"
+          badge={
+            <Badge variant={event.is_published ? 'success' : 'outline'}>
+              {event.is_published ? 'Publicado' : 'Borrador'}
+            </Badge>
+          }
+          description={event.title}
+          actions={
+            <>
+              <Button asChild variant="outline">
+                <Link href={`/${locale}/chapter/events`}>
+                  <Icons.ArrowLeft className="mr-2 h-4 w-4" />
+                  Eventos
+                </Link>
+              </Button>
+              <Button asChild variant="outline">
+                <Link href={`/${locale}/chapter/events/${event.id}/checkin`}>
+                  Check-in
+                </Link>
+              </Button>
+            </>
+          }
+        />
 
         <EventForm
           mode="edit"

@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Breadcrumb } from '@/components/ui/breadcrumb'
+import { PageHeader } from '@/components/ui/page-header'
 import { MainContainer } from '@/components/global/main-container'
 import { Icons } from '@/components/ui/icons'
 import { CheckinScanner } from '../../_components/checkin-scanner'
@@ -88,27 +89,25 @@ export default async function ChapterEventCheckinPage({
         />
 
         <div className="space-y-5">
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-            <div className="space-y-2">
-              <h1 className="text-3xl font-bold tracking-tight">Check-in del evento</h1>
-              <p className="max-w-2xl text-muted-foreground">
-                {event.title}
-              </p>
-            </div>
-            <div className="flex flex-wrap gap-2">
-              <Button asChild variant="outline">
-                <Link href={`/${locale}/chapter/events/${id}`}>
-                  <Icons.ArrowLeft className="mr-2 h-4 w-4" />
-                  Evento
-                </Link>
-              </Button>
-              <Button asChild variant="outline">
-                <Link href={`/${locale}/chapter/checkin`}>
-                  Centro de check-in
-                </Link>
-              </Button>
-            </div>
-          </div>
+          <PageHeader
+            title="Check-in del evento"
+            description={event.title}
+            actions={
+              <>
+                <Button asChild variant="outline">
+                  <Link href={`/${locale}/chapter/events/${id}`}>
+                    <Icons.ArrowLeft className="mr-2 h-4 w-4" />
+                    Evento
+                  </Link>
+                </Button>
+                <Button asChild variant="outline">
+                  <Link href={`/${locale}/chapter/checkin`}>
+                    Centro de check-in
+                  </Link>
+                </Button>
+              </>
+            }
+          />
 
           <CheckInSummary
             checkedIn={counter?.checkedIn ?? 0}

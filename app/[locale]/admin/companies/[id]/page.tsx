@@ -2,6 +2,7 @@ import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { PageHeader } from '@/components/ui/page-header'
 import { ArrowLeft } from 'lucide-react'
 import { getCompanyById, getCompanyStats } from '@/lib/actions/admin/companies'
 import { formatLeadDate } from '@/lib/utils/date-format'
@@ -19,36 +20,34 @@ export default async function CompanyManagePage({
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <Button asChild variant="ghost" size="sm" className="mb-2">
+      <PageHeader
+        title={resolvedCompany.name}
+        description={`Creado el ${formatLeadDate(resolvedCompany.created_at)} por ${resolvedCompany.created_by_name ?? 'desconocido'}`}
+        actions={
+          <Button asChild variant="ghost" size="sm">
             <Link href="/admin/companies">
               <ArrowLeft className="mr-2 h-4 w-4" />
-              Back to Companies
+              Volver a empresas
             </Link>
           </Button>
-          <h1 className="text-4xl font-bold tracking-tight">{resolvedCompany.name}</h1>
-          <p className="text-muted-foreground mt-2">
-            Created {formatLeadDate(resolvedCompany.created_at)} by {resolvedCompany.created_by_name ?? 'Unknown'}
-          </p>
-        </div>
-      </div>
+        }
+      />
 
       <div className="grid gap-4 md:grid-cols-4">
         <Card>
-          <CardHeader><CardTitle className="text-sm">Active Representatives</CardTitle></CardHeader>
+          <CardHeader><CardTitle className="text-sm">Representantes activos</CardTitle></CardHeader>
           <CardContent className="text-2xl font-bold">{stats.active_recruiters}</CardContent>
         </Card>
         <Card>
-          <CardHeader><CardTitle className="text-sm">Pending Invites</CardTitle></CardHeader>
+          <CardHeader><CardTitle className="text-sm">Invitaciones pendientes</CardTitle></CardHeader>
           <CardContent className="text-2xl font-bold">{stats.pending_invites}</CardContent>
         </Card>
         <Card>
-          <CardHeader><CardTitle className="text-sm">Resume Views</CardTitle></CardHeader>
+          <CardHeader><CardTitle className="text-sm">Vistas de CV</CardTitle></CardHeader>
           <CardContent className="text-2xl font-bold">{stats.totalViews}</CardContent>
         </Card>
         <Card>
-          <CardHeader><CardTitle className="text-sm">Resume Downloads</CardTitle></CardHeader>
+          <CardHeader><CardTitle className="text-sm">Descargas de CV</CardTitle></CardHeader>
           <CardContent className="text-2xl font-bold">{stats.totalDownloads}</CardContent>
         </Card>
       </div>
