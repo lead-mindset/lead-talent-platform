@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 import { UserPlus } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { Card, CardContent } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import {
@@ -63,8 +64,9 @@ export function OnboardPresidentPanel({ chapterId }: Props) {
   }
 
   return (
-    <section className="space-y-4 rounded-lg border bg-card p-4">
-      <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+    <Card>
+      <CardContent className="space-y-4 pt-5">
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
         <div className="space-y-1">
           <div className="flex flex-wrap items-center gap-2">
             <UserPlus className="h-5 w-5 text-primary" />
@@ -77,7 +79,7 @@ export function OnboardPresidentPanel({ chapterId }: Props) {
       </div>
 
       <form
-        className="grid gap-4 rounded-md border bg-muted/20 p-3"
+        className="grid gap-4"
         onSubmit={(event) => {
           event.preventDefault()
           if (canSubmit && !isPending) submit()
@@ -126,6 +128,7 @@ export function OnboardPresidentPanel({ chapterId }: Props) {
           {isPending ? 'Activando...' : 'Activar presidente'}
         </Button>
       </form>
-    </section>
+      </CardContent>
+    </Card>
   )
 }

@@ -313,10 +313,10 @@ export function CheckinScanner({
               style={{ width: `${percentage}%` }}
             />
           </div>
-          <div className="flex flex-wrap gap-2 text-xs text-muted-foreground">
-            <span className="rounded-full bg-muted px-2.5 py-1">Registrados: {counter.total}</span>
-            <span className="rounded-full bg-muted px-2.5 py-1">Asistieron: {counter.checkedIn}</span>
-            {wakeLockNote && <span className="rounded-full bg-muted px-2.5 py-1">{wakeLockNote}</span>}
+          <div className="flex flex-wrap gap-2">
+            <Badge variant="secondary">Registrados: {counter.total}</Badge>
+            <Badge variant="secondary">Asistieron: {counter.checkedIn}</Badge>
+            {wakeLockNote && <Badge variant="secondary">{wakeLockNote}</Badge>}
           </div>
         </CardContent>
       </Card>

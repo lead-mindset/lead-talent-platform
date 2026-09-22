@@ -206,12 +206,8 @@ export default function ResumeClient({
                   </p>
                 </div>
                 <div className="flex flex-wrap justify-center gap-2">
-                  <span className="rounded-full border border-border bg-muted px-3 py-1 text-xs font-medium text-muted-foreground">
-                    PDF
-                  </span>
-                  <span className="rounded-full border border-border bg-muted px-3 py-1 text-xs font-medium text-muted-foreground">
-                    MAX 10 MB
-                  </span>
+                  <Badge variant="outline">PDF</Badge>
+                  <Badge variant="outline">MAX 10 MB</Badge>
                 </div>
               </div>
             )}

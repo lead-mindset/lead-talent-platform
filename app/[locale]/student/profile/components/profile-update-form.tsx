@@ -305,9 +305,9 @@ export default function ProfileUpdateForm({
                       {t('academic.skills')}
                       <span className="text-destructive ml-0.5">*</span>
                     </label>
-                    <span className="inline-flex items-center rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-medium text-primary">
+                    <Badge className="inline-flex items-center">
                       {field.value.length} {t('academic.selected')}
-                    </span>
+                    </Badge>
                   </div>
 
                   <ToggleGroup

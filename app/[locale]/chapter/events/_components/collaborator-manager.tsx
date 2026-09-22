@@ -232,41 +232,43 @@ export function CollaboratorManager({
       <CardHeader>
         <div className="flex items-center justify-between w-full">
           <div className="flex items-center gap-2">
-            <button
-              onClick={() => setIsExpanded(!isExpanded)}
-              className="flex items-center gap-2 text-left hover:bg-muted/50 rounded-lg p-2 -m-2 transition-colors flex-1"
-            >
-              <CardTitle className="text-lg">Colaboración entre chapters</CardTitle>
-              {collaboratorCount > 0 && (
-                <Badge variant="secondary" className="text-xs">
-                  {collaboratorCount} {collaboratorCount === 1 ? 'colaborador' : 'colaboradores'}
-                </Badge>
-              )}
-              {isExpanded ? (
-                <ChevronUp className="w-4 h-4 text-muted-foreground" />
-              ) : (
-                <ChevronDown className="w-4 h-4 text-muted-foreground" />
-              )}
-            </button>
+            <CardTitle className="text-lg">Colaboración entre chapters</CardTitle>
+            {collaboratorCount > 0 && (
+              <Badge variant="secondary" className="text-xs">
+                {collaboratorCount} {collaboratorCount === 1 ? 'colaborador' : 'colaboradores'}
+              </Badge>
+            )}
           </div>
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <button
-                  className="p-2 hover:bg-muted/50 rounded-lg transition-colors"
-                  aria-label="Ayuda sobre colaboración entre chapters"
-                >
-                  <HelpCircle className="w-4 h-4 text-muted-foreground" />
-                </button>
-              </TooltipTrigger>
-              <TooltipContent>
-                <div className="max-w-xs">
-                  Agrega otros chapters como colaboradores para que sus editores puedan gestionar este evento.
-                  Los colaboradores tienen acceso completo de edición.
-                </div>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
+          <div className="flex items-center gap-1">
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon-sm"
+              onClick={() => setIsExpanded(!isExpanded)}
+              aria-expanded={isExpanded}
+              aria-label={isExpanded ? 'Ocultar colaboradores' : 'Mostrar colaboradores'}
+            >
+              {isExpanded ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+            </Button>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <button
+                    className="p-2 hover:bg-muted/50 rounded-lg transition-colors"
+                    aria-label="Ayuda sobre colaboración entre chapters"
+                  >
+                    <HelpCircle className="w-4 h-4 text-muted-foreground" />
+                  </button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <div className="max-w-xs">
+                    Agrega otros chapters como colaboradores para que sus editores puedan gestionar este evento.
+                    Los colaboradores tienen acceso completo de edición.
+                  </div>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          </div>
         </div>
       </CardHeader>
 
