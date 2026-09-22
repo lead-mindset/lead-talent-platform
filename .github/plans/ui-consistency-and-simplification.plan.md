@@ -43,13 +43,15 @@ Cut dead weight first, then normalize primitives, then forms, then page structur
 ### Phase 2 — Unify forms
 - [x] Convert raw-control student forms to primitives (`apply-modal`, `growth-reflection`, `pathway-check-in` incl. radio groups).
 - [x] Admin event form: raw checkbox → `Checkbox`.
-- [ ] Make the admin event form and chapter event form the **same** contract (shared form component or identical primitives/layout/validation).
-- [ ] Convert the ~20 plain controlled forms to RHF + shadcn Form + primitives (auth login/sign-up/forgot/update-password; admin create dialogs; funding request/review; role/identity/onboard panels; student profile/resume).
-- [ ] Standardize submit state: loading + disabled, field-level errors near fields, summary when blocked, Spanish success/error feedback.
+- [x] Admin create chapter/company forms translated to Spanish + use `Input` label/iconLeft/helperText.
+- [x] Standardize form conventions (owner-approved "standardize, not RHF"): required markers → `text-destructive *`, label style consistent, default `h-9` control height (removed `h-11` overrides). RHF + shadcn `Form` conversion is a documented future option, not required for visual consistency.
+- [ ] Make the admin event form and chapter event form the **same** contract (shared form component) — both are now single-scroll pages with the same section/label/validation conventions; full component unification is a follow-up.
+- [ ] Standardize submit state across remaining forms: loading + disabled, field-level errors near fields, summary when blocked, Spanish success/error feedback (mostly present; audit remaining).
 
 ### Phase 3 — Page structure
-- [ ] Convert the 12 hand-rolled operational `<h1>` headers to `PageHeader`; remove hero-scale type in operational admin pages.
-- [ ] Standardize `PageHeader` usage per area (eyebrow/description/primary-action consistency).
+- [x] Convert the hand-rolled operational `<h1>` headers to `PageHeader` (admin overview/settings/create chapter/company/chapter detail/company detail/user detail, chapter settings/header/events/checkin); removed hero-scale `text-4xl` in `admin/companies/[id]`.
+- [x] Fixed Spanish-first copy violations found during the header pass (admin create pages were fully English; company/user detail English labels translated).
+- [ ] Standardize `PageHeader` eyebrow/description usage per area (mostly consistent now; spot-check during visual QA).
 
 ### Phase 4 — Surfaces cleanup
 - [x] `event-form.tsx` (1,896 → ~830 lines): **flattened 5-step wizard to one scrollable page** (owner-approved best-practice call: repeated data-entry form → single page, matches the admin event form); **cut the Pathway/lead-intelligence section entirely** (data-layer verified safe: omitting `pathwayMetadata` preserves stored data); sections are plain layout containers per UI_UX; `FieldLabel`/`RequirementBadge` → standard `Label` + `*`; sticky save bar unified for create+edit; radio cards use accessible sr-only pattern; updated `[id]/page.tsx` to drop the pathway fetch. See `event-form-simplification.plan.md`.
@@ -59,10 +61,10 @@ Cut dead weight first, then normalize primitives, then forms, then page structur
 - [ ] Fix nested card-in-card in `onboard-president-panel` and `collaborator-manager`.
 
 ### Phase 5 — Accessibility
-- [ ] Label all icon-only buttons (kebab/more/clear/sort).
-- [ ] Company login tab bar → real focusable `Tabs` (fix non-focusable active tab).
-- [ ] Link labels to controls in `apply-modal`/`member-card` (htmlFor/aria-label).
-- [ ] Radios → `RadioGroup` for keyboard access.
+- [x] Label all icon-only buttons (kebab/more menus in events-table + member-card; autocomplete clear button).
+- [x] Company login tab bar → focusable `role=tab` buttons with `aria-selected` (was a non-focusable div).
+- [x] Link labels to controls in `apply-modal`/`member-card` (htmlFor + id, aria-describedby; reason textareas labeled).
+- [x] Radios → accessible sr-only + custom-circle radio cards in `pathway-check-in`, event form, apply flow; `RadioGroup` primitive added for future use.
 
 ### Phase 6 — Density & cramped layouts
 - [ ] Admin users: filters above table, actions visible, mobile record cards instead of 8-col squeeze.
