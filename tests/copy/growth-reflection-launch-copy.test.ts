@@ -21,8 +21,8 @@ describe('growth reflection launch copy', () => {
     const content = ACTIVE_GROWTH_REFLECTION_FILES.map((file) => fs.readFileSync(file, 'utf8')).join('\n')
 
     expect(content).toContain('evidencia privada de aprendizaje')
-    expect(content).toContain('Capturar reflexión')
-    expect(content).toContain('Reflexión privada')
+    expect(content).toContain('Reflexión de crecimiento')
+    expect(content).toContain('Privado por defecto')
 
     const matches = FORBIDDEN_ACTIVE_COPY.filter((copy) => content.includes(copy))
     expect(matches).toEqual([])

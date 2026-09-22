@@ -27,22 +27,24 @@ Cut dead weight first, then normalize primitives, then forms, then page structur
 ## Phases / Tasks
 
 ### Phase 0 — Cut dead weight
-- [ ] Remove dead routes `app/[locale]/design-audit` and `app/[locale]/student-redesign` (unreferenced; confirm no links remain).
-- [ ] Consolidate the 4 location-autocomplete implementations into **one** shared primitive; remove `location-autocomplete-new.tsx`; kill `border-gray-300`/`text-gray-500` non-palette colors.
-- [ ] Trim unused `Button` variants to the handbook canonical set (`default/secondary/outline/ghost/destructive/link`); keep `hero`/`brand` only if public CTAs adopt them.
-- [ ] Merge `company/(protected)/settings` into `company/(protected)/profile` (duplicate surface).
+- [x] Remove dead routes `app/[locale]/design-audit` and `app/[locale]/student-redesign` (unreferenced; confirm no links remain).
+- [x] Consolidate the 4 location-autocomplete implementations into **one** shared primitive; remove `location-autocomplete-new.tsx`; kill `border-gray-300`/`text-gray-500` non-palette colors.
+- [x] Trim unused `Button` variants to the handbook canonical set (`default/secondary/outline/ghost/destructive/link`); keep `hero`/`brand` only if public CTAs adopt them.
+- [x] Merge `company/(protected)/settings` into `company/(protected)/profile` (duplicate surface).
+- [x] Remove dead `md3-demo.tsx` (material demo) + drop `@material/web` dependency.
 
 ### Phase 1 — Normalize primitives (shared contract first)
+- [x] Add `RadioGroup` primitive (none existed) for accessible radio/choice groups; audit existing `ToggleGroup`.
+- [x] Wire label association + required marker into `Input` (htmlFor/useId + destructive `*`) so every form inherits one convention.
 - [ ] Wire shadcn `Form` primitives (`FormField/FormItem/FormLabel/FormControl/FormMessage`) into react-hook-form as the canonical form layer; the existing `FormInput` in `ui/stepper` bridges RHF→Input.
 - [ ] Standardize input heights: default `h-9`; remove ad-hoc `h-11` overrides (use the `lg` size intentionally where a taller control is justified).
-- [ ] Standardize label + required-marker convention inside `Input`/`Form` primitives (single style: `*` in destructive tone, helper/error under field).
-- [ ] Add a `RadioGroup` primitive (none exists) for accessible radio/choice groups; audit existing `ToggleGroup`.
 - [ ] Audit `Button`/`Badge`/`Card`/`Table`/`EmptyState` variant sets for drift; add domain status-badge mapping helpers so page code stops picking badge variants ad hoc.
 
 ### Phase 2 — Unify forms
+- [x] Convert raw-control student forms to primitives (`apply-modal`, `growth-reflection`, `pathway-check-in` incl. radio groups).
+- [x] Admin event form: raw checkbox → `Checkbox`.
 - [ ] Make the admin event form and chapter event form the **same** contract (shared form component or identical primitives/layout/validation).
 - [ ] Convert the ~20 plain controlled forms to RHF + shadcn Form + primitives (auth login/sign-up/forgot/update-password; admin create dialogs; funding request/review; role/identity/onboard panels; student profile/resume).
-- [ ] Convert raw-control student forms to primitives (`apply-modal`, `growth-reflection`, `pathway-check-in` incl. radio groups).
 - [ ] Standardize submit state: loading + disabled, field-level errors near fields, summary when blocked, Spanish success/error feedback.
 
 ### Phase 3 — Page structure
@@ -50,7 +52,7 @@ Cut dead weight first, then normalize primitives, then forms, then page structur
 - [ ] Standardize `PageHeader` usage per area (eyebrow/description/primary-action consistency).
 
 ### Phase 4 — Surfaces cleanup
-- [ ] `event-form.tsx`: replace section cards with `Card`, local `FieldLabel`/`CheckboxOptionGrid` with primitives, wizard dots with `Stepper`; **simplify field set** (confirm cut list: OKR/pillar/stage/result grids → essential only; simplify application-question builder) — needs owner sign-off before deleting fields.
+- [x] `event-form.tsx` (1,896 → ~830 lines): **flattened 5-step wizard to one scrollable page** (owner-approved best-practice call: repeated data-entry form → single page, matches the admin event form); **cut the Pathway/lead-intelligence section entirely** (data-layer verified safe: omitting `pathwayMetadata` preserves stored data); sections are plain layout containers per UI_UX; `FieldLabel`/`RequirementBadge` → standard `Label` + `*`; sticky save bar unified for create+edit; radio cards use accessible sr-only pattern; updated `[id]/page.tsx` to drop the pathway fetch. See `event-form-simplification.plan.md`.
 - [ ] Replace 7+ hand-rolled empty states with the `EmptyState` primitive; remove local reimplementations.
 - [ ] Replace rounded-full stat pills with `Badge`.
 - [ ] De-card operational pages: `admin/chapters/[id]` (~9 cards → sections/tables), `admin/users/[id]`, funding pages.
