@@ -37,6 +37,7 @@ export interface InputProps
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
   ({ className, size, state, label, helperText, errorText, iconLeft, iconRight, type, ...props }, ref) => {
     const inputState = errorText ? "error" : state
+    const generatedId = React.useId()
 
     if (!label && !helperText && !errorText && !iconLeft && !iconRight) {
       return (
@@ -51,11 +52,14 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
       )
     }
 
+    const fieldId = props.id ?? generatedId
+
     return (
       <div className="w-full space-y-2">
         {label && (
-          <label className="block text-sm font-medium text-foreground">
+          <label htmlFor={fieldId} className="block text-sm font-medium text-foreground">
             {label}
+            {props.required && <span className="ml-0.5 text-destructive">*</span>}
           </label>
         )}
         <div className="relative">
@@ -65,6 +69,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
             </div>
           )}
           <input
+            id={fieldId}
             type={type}
             ref={ref}
             suppressHydrationWarning
