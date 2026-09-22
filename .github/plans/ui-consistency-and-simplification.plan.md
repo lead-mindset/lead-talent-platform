@@ -67,9 +67,10 @@ Cut dead weight first, then normalize primitives, then forms, then page structur
 - [x] Radios → accessible sr-only + custom-circle radio cards in `pathway-check-in`, event form, apply flow; `RadioGroup` primitive added for future use.
 
 ### Phase 6 — Density & cramped layouts
-- [ ] Admin users: filters above table, actions visible, mobile record cards instead of 8-col squeeze.
-- [ ] Budget rows / pathway-check-in grids: give inputs breathing room, responsive stacking.
-- [ ] Remove redundant/duplicative controls introduced during accumulation.
+- [x] Budget rows in funding request form: 4 cramped inputs at `md` → responsive stacking (1-col → 2 at `sm` → 4 at `lg`). See `density-fixes.plan.md`.
+- [x] Pathway-check-in confidence grid de-cramped (done in Phase 2, `grid-cols-3 sm:grid-cols-5`).
+- [x] Admin users table assessed: already handbook-compliant (filters above records, mobile card rows, `overflow-x-auto` desktop table, bulk bar) — no forced change.
+- [x] No redundant/duplicative controls remaining beyond the dead weight already cut in Phase 0.
 
 ### Phase 7 — Validation
 - [ ] `pnpm test` (all suites), `pnpm lint` (0 errors), `pnpm build` (prod compile).
