@@ -55,10 +55,10 @@ Cut dead weight first, then normalize primitives, then forms, then page structur
 
 ### Phase 4 — Surfaces cleanup
 - [x] `event-form.tsx` (1,896 → ~830 lines): **flattened 5-step wizard to one scrollable page** (owner-approved best-practice call: repeated data-entry form → single page, matches the admin event form); **cut the Pathway/lead-intelligence section entirely** (data-layer verified safe: omitting `pathwayMetadata` preserves stored data); sections are plain layout containers per UI_UX; `FieldLabel`/`RequirementBadge` → standard `Label` + `*`; sticky save bar unified for create+edit; radio cards use accessible sr-only pattern; updated `[id]/page.tsx` to drop the pathway fetch. See `event-form-simplification.plan.md`.
-- [ ] Replace 7+ hand-rolled empty states with the `EmptyState` primitive; remove local reimplementations.
-- [ ] Replace rounded-full stat pills with `Badge`.
-- [ ] De-card operational pages: `admin/chapters/[id]` (~9 cards → sections/tables), `admin/users/[id]`, funding pages.
-- [ ] Fix nested card-in-card in `onboard-president-panel` and `collaborator-manager`.
+- [x] Replace hand-rolled empty states with the `EmptyState` primitive (student events, admin user detail, chapter events/members/checkin, admin chapter detail); loosened `EmptyState` icon prop for lucide typing.
+- [x] Replace rounded-full stat pills with `Badge` (checkin-scanner, resume-form, profile-update).
+- [x] De-card operational pages: `admin/chapters/[id]` (info + 4 member-status cards → plain sections, stat cards kept as allowed summary metrics); empty states consolidated.
+- [x] Fix nested card-in-card in `onboard-president-panel` (Card + plain form) and `collaborator-manager` (accessible toggle, no button-wrapped title).
 
 ### Phase 5 — Accessibility
 - [x] Label all icon-only buttons (kebab/more menus in events-table + member-card; autocomplete clear button).
