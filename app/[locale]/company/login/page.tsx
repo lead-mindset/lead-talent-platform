@@ -98,18 +98,27 @@ export default function CompanyLoginPage() {
   }
 
   const TabBar = () => (
-    <div className="inline-flex h-10 items-center justify-center rounded-lg bg-muted p-1 text-muted-foreground w-full">
+    <div role="tablist" aria-label="Tipo de acceso" className="inline-flex h-10 items-center justify-center rounded-lg bg-muted p-1 text-muted-foreground w-full">
       <button
+        type="button"
+        role="tab"
+        aria-selected="false"
         onClick={() => router.push('/auth/login')}
         className="inline-flex items-center justify-center whitespace-nowrap rounded-md px-3 py-1.5 text-sm font-medium transition-all hover:bg-accent hover:text-accent-foreground gap-2 flex-1"
       >
         <Users className="h-4 w-4" />
         {copy.memberLogin}
       </button>
-      <div className="inline-flex items-center justify-center whitespace-nowrap rounded-md px-3 py-1.5 text-sm font-medium bg-background text-foreground shadow-sm gap-2 flex-1">
+      <button
+        type="button"
+        role="tab"
+        aria-selected="true"
+        aria-current="page"
+        className="inline-flex items-center justify-center whitespace-nowrap rounded-md px-3 py-1.5 text-sm font-medium bg-background text-foreground shadow-sm gap-2 flex-1"
+      >
         <Building2 className="h-4 w-4" />
         {copy.companyLogin}
-      </div>
+      </button>
     </div>
   )
 

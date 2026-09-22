@@ -250,7 +250,7 @@ export default function MemberCard({
           <DialogTitle>Retirar rol e-board</DialogTitle>
           <DialogDescription>La membresía seguirá aprobada. Solo se desactiva el rol.</DialogDescription>
         </DialogHeader>
-        <Textarea value={removeReason} onChange={(e) => setRemoveReason(e.target.value)} placeholder="Motivo requerido para auditoría interna" rows={4} />
+        <Textarea value={removeReason} onChange={(e) => setRemoveReason(e.target.value)} placeholder="Motivo requerido para auditoría interna" rows={4} aria-label="Motivo para retirar el rol" />
         <DialogFooter>
           <Button variant="destructive" onClick={submitRemoval} disabled={isPendingAction || removeReason.trim().length === 0}>
             {isPendingAction && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
@@ -269,7 +269,7 @@ export default function MemberCard({
           <DialogTitle>Revocar membresía</DialogTitle>
           <DialogDescription>{member.name ?? member.email} pasará a inactivo.</DialogDescription>
         </DialogHeader>
-        <Textarea value={revokeReason} onChange={(e) => setRevokeReason(e.target.value)} placeholder="Motivo requerido para auditoría interna" rows={4} />
+        <Textarea value={revokeReason} onChange={(e) => setRevokeReason(e.target.value)} placeholder="Motivo requerido para auditoría interna" rows={4} aria-label="Motivo para revocar la membresía" />
         <DialogFooter>
           <Button variant="destructive" onClick={submitRevoke} disabled={isPendingAction || revokeReason.trim().length === 0}>
             {isPendingAction && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
@@ -288,7 +288,7 @@ export default function MemberCard({
           <DialogTitle>Rechazar postulación</DialogTitle>
           <DialogDescription>Nota interna opcional para editores.</DialogDescription>
         </DialogHeader>
-        <Textarea value={rejectReason} onChange={(e) => setRejectReason(e.target.value)} placeholder="Nota interna opcional" rows={3} />
+        <Textarea value={rejectReason} onChange={(e) => setRejectReason(e.target.value)} placeholder="Nota interna opcional" rows={3} aria-label="Nota interna del rechazo" />
         <DialogFooter>
           <Button variant="destructive" onClick={submitReject} disabled={isPendingAction}>
             {isPendingAction && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
@@ -382,7 +382,7 @@ export default function MemberCard({
             </Button>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon" className="h-7 w-7">
+                <Button variant="ghost" size="icon" className="h-7 w-7" aria-label={`Acciones de ${member.name ?? 'miembro'}`}>
                   <MoreVertical className="h-4 w-4" />
                 </Button>
               </DropdownMenuTrigger>
@@ -397,7 +397,7 @@ export default function MemberCard({
         ) : (canRevoke || canAssign) ? (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" className="h-7 w-7">
+              <Button variant="ghost" size="icon" className="h-7 w-7" aria-label={`Acciones de ${member.name ?? 'miembro'}`}>
                 <MoreVertical className="h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>

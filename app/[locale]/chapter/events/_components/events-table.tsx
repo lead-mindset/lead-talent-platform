@@ -361,7 +361,7 @@ function EventRow({
         <div className="flex items-center justify-end">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button size="sm" variant="ghost" className="h-8 w-8 p-0">
+              <Button size="sm" variant="ghost" className="h-8 w-8 p-0" aria-label={`Acciones de ${event.title}`}>
                 <EllipsisVertical className="h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
@@ -422,7 +422,7 @@ function MobileEventRow({
         </div>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button size="sm" variant="ghost" className="h-8 w-8 p-0 shrink-0">
+            <Button size="sm" variant="ghost" className="h-8 w-8 p-0 shrink-0" aria-label={`Acciones de ${event.title}`}>
               <EllipsisVertical className="h-4 w-4" />
             </Button>
           </DropdownMenuTrigger>
