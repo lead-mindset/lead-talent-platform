@@ -361,7 +361,7 @@ export function FundingRequestForm({
 
             <div className="space-y-3">
               {budgetItems.map((item, index) => (
-                <div key={index} className="grid gap-3 rounded-md border border-border/60 p-3 md:grid-cols-[minmax(0,1fr)_13rem_8rem_auto]">
+                <div key={index} className="grid grid-cols-1 gap-3 rounded-md border border-border/60 p-3 sm:grid-cols-2 lg:grid-cols-[minmax(0,1fr)_12rem_8rem_auto]">
                   <div className="space-y-2">
                     <Label htmlFor={`budget-label-${index}`}>Ítem <span className="text-destructive">*</span></Label>
                     <Input
