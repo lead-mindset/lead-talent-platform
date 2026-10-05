@@ -35,7 +35,8 @@ const emptyForm = {
 export default function AdminEventosPage() {
   const user = useCurrentUser();
   const isGlobal = user.scopeType === "global";
-  const [scope, setScope] = useState<"global" | "chapter">("chapter");
+  const hasChapter = user.scopeType === "chapter";
+  const [scope, setScope] = useState<"global" | "chapter">(isGlobal && !hasChapter ? "global" : "chapter");
   const [list, setList] = useState(
     events
       .filter((event) => event.calendar === "LEAD Global" || (isGlobal && scope === "global") || event.calendar === user.scope)
@@ -75,7 +76,11 @@ export default function AdminEventosPage() {
           {isGlobal && (
             <div className="mt-4 space-y-1.5">
               <Label>Alcance</Label>
-              <Segmented value={scope} onChange={(v) => setScope(v)} options={[{ value: "global", label: "Global · toda LEAD" }, { value: "chapter", label: "Mi capítulo" }]} className="w-full" />
+              {hasChapter ? (
+                <Segmented value={scope} onChange={(v) => setScope(v)} options={[{ value: "global", label: "Global · toda LEAD" }, { value: "chapter", label: "Mi capítulo" }]} className="w-full" />
+              ) : (
+                <div className="rounded-lg bg-muted/40 px-3 py-2 text-small text-muted-foreground">Global · toda LEAD (no perteneces a un capítulo)</div>
+              )}
               {scope === "global" && (
                 <p className="text-caption text-muted-foreground">Lo verá toda LEAD. Requiere el permiso <code className="rounded bg-muted px-1 text-caption">global.events.manage</code>.</p>
               )}
