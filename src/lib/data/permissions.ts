@@ -41,6 +41,8 @@ export const permissionCatalog: Permission[] = [
   { key: "global.companies.manage", label: "Invitar / revocar empresas", scope: "global", domain: "Empresas" },
   { key: "global.roles.assign", label: "Asignar roles (cualquier scope)", scope: "global", domain: "Roles" },
   { key: "global.audit.view", label: "Ver la auditoría", scope: "global", domain: "Auditoría" },
+  { key: "global.events.manage", label: "Crear eventos globales (toda LEAD)", scope: "global", domain: "Eventos" },
+  { key: "global.announcements.manage", label: "Publicar anuncios", scope: "global", domain: "Comunicación" },
   { key: "global.content.manage", label: "Gestionar contenido / recursos", scope: "global", domain: "Contenido" },
   { key: "global.metrics.view", label: "Ver métricas globales", scope: "global", domain: "Métricas" },
 ];
@@ -66,15 +68,15 @@ export const presets: Preset[] = [
   },
   {
     id: "global_eboard", label: "E-board LEAD Americas", scope: "global",
-    permissions: ["global.dashboard.access", "global.chapters.manage", "global.countries.manage", "global.funding.review", "global.companies.manage", "global.audit.view", "global.metrics.view"],
+    permissions: ["global.dashboard.access", "global.chapters.manage", "global.countries.manage", "global.funding.review", "global.companies.manage", "global.audit.view", "global.announcements.manage", "global.metrics.view"],
   },
   {
     id: "global_ceo", label: "CEO LEAD Americas", scope: "global",
-    permissions: ["global.dashboard.access", "global.chapters.manage", "global.countries.manage", "global.funding.review", "global.companies.manage", "global.roles.assign", "global.audit.view", "global.content.manage", "global.metrics.view"],
+    permissions: ["global.dashboard.access", "global.chapters.manage", "global.countries.manage", "global.funding.review", "global.companies.manage", "global.roles.assign", "global.audit.view", "global.content.manage", "global.events.manage", "global.announcements.manage", "global.metrics.view"],
   },
   {
     id: "vp_operations", label: "VP of Operations", scope: "global",
-    permissions: ["global.dashboard.access", "global.chapters.manage", "global.funding.review", "global.companies.manage", "global.audit.view", "global.metrics.view"],
+    permissions: ["global.dashboard.access", "global.chapters.manage", "global.funding.review", "global.companies.manage", "global.audit.view", "global.events.manage", "global.announcements.manage", "global.metrics.view"],
   },
   {
     id: "member", label: "Miembro", scope: "member",

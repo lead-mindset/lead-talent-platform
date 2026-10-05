@@ -42,6 +42,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     { href: "/admin/validaciones", label: "Validaciones" },
     { href: "/admin/financiamiento", label: "Financiamiento" },
     { href: "/admin/invitaciones", label: "Invitaciones" },
+    { href: "/admin/anuncios", label: "Anuncios" },
     { href: "/admin/auditoria", label: "Auditoría" },
   ];
   const countryTabs = [

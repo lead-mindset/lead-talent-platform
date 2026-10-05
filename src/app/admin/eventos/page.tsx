@@ -10,6 +10,8 @@ import { Switch } from "@/components/ui/switch";
 import { Segmented } from "@/components/ui/segmented";
 import { Textarea } from "@/components/ui/textarea";
 import { events } from "@/lib/data/community";
+import { useCurrentUser } from "@/lib/use-current-user";
+import { StatusBadge } from "@/components/ui/status-badge";
 
 type EventType = "in_person" | "online" | "hybrid";
 type AccessModel = "open" | "application";
@@ -31,8 +33,13 @@ const emptyForm = {
 };
 
 export default function AdminEventosPage() {
+  const user = useCurrentUser();
+  const isGlobal = user.scopeType === "global";
+  const [scope, setScope] = useState<"global" | "chapter">("chapter");
   const [list, setList] = useState(
-    events.filter((event) => event.calendar === "LEAD Perú").map((event) => ({ id: event.id, title: event.title, date: `${event.month} ${event.day}`, location: event.location, type: event.type }))
+    events
+      .filter((event) => event.calendar === "LEAD Global" || (isGlobal && scope === "global") || event.calendar === user.scope)
+      .map((event) => ({ id: event.id, title: event.title, date: `${event.month} ${event.day}`, location: event.location, type: event.type }))
   );
   const [creating, setCreating] = useState(false);
   const [form, setForm] = useState(emptyForm);
@@ -64,6 +71,16 @@ export default function AdminEventosPage() {
       {creating && (
         <div className="card-surface rounded-xl border border-border/60 p-5">
           <h2 className="text-h3 font-semibold">Nuevo evento</h2>
+
+          {isGlobal && (
+            <div className="mt-4 space-y-1.5">
+              <Label>Alcance</Label>
+              <Segmented value={scope} onChange={(v) => setScope(v)} options={[{ value: "global", label: "Global · toda LEAD" }, { value: "chapter", label: "Mi capítulo" }]} className="w-full" />
+              {scope === "global" && (
+                <p className="text-caption text-muted-foreground">Lo verá toda LEAD. Requiere el permiso <code className="rounded bg-muted px-1 text-caption">global.events.manage</code>.</p>
+              )}
+            </div>
+          )}
 
           <div className="mt-4 space-y-4">
             <div className="space-y-1.5">
