@@ -16,6 +16,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const chapterTabs = [
     { href: "/admin", label: "Panel" },
     { href: "/admin/miembros", label: "Miembros" },
+    { href: "/admin/permisos", label: "Permisos" },
     { href: "/admin/validaciones", label: "Validaciones" },
     { href: "/admin/eventos", label: "Eventos" },
     { href: "/admin/financiamiento", label: "Financiamiento" },
