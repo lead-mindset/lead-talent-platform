@@ -104,7 +104,7 @@ export default function AdminFinanciamientoPage() {
         </header>
 
         <div className="flex flex-wrap items-center gap-2">
-          <Segmented value={filter} onChange={setFilter} options={statusFilters.map((f) => ({ value: f.value, label: f.value === "submitted" ? `Enviadas · ${submittedCount}` : f.label }))} />
+          <Segmented value={filter} onChange={setFilter} options={statusFilters.map((f) => ({ value: f.value, label: f.value === "submitted" ? `Por revisar · ${submittedCount}` : f.label }))} />
         </div>
 
         <div className="card-surface divide-y divide-border/60 rounded-xl border border-border/60">
