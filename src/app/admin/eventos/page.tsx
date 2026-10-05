@@ -125,7 +125,7 @@ export default function AdminEventosPage() {
               <div className="grid gap-4 sm:grid-cols-3">
                 <div className="space-y-1.5">
                   <Label htmlFor="ev-loc">Lugar</Label>
-                  <Input id="ev-loc" value={form.locationName} onChange={(e) => set("locationName", e.target.value)} placeholder="Auditorio UTEC" />
+                  <Input id="ev-loc" value={form.locationName} onChange={(e) => set("locationName", e.target.value)} placeholder="Auditorio, sala, etc." />
                 </div>
                 <div className="space-y-1.5">
                   <Label htmlFor="ev-addr">Dirección</Label>
@@ -133,7 +133,7 @@ export default function AdminEventosPage() {
                 </div>
                 <div className="space-y-1.5">
                   <Label htmlFor="ev-city">Ciudad</Label>
-                  <Input id="ev-city" value={form.locationCity} onChange={(e) => set("locationCity", e.target.value)} placeholder="Lima" />
+                  <Input id="ev-city" value={form.locationCity} onChange={(e) => set("locationCity", e.target.value)} placeholder="Ciudad" />
                 </div>
               </div>
             )}

@@ -113,7 +113,7 @@ export function ProfileWizard() {
               <Input id="w-name" value={name} onChange={(e) => setName(e.target.value)} placeholder="Tu nombre completo" autoFocus />
             </Field>
             <Field label="¿Dónde estás?" htmlFor="w-loc" hint="Ciudad, país">
-              <Input id="w-loc" value={location} onChange={(e) => setLocation(e.target.value)} placeholder="Lima, Perú" />
+              <Input id="w-loc" value={location} onChange={(e) => setLocation(e.target.value)} placeholder="Ciudad, país" />
             </Field>
             <Field label="LinkedIn" htmlFor="w-li" hint="Opcional" error={errors.linkedin}>
               <Input id="w-li" value={linkedin} onChange={(e) => setLinkedin(e.target.value)} placeholder="linkedin.com/in/tu-usuario" />

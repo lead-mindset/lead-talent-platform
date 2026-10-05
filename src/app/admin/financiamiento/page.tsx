@@ -196,7 +196,7 @@ export default function AdminFinanciamientoPage() {
         <div className="mt-4 grid gap-4 sm:grid-cols-2">
           <div className="space-y-1.5">
             <Label htmlFor="fr-title">Concepto <span className="text-destructive-light">*</span></Label>
-            <Input id="fr-title" value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} placeholder="Discover Day — materiales" />
+            <Input id="fr-title" value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} placeholder="Ej. materiales del evento" />
           </div>
           <div className="space-y-1.5">
             <Label>Tipo</Label>
@@ -206,7 +206,7 @@ export default function AdminFinanciamientoPage() {
         {form.tipo === "Evento" && (
           <div className="mt-4 space-y-1.5">
             <Label htmlFor="fr-event">Evento vinculado</Label>
-            <Input id="fr-event" value={form.eventTitle} onChange={(e) => setForm({ ...form, eventTitle: e.target.value })} placeholder="Discover Day 2027" />
+            <Input id="fr-event" value={form.eventTitle} onChange={(e) => setForm({ ...form, eventTitle: e.target.value })} placeholder="Ej. nombre del evento" />
           </div>
         )}
         <div className="mt-4 space-y-1.5">

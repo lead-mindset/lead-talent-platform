@@ -145,7 +145,7 @@ export function InviteManagement({ subtitle }: { subtitle: string }) {
           ) : (
             <div className="sm:col-span-2">
               <Field label="Empresa" htmlFor="inv-company" required error={form.errors.company}>
-                <Input id="inv-company" value={form.values.company} onChange={(e) => form.set("company", e.target.value)} placeholder="TechBridge Solutions" autoFocus />
+                <Input id="inv-company" value={form.values.company} onChange={(e) => form.set("company", e.target.value)} placeholder="Nombre de la empresa" autoFocus />
               </Field>
               {matchSuggestion && (
                 <div className="mt-2 flex flex-wrap items-center gap-2">
