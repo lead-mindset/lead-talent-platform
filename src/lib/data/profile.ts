@@ -16,6 +16,7 @@ export const profile: Person & {
   leadRole: string;
   leadChapter: string;
   validationStatus: "pending" | "approved" | "rejected";
+  shareWithCompanies: boolean;
   areasOfInterest: string[];
   gender: string;
   cv: { uploaded: boolean; name: string };
@@ -62,6 +63,7 @@ export const profile: Person & {
   leadRole: "Tech Lead",
   leadChapter: "LEAD Perú",
   validationStatus: "pending",
+  shareWithCompanies: true,
   areasOfInterest: ["Software Engineering", "Data", "Product"],
   gender: "Mujer",
   cv: { uploaded: true, name: "resume-valeria.pdf" },

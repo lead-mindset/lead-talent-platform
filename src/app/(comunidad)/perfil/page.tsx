@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { InitialsAvatar } from "@/components/initials-avatar";
 import { ProfileStatusBadge } from "@/components/profile-status-badge";
+import { VisibilityOptIn } from "@/components/visibility-opt-in";
 import { ProfileStrength } from "@/components/profile-strength";
 import { CvCard } from "@/components/cv-card";
 import { ResourcesCard } from "@/components/resources-card";
@@ -58,6 +59,10 @@ export default function ProfilePage() {
               <Briefcase className="size-4" />
               GitHub
             </a>
+          </div>
+
+          <div className="mt-4">
+            <VisibilityOptIn defaultOn={profile.shareWithCompanies} />
           </div>
         </div>
       </section>
