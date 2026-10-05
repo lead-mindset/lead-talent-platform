@@ -1,7 +1,7 @@
 import { StatusBadge } from "@/components/ui/status-badge";
 import Link from "next/link";
 import { ArrowRight, BookOpen, CalendarDays, IdCard, Users } from "lucide-react";
-import { PostCard } from "@/components/post-card";
+import { announcements } from "@/lib/data/announcements";
 import { ProfileCard } from "@/components/profile-card";
 import { ResourcesCard } from "@/components/resources-card";
 import { SocialsCard } from "@/components/socials-card";
@@ -95,8 +95,28 @@ export default function Home() {
             <section>
               <h2 className="mb-3 text-h3 font-semibold">Anuncios</h2>
               <div className="space-y-4">
-                {posts.map((post) => (
-                  <PostCard key={post.id} post={post} />
+                {announcements.filter((a) => a.published).map((a) => (
+                  <article key={a.id} className="card-surface rounded-xl border border-border/60 p-5">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <p className="font-medium">{a.title}</p>
+                      <StatusBadge tone="info">Global</StatusBadge>
+                    </div>
+                    <p className="mt-1 text-small text-muted-foreground">{a.body}</p>
+                    {a.image && (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img src={a.image} alt="" className="mt-2 max-h-44 w-full rounded-lg object-cover" />
+                    )}
+                    {a.links.length > 0 && (
+                      <div className="mt-2 flex flex-wrap gap-2">
+                        {a.links.map((l, i) => (
+                          <a key={i} href={l.url} className="inline-flex items-center gap-1 rounded-md bg-brand-purple/15 px-2.5 py-1 text-xs font-medium text-brand-purple-light hover:bg-brand-purple/25">
+                            {l.label} →
+                          </a>
+                        ))}
+                      </div>
+                    )}
+                    <p className="mt-1.5 text-caption text-muted-foreground">{a.author} · {a.at}</p>
+                  </article>
                 ))}
               </div>
             </section>
