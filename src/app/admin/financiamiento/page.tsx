@@ -60,7 +60,7 @@ const statusFilters: { value: "all" | FundingStatus; label: string }[] = [
 ];
 
 export default function AdminFinanciamientoPage() {
-  const role = useAdminRole();
+  const { role } = useAdminRole();
   const [requests, setRequests] = useState<FundingReq[]>(initialRequests);
   const [filter, setFilter] = useState<"all" | FundingStatus>("submitted");
   const [form, setForm] = useState({ title: "", tipo: "Evento" as "Evento" | "Iniciativa", pillar: "Educación", eventTitle: "" });
@@ -91,7 +91,7 @@ export default function AdminFinanciamientoPage() {
   const visible = filter === "all" ? requests : requests.filter((request) => request.status === filter);
   const submittedCount = requests.filter((request) => request.status === "submitted").length;
 
-  if (role === "board") {
+  if (role !== "chapter") {
     return (
       <div className="space-y-6">
         <header>
