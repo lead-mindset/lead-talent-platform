@@ -10,7 +10,7 @@ import { posts, events } from "@/lib/data/community";
 import { me } from "@/lib/data/people";
 
 const TODAY = "2026-10-01";
-const MY_COMMUNITY = ["LEAD Perú", "LEAD América", "LEAD Global"];
+const MY_COMMUNITY = ["LEAD UTEC", "LEAD América", "LEAD Global"];
 
 const actions = [
   { href: "/eventos", icon: CalendarDays, title: "Próximos eventos", text: "Workshops, paneles y networking de tu capítulo y LEAD." },

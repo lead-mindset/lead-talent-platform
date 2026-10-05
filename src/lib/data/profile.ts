@@ -41,10 +41,10 @@ export const profile: Person & {
     openToWork: true,
   } satisfies Person),
   about:
-    "Estudiante de Ingeniería de Software interesada en construir productos que conecten comunidades. Formé parte del capítulo LEAD Perú y ahora busco conectar mi experiencia con nuevas oportunidades en tecnología.",
+    "Estudiante de Ingeniería de Software interesada en construir productos que conecten comunidades. Formé parte del capítulo LEAD UTEC y ahora busco conectar mi experiencia con nuevas oportunidades en tecnología.",
   experience: [
-    { role: "Software Engineering Intern", company: "LEAD Perú · Tech", period: "Verano 2026" },
-    { role: "Chapter Tech Lead", company: "LEAD Perú", period: "2025 – 2026" },
+    { role: "Software Engineering Intern", company: "LEAD UTEC · Tech", period: "Verano 2026" },
+    { role: "Chapter Tech Lead", company: "LEAD UTEC", period: "2025 – 2026" },
   ],
   education: [
     { school: "UTEC", degree: "B.S. Computer Science", period: "2025 – 2029" },
@@ -61,7 +61,7 @@ export const profile: Person & {
   linkedinUrl: "https://linkedin.com/in/valeriamendoza",
   contactEmail: "valeria.mendoza@example.com",
   leadRole: "Tech Lead",
-  leadChapter: "LEAD Perú",
+  leadChapter: "LEAD UTEC",
   validationStatus: "pending",
   shareWithCompanies: true,
   areasOfInterest: ["Software Engineering", "Data", "Product"],

@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Segmented } from "@/components/ui/segmented";
 import { useAdminRole } from "@/lib/admin-role";
+import { useCurrentUser } from "@/lib/use-current-user";
 
 type BudgetItem = { name: string; amount: string };
 type FundingStatus = "submitted" | "approved" | "changes_requested" | "rejected" | "receipts_due";
@@ -45,9 +46,9 @@ const statusLabel: Record<FundingStatus, string> = {
 };
 
 const initialRequests: FundingReq[] = [
-  { id: "f1", title: "Discover Day 2027 — materiales", chapter: "LEAD Perú", requester: "Diego Salinas", tipo: "Evento", event: "Discover Day 2027", pillar: "Educación", items: [{ name: "Impresiones", amount: "120" }, { name: "Catering", amount: "200" }], status: "submitted", requested: 320, approved: 0, late: true },
-  { id: "f2", title: "Hackathon — premios", chapter: "LEAD América", requester: "Fernando Chávez", tipo: "Iniciativa", pillar: "Tecnología", items: [{ name: "Premios", amount: "150" }], status: "approved", requested: 150, approved: 150, source: "Presupuesto 2026" },
-  { id: "f3", title: "Networking — catering", chapter: "LEAD Ecuador", requester: "Camila Rojas", tipo: "Evento", pillar: "Comunidad", items: [{ name: "Catering", amount: "90" }], status: "submitted", requested: 90, approved: 0 },
+  { id: "f1", title: "Discover Day 2027 — materiales", chapter: "LEAD UTEC", requester: "Luis Maquera", tipo: "Evento", event: "Discover Day 2027", pillar: "Educación", items: [{ name: "Impresiones", amount: "120" }, { name: "Catering", amount: "200" }], status: "submitted", requested: 320, approved: 0, late: true },
+  { id: "f2", title: "Hackathon — premios", chapter: "LEAD PUCP", requester: "Xendra Jaime", tipo: "Iniciativa", pillar: "Tecnología", items: [{ name: "Premios", amount: "150" }], status: "approved", requested: 150, approved: 150, source: "Presupuesto 2026" },
+  { id: "f3", title: "Networking — catering", chapter: "LEAD Javeriana", requester: "Camila Rojas", tipo: "Evento", pillar: "Comunidad", items: [{ name: "Catering", amount: "90" }], status: "submitted", requested: 90, approved: 0 },
 ];
 
 const statusFilters: { value: "all" | FundingStatus; label: string }[] = [
@@ -61,6 +62,7 @@ const statusFilters: { value: "all" | FundingStatus; label: string }[] = [
 
 export default function AdminFinanciamientoPage() {
   const { role } = useAdminRole();
+  const user = useCurrentUser();
   const [requests, setRequests] = useState<FundingReq[]>(initialRequests);
   const [filter, setFilter] = useState<"all" | FundingStatus>("submitted");
   const [form, setForm] = useState({ title: "", tipo: "Evento" as "Evento" | "Iniciativa", pillar: "Educación", eventTitle: "" });
@@ -75,7 +77,7 @@ export default function AdminFinanciamientoPage() {
   const canSubmit = form.title.trim() && total > 0 && items.every((item) => item.name.trim());
   const send = () => {
     if (!canSubmit) return;
-    setRequests((prev) => [{ id: `new-${Date.now()}`, title: form.title, chapter: "LEAD UTEC", requester: "Valeria Mendoza", tipo: form.tipo, event: form.eventTitle || undefined, pillar: form.pillar, items: items.filter((item) => item.name.trim()), status: "submitted", requested: total, approved: 0 }, ...prev]);
+    setRequests((prev) => [{ id: `new-${Date.now()}`, title: form.title, chapter: user.scope, requester: user.name, tipo: form.tipo, event: form.eventTitle || undefined, pillar: form.pillar, items: items.filter((item) => item.name.trim()), status: "submitted", requested: total, approved: 0 }, ...prev]);
     setForm({ title: "", tipo: "Evento", pillar: "Educación", eventTitle: "" });
     setItems([{ name: "", amount: "" }]);
   };

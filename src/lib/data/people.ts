@@ -26,7 +26,7 @@ export const me: Person = {
   skills: [{ name: "TypeScript" }, { name: "React" }, { name: "Next.js" }, { name: "Python" }, { name: "SQL" }, { name: "UI Design" }],
   location: "Lima",
   country: "Perú",
-  chapter: "LEAD Perú",
+  chapter: "LEAD UTEC",
   openToWork: true,
 };
 
@@ -43,7 +43,7 @@ export const people: Person[] = [
     skills: [{ name: "Java" }, { name: "AWS" }, { name: "System Design" }, { name: "Kotlin" }],
     location: "Bogotá",
     country: "Colombia",
-    chapter: "LEAD Colombia",
+    chapter: "LEAD Javeriana",
     openToWork: false,
   },
   {
@@ -58,7 +58,7 @@ export const people: Person[] = [
     skills: [{ name: "Data Analysis" }, { name: "Stata" }, { name: "Econometrics" }, { name: "Excel" }],
     location: "Lima",
     country: "Perú",
-    chapter: "LEAD Perú",
+    chapter: "LEAD UTEC",
     openToWork: true,
   },
   {
@@ -73,7 +73,7 @@ export const people: Person[] = [
     skills: [{ name: "Python" }, { name: "Machine Learning" }, { name: "SQL" }, { name: "Pandas" }],
     location: "Monterrey",
     country: "México",
-    chapter: "LEAD México",
+    chapter: "LEAD UTP",
     openToWork: true,
   },
   {
@@ -88,7 +88,7 @@ export const people: Person[] = [
     skills: [{ name: "Research" }, { name: "Policy Analysis" }, { name: "Spanish" }, { name: "French" }],
     location: "Bogotá",
     country: "Colombia",
-    chapter: "LEAD Colombia",
+    chapter: "LEAD Javeriana",
     openToWork: false,
   },
   {
@@ -103,7 +103,7 @@ export const people: Person[] = [
     skills: [{ name: "Figma" }, { name: "Design Systems" }, { name: "Prototyping" }, { name: "Research" }],
     location: "Quito",
     country: "Ecuador",
-    chapter: "LEAD Ecuador",
+    chapter: "LEAD UNI",
     openToWork: true,
   },
   {
@@ -118,7 +118,7 @@ export const people: Person[] = [
     skills: [{ name: "CAD" }, { name: "SolidWorks" }, { name: "MATLAB" }, { name: "Robotics" }],
     location: "Lima",
     country: "Perú",
-    chapter: "LEAD Perú",
+    chapter: "LEAD UTEC",
     openToWork: false,
   },
   {
@@ -133,7 +133,7 @@ export const people: Person[] = [
     skills: [{ name: "Python" }, { name: "React" }, { name: "ML" }],
     location: "Lima",
     country: "Perú",
-    chapter: "LEAD Perú",
+    chapter: "LEAD UTEC",
     openToWork: true,
   },
   {
@@ -148,7 +148,7 @@ export const people: Person[] = [
     skills: [{ name: "Python" }, { name: "Deep Learning" }],
     location: "Ciudad de México",
     country: "México",
-    chapter: "LEAD México",
+    chapter: "LEAD UTP",
     openToWork: false,
   },
 ];

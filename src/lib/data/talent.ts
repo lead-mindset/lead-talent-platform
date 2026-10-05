@@ -30,7 +30,7 @@ export const talent: Talent[] = [
     graduation: "2028",
     location: "Bogotá",
     country: "Colombia",
-    chapter: "LEAD Colombia",
+    chapter: "LEAD Javeriana",
     skills: [
       { name: "Java", level: "Avanzado" },
       { name: "AWS", level: "Avanzado" },
@@ -57,7 +57,7 @@ export const talent: Talent[] = [
     graduation: "2027",
     location: "Monterrey",
     country: "México",
-    chapter: "LEAD México",
+    chapter: "LEAD UTP",
     skills: [
       { name: "Python", level: "Avanzado" },
       { name: "Machine Learning", level: "Avanzado" },
@@ -84,7 +84,7 @@ export const talent: Talent[] = [
     graduation: "2029",
     location: "Lima",
     country: "Perú",
-    chapter: "LEAD Perú",
+    chapter: "LEAD UTEC",
     skills: [
       { name: "Data Analysis", level: "Intermedio" },
       { name: "Econometrics", level: "Intermedio" },
@@ -111,7 +111,7 @@ export const talent: Talent[] = [
     graduation: "2027",
     location: "Quito",
     country: "Ecuador",
-    chapter: "LEAD Ecuador",
+    chapter: "LEAD UNI",
     skills: [
       { name: "Figma", level: "Avanzado" },
       { name: "Design Systems", level: "Avanzado" },
@@ -137,7 +137,7 @@ export const talent: Talent[] = [
     graduation: "2028",
     location: "Lima",
     country: "Perú",
-    chapter: "LEAD Perú",
+    chapter: "LEAD UTEC",
     skills: [
       { name: "Python", level: "Avanzado" },
       { name: "React", level: "Avanzado" },
@@ -163,7 +163,7 @@ export const talent: Talent[] = [
     graduation: "2029",
     location: "Ciudad de México",
     country: "México",
-    chapter: "LEAD México",
+    chapter: "LEAD UTP",
     skills: [
       { name: "Python", level: "Avanzado" },
       { name: "Deep Learning", level: "Avanzado" },

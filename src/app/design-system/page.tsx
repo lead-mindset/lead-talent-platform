@@ -405,9 +405,9 @@ export default function DesignSystemPage() {
             <Select defaultValue="peru">
               <SelectTrigger className="w-48 max-w-full"><SelectValue /></SelectTrigger>
               <SelectContent>
-                <SelectItem value="peru">LEAD Perú</SelectItem>
-                <SelectItem value="mexico">LEAD México</SelectItem>
-                <SelectItem value="america">LEAD América</SelectItem>
+                <SelectItem value="peru">LEAD UTEC</SelectItem>
+                <SelectItem value="mexico">LEAD UTP</SelectItem>
+                <SelectItem value="america">LEAD Javeriana</SelectItem>
               </SelectContent>
             </Select>
           </Row>

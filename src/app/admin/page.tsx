@@ -95,7 +95,7 @@ export default function AdminPage() {
 
   // Chapter e-board view (scoped)
   const myEvents = events
-    .filter((event) => event.calendar === "LEAD Perú" && event.date >= "2026-10-01")
+    .filter((event) => event.calendar === "LEAD UTEC" && event.date >= "2026-10-01")
     .sort((a, b) => a.date.localeCompare(b.date))
     .slice(0, 3);
 

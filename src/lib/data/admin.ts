@@ -194,10 +194,10 @@ export type ProfileReview = {
 };
 
 export const profileReviews: ProfileReview[] = [
-  { id: "r1", name: "Valeria Mendoza", initials: "VM", avatarColor: "brand-purple", university: "UTEC", major: "Ingeniería de Software", year: "2028", chapter: "LEAD Perú", skills: ["Python", "SQL", "Machine Learning", "Git"], topSkills: ["Python", "SQL"], submitted: "hoy", status: "pending" },
+  { id: "r1", name: "Valeria Mendoza", initials: "VM", avatarColor: "brand-purple", university: "UTEC", major: "Ingeniería de Software", year: "2028", chapter: "LEAD UTEC", skills: ["Python", "SQL", "Machine Learning", "Git"], topSkills: ["Python", "SQL"], submitted: "hoy", status: "pending" },
   { id: "r2", name: "Camila Torres", initials: "CT", avatarColor: "brand-rose", university: "UTEC", major: "Ingeniería de Sistemas", year: "2027", chapter: "LEAD UTEC", skills: ["JavaScript", "React", "TypeScript"], topSkills: ["React"], submitted: "hace 2 días", status: "pending" },
   { id: "r3", name: "Daniela Castro", initials: "DC", avatarColor: "brand-orange", university: "Universidad de Buenos Aires", major: "Computer Science", year: "2028", chapter: "", skills: ["Python", "C++", "Data Analysis"], topSkills: ["Python"], submitted: "hace 3 días", status: "pending" },
-  { id: "r4", name: "Sofía Ramírez", initials: "SR", avatarColor: "brand-red", university: "EPN", major: "CS + Statistics", year: "2027", chapter: "LEAD Ecuador", skills: ["SQL", "Data Analysis", "R"], topSkills: ["SQL"], submitted: "hace 1 semana", status: "pending" },
-  { id: "r5", name: "Ana Lucía Paredes", initials: "AP", avatarColor: "brand-purple", university: "Universidad de los Andes", major: "Computer Science", year: "2027", chapter: "LEAD Colombia", skills: ["Java", "AWS", "Docker"], topSkills: ["AWS"], submitted: "hace 3 días", status: "approved" },
-  { id: "r6", name: "Diego Salas", initials: "DS", avatarColor: "brand-rose", university: "UTEC", major: "Ingeniería Mecatrónica", year: "2028", chapter: "LEAD Perú", skills: ["C++", "Arduino"], topSkills: ["C++"], submitted: "hace 5 días", status: "rejected" },
+  { id: "r4", name: "Sofía Ramírez", initials: "SR", avatarColor: "brand-red", university: "UNI", major: "CS + Statistics", year: "2027", chapter: "LEAD UNI", skills: ["SQL", "Data Analysis", "R"], topSkills: ["SQL"], submitted: "hace 1 semana", status: "pending" },
+  { id: "r5", name: "Ana Lucía Paredes", initials: "AP", avatarColor: "brand-purple", university: "Pontificia Universidad Javeriana", major: "Computer Science", year: "2027", chapter: "LEAD Javeriana", skills: ["Java", "AWS", "Docker"], topSkills: ["AWS"], submitted: "hace 3 días", status: "approved" },
+  { id: "r6", name: "Diego Salas", initials: "DS", avatarColor: "brand-rose", university: "UTEC", major: "Ingeniería Mecatrónica", year: "2028", chapter: "LEAD UTEC", skills: ["C++", "Arduino"], topSkills: ["C++"], submitted: "hace 5 días", status: "rejected" },
 ];

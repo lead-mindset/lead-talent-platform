@@ -26,7 +26,7 @@ const seed: Request[] = [
   {
     id: "f1",
     title: "Discover Day 2027 — materiales",
-    chapter: "LEAD Perú",
+    chapter: "LEAD UTEC",
     requester: "Diego Salinas",
     tipo: "Evento",
     pillar: "Educación",
@@ -37,7 +37,7 @@ const seed: Request[] = [
   {
     id: "f2",
     title: "Hackathon — premios",
-    chapter: "LEAD América",
+    chapter: "LEAD Javeriana",
     requester: "Fernando Chávez",
     tipo: "Iniciativa",
     pillar: "Tecnología",
@@ -48,7 +48,7 @@ const seed: Request[] = [
   {
     id: "f3",
     title: "Networking — catering",
-    chapter: "LEAD Ecuador",
+    chapter: "LEAD UNI",
     requester: "Camila Rojas",
     tipo: "Evento",
     pillar: "Comunidad",
