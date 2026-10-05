@@ -26,6 +26,10 @@ export const testUsers: TestUser[] = [
     views: [{ label: "Admin", href: "/admin" }, { label: "Miembro", href: "/inicio" }],
   },
   {
+    id: "kiara", name: "Kiara Aguirre", initials: "KA", avatarColor: "brand-purple", group: "E-board global", role: "Programs & Communication", scope: "LEAD Americas", scopeType: "global",
+    views: [{ label: "Admin", href: "/admin" }, { label: "Miembro", href: "/inicio" }],
+  },
+  {
     id: "christopher", name: "Christopher Lozada", initials: "CL", avatarColor: "brand-orange", group: "Country Director", role: "Country Director", scope: "Perú", scopeType: "country",
     views: [{ label: "País", href: "/admin" }, { label: "Miembro", href: "/inicio" }],
   },

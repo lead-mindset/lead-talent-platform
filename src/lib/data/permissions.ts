@@ -79,6 +79,10 @@ export const presets: Preset[] = [
     permissions: ["global.dashboard.access", "global.chapters.manage", "global.funding.review", "global.companies.manage", "global.audit.view", "global.events.manage", "global.announcements.manage", "global.metrics.view"],
   },
   {
+    id: "programs_comms", label: "Programs & Communication", scope: "global",
+    permissions: ["global.dashboard.access", "global.events.manage", "global.announcements.manage", "global.content.manage", "global.metrics.view"],
+  },
+  {
     id: "member", label: "Miembro", scope: "member",
     permissions: ["members.view_directory", "profile.edit_own", "events.rsvp"],
   },
@@ -89,6 +93,7 @@ export const userPreset: Record<string, string> = {
   luis: "global_ceo",
   antonny: "global_ceo",
   nicole: "vp_operations",
+  kiara: "programs_comms",
   christopher: "country_director",
   maquera: "presidente",
   christian: "vp",
