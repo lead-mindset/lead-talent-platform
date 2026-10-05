@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Check, ChevronDown, Plus, RotateCcw, X } from "lucide-react";
+import { Check, ChevronDown, Pencil, Plus, RotateCcw, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { Input } from "@/components/ui/input";
@@ -69,6 +69,7 @@ export default function AdminFinanciamientoPage() {
   const [items, setItems] = useState<BudgetItem[]>([{ name: "", amount: "" }]);
   const [openReview, setOpenReview] = useState<string | null>(null);
   const [notes, setNotes] = useState<Record<string, string>>({});
+  const [partial, setPartial] = useState<Record<string, string>>({});
 
   // ---- chapter request form ----
   const total = items.reduce((sum, item) => sum + (Number(item.amount) || 0), 0);
@@ -131,11 +132,9 @@ export default function AdminFinanciamientoPage() {
                   <StatusBadge tone={statusTone[request.status]}>{statusLabel[request.status]}</StatusBadge>
 
                   {request.status === "submitted" ? (
-                    <div className="flex flex-wrap items-center gap-1.5">
-                      <Button size="sm" className="gap-1" onClick={() => approve(request.id)}><Check className="size-3.5" /> Aprobar</Button>
-                      <Button size="sm" variant="outline" onClick={() => setStatus(request.id, "changes_requested")}>Cambios</Button>
-                      <Button size="sm" variant="destructive-outline" onClick={() => setStatus(request.id, "rejected")}><X className="size-3.5" /> Rechazar</Button>
-                    </div>
+                    <Button size="sm" variant={open ? "secondary" : "outline"} onClick={() => setOpenReview(open ? null : request.id)}>
+                      {open ? "Cerrar" : "Revisar"}
+                    </Button>
                   ) : (
                     <Button size="sm" variant="outline" className="gap-1" onClick={() => setStatus(request.id, "submitted")}>
                       <RotateCcw className="size-3.5" /> Deshacer
@@ -172,16 +171,39 @@ export default function AdminFinanciamientoPage() {
                       <p className="mt-1 text-small text-muted-foreground">
                         {request.note ? `“${request.note}”` : "Sin notas."}
                       </p>
+
                       {request.status === "submitted" && (
-                        <div className="mt-4 space-y-2">
-                          <p className="text-caption font-medium text-muted-foreground">Decisión</p>
-                          <div className="flex items-center gap-1.5">
-                            <Input type="number" placeholder="Monto parcial…" className="w-28" aria-label="Monto parcial" />
-                            <Button size="sm" variant="outline" onClick={() => approve(request.id, Number(100))}>Aprobar parcial</Button>
+                        <div className="mt-4 space-y-3 border-t border-border/60 pt-4">
+                          <div>
+                            <p className="text-caption font-medium text-muted-foreground">Nota para tu decisión <span className="font-normal">(opcional)</span></p>
+                            <Input value={notes[request.id] ?? ""} onChange={(e) => setNotes((prev) => ({ ...prev, [request.id]: e.target.value }))} placeholder="Ej. aprobado este mes, o qué debe ajustar…" className="mt-1" aria-label="Nota de decisión" />
                           </div>
-                          <div className="flex items-center gap-1.5">
-                            <Input value={notes[request.id] ?? ""} onChange={(e) => setNotes((prev) => ({ ...prev, [request.id]: e.target.value }))} placeholder="Escribe una nota…" className="flex-1" aria-label="Nota" />
-                            <Button size="sm" variant="secondary" onClick={() => addNote(request.id)}>Agregar nota</Button>
+
+                          <p className="text-caption font-medium text-muted-foreground">Decisión</p>
+
+                          <Button className="w-full justify-start gap-2" onClick={() => { addNote(request.id); approve(request.id); }}>
+                            <Check className="size-4" /> Aprobar completo · ${request.requested}
+                          </Button>
+
+                          <div className="flex items-center gap-2">
+                            <Input type="number" placeholder="$" className="w-24" aria-label="Monto parcial" value={partial[request.id] ?? ""} onChange={(e) => setPartial((prev) => ({ ...prev, [request.id]: e.target.value }))} />
+                            <Button variant="outline" className="flex-1 justify-start gap-2" onClick={() => { addNote(request.id); approve(request.id, Number(partial[request.id]) || 0); }}>
+                              Aprobar parcial
+                            </Button>
+                          </div>
+
+                          <div>
+                            <Button variant="outline" className="w-full justify-start gap-2" onClick={() => { addNote(request.id); setStatus(request.id, "changes_requested"); }}>
+                              <Pencil className="size-4" /> Pedir cambios
+                            </Button>
+                            <p className="mt-1 pl-6 text-caption text-muted-foreground">Le devuelves la solicitud al capítulo para que la ajuste.</p>
+                          </div>
+
+                          <div>
+                            <Button variant="destructive-outline" className="w-full justify-start gap-2" onClick={() => { addNote(request.id); setStatus(request.id, "rejected"); }}>
+                              <X className="size-4" /> Rechazar
+                            </Button>
+                            <p className="mt-1 pl-6 text-caption text-muted-foreground">La rechazas. El capítulo la verá como rechazada.</p>
                           </div>
                         </div>
                       )}
