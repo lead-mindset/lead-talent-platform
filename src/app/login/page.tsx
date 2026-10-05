@@ -1,7 +1,7 @@
 import Link from "next/link";
-import { ArrowRight, GraduationCap } from "lucide-react";
+import { ArrowRight, GraduationCap, Info } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { LoginForm } from "@/components/login-form";
+import { OtpLogin } from "@/components/otp-login";
 import { LoginDivider, SocialLogin } from "@/components/social-login";
 
 export default function LoginPage() {
@@ -37,11 +37,18 @@ export default function LoginPage() {
           <p className="font-semibold">¿Ya tienes cuenta?</p>
           <p className="mt-1 text-caption text-muted-foreground">Inicia sesión para entrar a tu comunidad.</p>
           <div className="mt-4">
-            <SocialLogin route="/inicio" label="Entrar" />
+            <OtpLogin route="/inicio" />
             <LoginDivider />
-            <LoginForm route="/inicio" submitLabel="Iniciar sesión" />
+            <SocialLogin route="/inicio" label="Entrar" />
           </div>
         </div>
+      </div>
+
+      <div className="mt-6 flex items-start gap-2.5 rounded-xl border border-border/60 bg-muted/30 p-4 text-caption text-muted-foreground">
+        <Info className="mt-0.5 size-4 shrink-0 text-brand-purple-light" />
+        <p>
+          <span className="font-medium text-foreground">Decisión pendiente: Google vs OTP.</span> Hoy el registro es con Google, que deja fuera cuentas de Microsoft, dominios universitarios y personales. Proponemos OTP por email porque funciona con cualquier dominio y no depende de tener Gmail. Lo decidimos en la reunión.
+        </p>
       </div>
     </div>
   );

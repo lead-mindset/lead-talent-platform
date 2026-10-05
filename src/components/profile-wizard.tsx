@@ -24,7 +24,7 @@ const ROLE_POOL = [
 
 const YEARS = ["2027", "2028", "2029", "2030"];
 
-const CHAPTERS = ["LEAD Perú", "LEAD UTEC", "LEAD México", "LEAD Colombia"];
+const CHAPTERS = ["LEAD UTEC", "LEAD PUCP", "LEAD UTP", "LEAD UNI", "LEAD UPC", "LEAD Javeriana"];
 
 const STEPS = ["Tú", "Formación", "Skills", "Objetivos", "Listo"];
 
@@ -150,10 +150,10 @@ export function ProfileWizard() {
                     {item}
                   </FilterChip>
                 ))}
-                <FilterChip active={chapter === ""} onClick={() => setChapter("")}>No estoy en un capítulo</FilterChip>
+                <FilterChip active={chapter === ""} onClick={() => setChapter("")}>No estoy en un capítulo (general member)</FilterChip>
               </div>
               <p className="mt-1.5 text-caption text-muted-foreground">
-                Sin capítulo aún, tu perfil lo revisa el equipo global de LEAD.
+                Sin capítulo eres un general member, y tu perfil lo revisa el equipo global de LEAD.
               </p>
             </div>
           </div>
