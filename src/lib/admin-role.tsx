@@ -2,7 +2,7 @@
 
 import { createContext, useContext } from "react";
 
-export type AdminRole = "chapter" | "board";
+export type AdminRole = "global" | "country" | "chapter";
 
 export type AdminContextValue = {
   role: AdminRole;

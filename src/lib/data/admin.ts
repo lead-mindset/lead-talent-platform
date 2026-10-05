@@ -10,12 +10,12 @@ export type AdminMember = {
 };
 
 export const adminMembers: AdminMember[] = [
-  { id: "m1", name: "Valeria Mendoza", initials: "VM", avatarColor: "brand-purple", chapter: "LEAD Perú", role: "Tech Lead", status: "active", joined: "Sep 2026" },
-  { id: "m2", name: "Gabriela Torres", initials: "GT", avatarColor: "brand-rose", chapter: "LEAD Perú", role: "Miembro", status: "active", joined: "Ago 2026" },
-  { id: "m3", name: "Mateo Ríos", initials: "MR", avatarColor: "brand-orange", chapter: "LEAD América", role: "Miembro", status: "pending", joined: "Solicitó hace 2 días" },
-  { id: "m4", name: "Camila Rojas", initials: "CR", avatarColor: "brand-red", chapter: "LEAD Ecuador", role: "VP", status: "active", joined: "Jul 2026" },
-  { id: "m5", name: "Iván Quispe", initials: "IQ", avatarColor: "brand-purple", chapter: "LEAD México", role: "Miembro", status: "pending", joined: "Solicitó hace 1 día" },
-  { id: "m6", name: "Sebastián Flores", initials: "SF", avatarColor: "brand-rose", chapter: "LEAD América", role: "Miembro", status: "rejected", joined: "Rechazado" },
+  { id: "m1", name: "Valeria Mendoza", initials: "VM", avatarColor: "brand-purple", chapter: "LEAD UTEC", role: "Tech Lead", status: "active", joined: "Sep 2026" },
+  { id: "m2", name: "Gabriela Torres", initials: "GT", avatarColor: "brand-rose", chapter: "LEAD UTEC", role: "Miembro", status: "active", joined: "Ago 2026" },
+  { id: "m3", name: "Mateo Ríos", initials: "MR", avatarColor: "brand-orange", chapter: "LEAD PUCP", role: "Miembro", status: "pending", joined: "Solicitó hace 2 días" },
+  { id: "m4", name: "Camila Rojas", initials: "CR", avatarColor: "brand-red", chapter: "LEAD Javeriana", role: "VP", status: "active", joined: "Jul 2026" },
+  { id: "m5", name: "Iván Quispe", initials: "IQ", avatarColor: "brand-purple", chapter: "LEAD UTP", role: "Miembro", status: "pending", joined: "Solicitó hace 1 día" },
+  { id: "m6", name: "Mateo Silva", initials: "MS", avatarColor: "brand-rose", chapter: "Sin capítulo (USA)", role: "General member", status: "active", joined: "Ago 2026" },
 ];
 
 export type AdminChapter = {
@@ -28,10 +28,12 @@ export type AdminChapter = {
 };
 
 export const adminChapters: AdminChapter[] = [
-  { id: "c1", name: "LEAD Perú", university: "UTEC", members: 28, events: 5, region: "LatAm" },
-  { id: "c2", name: "LEAD Colombia", university: "Universidad de los Andes", members: 41, events: 8, region: "Colombia" },
-  { id: "c3", name: "LEAD Ecuador", university: "EPN", members: 12, events: 3, region: "Ecuador" },
-  { id: "c4", name: "LEAD México", university: "UNAM", members: 9, events: 2, region: "LatAm" },
+  { id: "utec", name: "LEAD UTEC", university: "UTEC", members: 28, events: 5, region: "Perú" },
+  { id: "pucp", name: "LEAD PUCP", university: "PUCP", members: 41, events: 8, region: "Perú" },
+  { id: "utp", name: "LEAD UTP", university: "UTP", members: 22, events: 4, region: "Perú" },
+  { id: "uni", name: "LEAD UNI", university: "UNI", members: 18, events: 3, region: "Perú" },
+  { id: "upc", name: "LEAD UPC", university: "UPC", members: 15, events: 2, region: "Perú" },
+  { id: "javeriana", name: "LEAD Javeriana", university: "Pontificia Universidad Javeriana", members: 12, events: 2, region: "Colombia" },
 ];
 
 export type FundingRequest = {
@@ -43,9 +45,9 @@ export type FundingRequest = {
 };
 
 export const fundingRequests: FundingRequest[] = [
-  { id: "f1", title: "Discover Day 2027 — materiales", chapter: "LEAD Perú", amount: "$320", status: "pending" },
-  { id: "f2", title: "Hackathon — premios", chapter: "LEAD América", amount: "$150", status: "review" },
-  { id: "f3", title: "Networking — catering", chapter: "LEAD Ecuador", amount: "$90", status: "approved" },
+  { id: "f1", title: "Discover Day 2027 — materiales", chapter: "LEAD UTEC", amount: "$320", status: "pending" },
+  { id: "f2", title: "Hackathon — premios", chapter: "LEAD Javeriana", amount: "$150", status: "review" },
+  { id: "f3", title: "Networking — catering", chapter: "LEAD PUCP", amount: "$90", status: "approved" },
 ];
 
 export type ContactRole = "Recruiter" | "Talent Partner" | "Admin";
@@ -118,27 +120,58 @@ export const juntas: ChapterJunta[] = [
     members: 28,
     volunteers: 22,
     junta: [
-      { id: "u1", name: "Diego Salinas", initials: "LM", avatarColor: "brand-purple", role: "Presidente", tier: "presidente" },
-      { id: "u2", name: "Camila Ruiz", initials: "AA", avatarColor: "brand-rose", role: "Vicepresidente", tier: "vp" },
-      { id: "u3", name: "Mateo Torres", initials: "DM", avatarColor: "brand-orange", role: "Director", area: "Excelencia Académica", tier: "director" },
-      { id: "u4", name: "Iván Paredes", initials: "CE", avatarColor: "brand-red", role: "Director", area: "LEAD Academia", tier: "director" },
-      { id: "u5", name: "Sofía Ríos", initials: "NG", avatarColor: "brand-purple", role: "Directora", area: "Excelencia Femenina", tier: "director" },
+      { id: "u1", name: "Luis Maquera", initials: "LM", avatarColor: "brand-purple", role: "Presidente", tier: "presidente" },
+      { id: "u2", name: "Christian Estrada", initials: "CE", avatarColor: "brand-rose", role: "Vicepresidente", tier: "vp" },
+      { id: "u3", name: "Diego Miranda", initials: "DM", avatarColor: "brand-orange", role: "Director", area: "Excelencia Académica", tier: "director" },
+      { id: "u4", name: "Sofía Ríos", initials: "SR", avatarColor: "brand-red", role: "Directora", area: "Excelencia Femenina", tier: "director" },
     ],
   },
   {
-    chapterId: "upn-trujillo",
-    name: "LEAD UPN-Trujillo",
-    university: "Universidad Privada del Norte",
-    region: "Perú · Trujillo",
-    members: 15,
-    volunteers: 9,
+    chapterId: "pucp",
+    name: "LEAD PUCP",
+    university: "Pontificia Universidad Católica del Perú",
+    region: "Perú · Lima",
+    members: 41,
+    volunteers: 30,
     junta: [
-      { id: "t1", name: "Valeria Córdova", initials: "MQ", avatarColor: "brand-rose", role: "Presidenta", tier: "presidente" },
-      { id: "t2", name: "Lucía Mendoza", initials: "YB", avatarColor: "brand-purple", role: "Vicepresidente", tier: "vp" },
-      { id: "t3", name: "Gabriela Vega", initials: "LC", avatarColor: "brand-orange", role: "Coordinadora", area: "Desarrollo de Capítulo", tier: "director" },
-      { id: "t4", name: "Andrés Silva", initials: "LQ", avatarColor: "brand-red", role: "Coordinador", area: "Desarrollo Profesional", tier: "director" },
-      { id: "t5", name: "María Prado", initials: "VG", avatarColor: "brand-purple", role: "Coordinadora", area: "Marketing", tier: "director" },
-      { id: "t6", name: "Camila Duarte", initials: "MR", avatarColor: "brand-orange", role: "Coordinadora", area: "Impacto Comunitario", tier: "director" },
+      { id: "p1", name: "Xendra Jaime", initials: "XJ", avatarColor: "brand-rose", role: "Presidenta", tier: "presidente" },
+      { id: "p2", name: "Caleb Montero", initials: "CM", avatarColor: "brand-purple", role: "Vicepresidente", tier: "vp" },
+    ],
+  },
+  {
+    chapterId: "utp",
+    name: "LEAD UTP",
+    university: "Universidad Tecnológica del Perú",
+    region: "Perú · Lima",
+    members: 22,
+    volunteers: 16,
+    junta: [
+      { id: "t1", name: "Giuliana Sanchez", initials: "GS", avatarColor: "brand-orange", role: "Presidenta", tier: "presidente" },
+      { id: "t2", name: "Matthew Zegarra", initials: "MZ", avatarColor: "brand-red", role: "Vicepresidente", tier: "vp" },
+    ],
+  },
+  {
+    chapterId: "uni",
+    name: "LEAD UNI",
+    university: "Universidad Nacional de Ingeniería",
+    region: "Perú · Lima",
+    members: 18,
+    volunteers: 12,
+    junta: [
+      { id: "n1", name: "Arianna Yauri", initials: "AY", avatarColor: "brand-purple", role: "Presidenta", tier: "presidente" },
+      { id: "n2", name: "Anthony Castañeda", initials: "AC", avatarColor: "brand-rose", role: "Vicepresidente", tier: "vp" },
+    ],
+  },
+  {
+    chapterId: "upc",
+    name: "LEAD UPC",
+    university: "Universidad Peruana de Ciencias Aplicadas",
+    region: "Perú · Lima",
+    members: 15,
+    volunteers: 10,
+    junta: [
+      { id: "c1", name: "Alexandra Cuchula", initials: "AC", avatarColor: "brand-orange", role: "Presidenta", tier: "presidente" },
+      { id: "c2", name: "Maribel Maza", initials: "MM", avatarColor: "brand-red", role: "Vicepresidenta", tier: "vp" },
     ],
   },
 ];

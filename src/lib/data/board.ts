@@ -8,11 +8,11 @@ export type BoardMember = {
 };
 
 export const boardTeam: BoardMember[] = [
-  { id: "b1", name: "Luis Coronel", initials: "LR", avatarColor: "brand-purple", role: "Fundador · Tech", email: "lcoronel@leadmindset.org" },
-  { id: "b2", name: "Antonny Porlles", initials: "AV", avatarColor: "brand-rose", role: "Fundador · Ops", email: "aporlles@leadmindset.org" },
-  { id: "b3", name: "Mariana Torres", initials: "MT", avatarColor: "brand-orange", role: "Admin LEAD", email: "mtorres@leadmindset.org" },
-  { id: "b4", name: "Valeria Córdova", initials: "VC", avatarColor: "brand-purple", role: "Operaciones", email: "ops@leadmindset.org" },
-  { id: "b5", name: "Diego Salinas", initials: "DS", avatarColor: "brand-red", role: "Presidente · LEAD Perú", email: "dsalinas@leadmindset.org" },
+  { id: "b1", name: "Luis Coronel", initials: "LC", avatarColor: "brand-purple", role: "CEO LEAD Americas", email: "luis.coronel@leadmindset.org" },
+  { id: "b2", name: "Antonny Porlles", initials: "AP", avatarColor: "brand-rose", role: "CEO LEAD Americas", email: "aporlles@leadmindset.org" },
+  { id: "b3", name: "Nicole Jimenez", initials: "NJ", avatarColor: "brand-red", role: "VP of Operations", email: "operations@leadmindset.org" },
+  { id: "b4", name: "Oscar Castro", initials: "OC", avatarColor: "brand-orange", role: "Chief of Staff", email: "ocastro@leadmindset.org" },
+  { id: "b5", name: "Christopher Lozada", initials: "CL", avatarColor: "brand-purple", role: "Country Director · Perú", email: "clozada@leadmindset.org" },
 ];
 
 export const boardKpis = {

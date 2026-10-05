@@ -11,7 +11,7 @@ import { useCurrentUser } from "@/lib/use-current-user";
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const user = useCurrentUser();
-  const role: AdminRole = user.views.some((view) => view.href === "/board") ? "board" : "chapter";
+  const role: AdminRole = user.scopeType === "global" ? "global" : user.scopeType === "country" ? "country" : "chapter";
 
   const chapterTabs = [
     { href: "/admin", label: "Panel" },
@@ -20,7 +20,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     { href: "/admin/eventos", label: "Eventos" },
     { href: "/admin/financiamiento", label: "Financiamiento" },
   ];
-  const boardTabs = [
+  const globalTabs = [
     { href: "/admin", label: "Panel" },
     { href: "/admin/capitulos", label: "Capítulos" },
     { href: "/admin/miembros", label: "Miembros" },
@@ -28,8 +28,19 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     { href: "/admin/validaciones", label: "Validaciones" },
     { href: "/admin/financiamiento", label: "Financiamiento" },
     { href: "/admin/invitaciones", label: "Invitaciones" },
+    { href: "/admin/auditoria", label: "Auditoría" },
   ];
-  const tabs = role === "chapter" ? chapterTabs : boardTabs;
+  const countryTabs = [
+    { href: "/admin", label: "Panel" },
+    { href: "/admin/capitulos", label: "Capítulos" },
+    { href: "/admin/miembros", label: "Miembros" },
+    { href: "/admin/validaciones", label: "Validaciones" },
+    { href: "/admin/eventos", label: "Eventos" },
+    { href: "/admin/financiamiento", label: "Financiamiento" },
+    { href: "/admin/auditoria", label: "Auditoría" },
+  ];
+  const tabs = role === "chapter" ? chapterTabs : role === "country" ? countryTabs : globalTabs;
+  const roleLabel = role === "chapter" ? "Capítulo" : role === "country" ? "País" : "LEAD Americas";
 
   return (
     <AdminRoleContext.Provider value={{ role, scope: user.scope }}>
@@ -43,7 +54,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               </span>
               <div className="leading-tight">
                 <p className="text-sm font-bold tracking-tight">{user.scope}</p>
-                <p className="text-caption text-muted-foreground">{user.role} · {role === "chapter" ? "Capítulo" : "E-board global"}</p>
+                <p className="text-caption text-muted-foreground">{user.role} · {roleLabel}</p>
               </div>
             </div>
 
