@@ -55,7 +55,7 @@ const statusFilters: { value: "all" | FundingStatus; label: string }[] = [
   { value: "all", label: "Todas" },
   { value: "submitted", label: "Enviadas" },
   { value: "approved", label: "Aprobadas" },
-  { value: "changes_requested", label: "Cambios" },
+  { value: "changes_requested", label: "Cambios pedidos" },
   { value: "rejected", label: "Rechazadas" },
   { value: "receipts_due", label: "Recibos" },
 ];
@@ -70,6 +70,8 @@ export default function AdminFinanciamientoPage() {
   const [openReview, setOpenReview] = useState<string | null>(null);
   const [notes, setNotes] = useState<Record<string, string>>({});
   const [partial, setPartial] = useState<Record<string, string>>({});
+  const [toast, setToast] = useState<{ msg: string; undo?: () => void } | null>(null);
+  const [recent, setRecent] = useState<Set<string>>(new Set());
 
   // ---- chapter request form ----
   const total = items.reduce((sum, item) => sum + (Number(item.amount) || 0), 0);
@@ -96,7 +98,24 @@ export default function AdminFinanciamientoPage() {
     setNotes((prev) => ({ ...prev, [id]: "" }));
   };
 
-  const visible = filter === "all" ? requests : requests.filter((request) => request.status === filter);
+  const decide = (id: string, status: FundingStatus, msg: string, amount?: number) => {
+    const prev = requests.find((r) => r.id === id);
+    const prevStatus = prev?.status ?? "submitted";
+    setRequests((all) => all.map((r) => (r.id === id ? { ...r, status, approved: amount ?? (status === "approved" ? r.requested : r.approved), note: (notes[id] ?? "").trim() || r.note } : r)));
+    setRecent((prevSet) => new Set(prevSet).add(id));
+    setOpenReview(null);
+    setToast({
+      msg,
+      undo: () => {
+        setRequests((all) => all.map((r) => (r.id === id ? { ...r, status: prevStatus } : r)));
+        setRecent((prevSet) => { const n = new Set(prevSet); n.delete(id); return n; });
+        setToast(null);
+      },
+    });
+    setTimeout(() => setToast((t) => (t && t.msg === msg ? null : t)), 7000);
+  };
+
+  const visible = filter === "all" ? requests : requests.filter((request) => request.status === filter || recent.has(request.id));
   const submittedCount = requests.filter((request) => request.status === "submitted").length;
 
   if (role !== "chapter") {
@@ -181,26 +200,26 @@ export default function AdminFinanciamientoPage() {
 
                           <p className="text-caption font-medium text-muted-foreground">Decisión</p>
 
-                          <Button className="w-full justify-start gap-2" onClick={() => { addNote(request.id); approve(request.id); }}>
+                          <Button className="w-full justify-start gap-2" onClick={() => decide(request.id, "approved", `Aprobaste el monto completo ($${request.requested}) a ${request.chapter}.`)}>
                             <Check className="size-4" /> Aprobar completo · ${request.requested}
                           </Button>
 
                           <div className="flex items-center gap-2">
                             <Input type="number" placeholder="$" className="w-24" aria-label="Monto parcial" value={partial[request.id] ?? ""} onChange={(e) => setPartial((prev) => ({ ...prev, [request.id]: e.target.value }))} />
-                            <Button variant="outline" className="flex-1 justify-start gap-2" onClick={() => { addNote(request.id); approve(request.id, Number(partial[request.id]) || 0); }}>
+                            <Button variant="outline" className="flex-1 justify-start gap-2" onClick={() => decide(request.id, "approved", `Aprobaste parcialmente ($${partial[request.id] || 0}) a ${request.chapter}.`, Number(partial[request.id]) || 0)}>
                               Aprobar parcial
                             </Button>
                           </div>
 
                           <div>
-                            <Button variant="outline" className="w-full justify-start gap-2" onClick={() => { addNote(request.id); setStatus(request.id, "changes_requested"); }}>
+                            <Button variant="outline" className="w-full justify-start gap-2" disabled={!notes[request.id]?.trim()} onClick={() => decide(request.id, "changes_requested", `Pediste cambios a ${request.chapter}. El capítulo la ajustará y reenviará.`)}>
                               <Pencil className="size-4" /> Pedir cambios
                             </Button>
-                            <p className="mt-1 pl-6 text-caption text-muted-foreground">Le devuelves la solicitud al capítulo para que la ajuste.</p>
+                            <p className="mt-1 pl-6 text-caption text-muted-foreground">{notes[request.id]?.trim() ? "Le devuelves la solicitud al capítulo para que la ajuste." : "Escribe la nota primero (qué debe ajustar)."}</p>
                           </div>
 
                           <div>
-                            <Button variant="destructive-outline" className="w-full justify-start gap-2" onClick={() => { addNote(request.id); setStatus(request.id, "rejected"); }}>
+                            <Button variant="destructive-outline" className="w-full justify-start gap-2" onClick={() => decide(request.id, "rejected", `Rechazaste la solicitud de ${request.chapter}.`)}>
                               <X className="size-4" /> Rechazar
                             </Button>
                             <p className="mt-1 pl-6 text-caption text-muted-foreground">La rechazas. El capítulo la verá como rechazada.</p>
@@ -214,6 +233,17 @@ export default function AdminFinanciamientoPage() {
             );
           })}
         </div>
+
+        {toast && (
+          <div role="status" className="fixed bottom-4 left-1/2 z-50 flex max-w-[90vw] -translate-x-1/2 items-center gap-3 rounded-xl border border-border/60 bg-card px-4 py-2.5 shadow-xl">
+            <span className="text-small">{toast.msg}</span>
+            {toast.undo && (
+              <button type="button" onClick={toast.undo} className="shrink-0 text-small font-medium text-brand-purple-light hover:underline">
+                Deshacer
+              </button>
+            )}
+          </div>
+        )}
       </div>
     );
   }
@@ -278,9 +308,17 @@ export default function AdminFinanciamientoPage() {
               <div className="min-w-0 flex-1">
                 <p className="truncate font-medium">{request.title}</p>
                 <p className="truncate text-caption text-muted-foreground">{request.chapter} · {request.tipo} · {request.pillar}</p>
+                {request.status === "changes_requested" && request.note && (
+                  <p className="mt-1 text-caption text-brand-purple-light">Cambios pedidos: “{request.note}” — ajústala y reenvía.</p>
+                )}
               </div>
               <span className="font-semibold">${request.requested}</span>
               <StatusBadge tone={statusTone[request.status]}>{statusLabel[request.status]}</StatusBadge>
+              {request.status === "changes_requested" && (
+                <Button size="sm" className="gap-1" onClick={() => setStatus(request.id, "submitted")}>
+                  <RotateCcw className="size-3.5" /> Reenviar
+                </Button>
+              )}
             </div>
           );
         })}
