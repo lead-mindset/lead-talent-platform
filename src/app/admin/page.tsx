@@ -11,7 +11,7 @@ import { events } from "@/lib/data/community";
 import { useAdminRole } from "@/lib/admin-role";
 
 export default function AdminPage() {
-  const role = useAdminRole();
+  const { role, scope } = useAdminRole();
   const [members, setMembers] = useState(adminMembers);
   const [pendingCount, setPendingCount] = useState(adminStats.pendingApprovals);
 
@@ -22,7 +22,7 @@ export default function AdminPage() {
     setPendingCount((prev) => Math.max(0, prev - 1));
   };
 
-  if (role === "board") {
+  if (role !== "chapter") {
     const totalMembers = juntas.reduce((sum, chapter) => sum + chapter.members, 0);
     const boardStats = [
       { label: "Miembros totales", value: totalMembers },
@@ -33,8 +33,8 @@ export default function AdminPage() {
     return (
       <div className="space-y-6">
         <header>
-          <h1 className="text-h1 font-bold tracking-tight">Panel global</h1>
-          <p className="mt-1 text-small text-muted-foreground">Operación de todos los capítulos de LEAD.</p>
+          <h1 className="text-h1 font-bold tracking-tight">{role === "country" ? `Panel de ${scope}` : "Panel global"}</h1>
+          <p className="mt-1 text-small text-muted-foreground">{role === "country" ? `Capítulos de ${scope}.` : "Operación de todos los capítulos de LEAD."}</p>
         </header>
 
         <div className="grid gap-4 sm:grid-cols-3">
