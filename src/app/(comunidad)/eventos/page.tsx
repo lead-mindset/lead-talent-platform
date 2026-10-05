@@ -101,7 +101,7 @@ function TypeIcon({ icon: Icon }: { icon: typeof Wrench }) {
 }
 
 export default function EventosPage() {
-  const [view, setView] = useState<"mi" | "toda">("mi");
+  const [view, setView] = useState<"mi" | "toda">("toda");
   const [time, setTime] = useState<"proximos" | "pasados">("proximos");
   const [type, setType] = useState("Todos");
   const [month, setMonth] = useState(9);
