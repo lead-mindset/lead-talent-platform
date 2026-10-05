@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { CalendarDays, Check, ChevronLeft, ChevronRight, Clock, Handshake, MapPin, Mic, Users, Wrench } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { StatusBadge } from "@/components/ui/status-badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { FilterChip } from "@/components/ui/filter-chip";
@@ -14,7 +15,7 @@ const monthNames = ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep
 const weekLabels = ["L", "M", "X", "J", "V", "S", "D"];
 
 const TODAY = "2026-10-01";
-const MY_COMMUNITY = ["LEAD Perú", "LEAD América", "LEAD Global"];
+const MY_COMMUNITY = ["LEAD UTEC", "LEAD Javeriana", "LEAD Global"];
 
 function parseDate(date: string) {
   const [y, m, d] = date.split("-").map(Number);
@@ -62,9 +63,11 @@ function EventRow({ event, registered, onToggle }: { event: LeadEvent; registere
           <Badge variant="secondary" className="rounded-full">
             {event.type}
           </Badge>
-          <Badge variant="outline" className="rounded-full">
-            {event.calendar}
-          </Badge>
+          {event.calendar === "LEAD Global" ? (
+            <StatusBadge tone="success">Global · toda LEAD</StatusBadge>
+          ) : (
+            <Badge variant="outline" className="rounded-full">{event.calendar}</Badge>
+          )}
         </div>
         <h3 className="mt-1.5 font-semibold leading-snug">{event.title}</h3>
         <p className="mt-1.5 flex items-center gap-1.5 text-small text-muted-foreground">
