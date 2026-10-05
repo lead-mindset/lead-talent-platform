@@ -231,8 +231,8 @@ export function ProfileWizard() {
             <div className="mx-auto mt-4 flex max-w-sm items-center justify-center gap-2 rounded-lg bg-muted/60 px-3 py-2 text-small text-muted-foreground">
               <ShieldCheck className="size-4 shrink-0 text-brand-purple-light" />
               {chapter
-                ? `En revisión. El e-board de ${chapter} validará tu perfil antes de que sea visible.`
-                : "En revisión. El equipo global de LEAD validará tu perfil antes de que sea visible."}
+                ? `En revisión. El e-board de ${chapter} validará tu perfil para las empresas. Mientras tanto ya puedes usar la comunidad y los eventos.`
+                : "En revisión. El equipo global de LEAD validará tu perfil para las empresas. Mientras tanto ya puedes usar la comunidad y los eventos."}
             </div>
             <div className="mt-6 grid gap-2 sm:grid-cols-2">
               <Button onClick={() => router.push("/perfil")}>
