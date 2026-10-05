@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Check, ChevronDown, Landmark, Plus, RotateCcw, X } from "lucide-react";
+import { Check, ChevronDown, Plus, RotateCcw, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { Input } from "@/components/ui/input";
@@ -25,7 +25,7 @@ type FundingReq = {
   status: FundingStatus;
   requested: number;
   approved: number;
-  source?: string;
+  note?: string;
   late?: boolean;
 };
 
@@ -47,7 +47,7 @@ const statusLabel: Record<FundingStatus, string> = {
 
 const initialRequests: FundingReq[] = [
   { id: "f1", title: "Discover Day 2027 — materiales", chapter: "LEAD UTEC", requester: "Luis Maquera", tipo: "Evento", event: "Discover Day 2027", pillar: "Educación", items: [{ name: "Impresiones", amount: "120" }, { name: "Catering", amount: "200" }], status: "submitted", requested: 320, approved: 0, late: true },
-  { id: "f2", title: "Hackathon — premios", chapter: "LEAD PUCP", requester: "Xendra Jaime", tipo: "Iniciativa", pillar: "Tecnología", items: [{ name: "Premios", amount: "150" }], status: "approved", requested: 150, approved: 150, source: "Presupuesto 2026" },
+  { id: "f2", title: "Hackathon — premios", chapter: "LEAD PUCP", requester: "Xendra Jaime", tipo: "Iniciativa", pillar: "Tecnología", items: [{ name: "Premios", amount: "150" }], status: "approved", requested: 150, approved: 150 },
   { id: "f3", title: "Networking — catering", chapter: "LEAD Javeriana", requester: "Camila Rojas", tipo: "Evento", pillar: "Comunidad", items: [{ name: "Catering", amount: "90" }], status: "submitted", requested: 90, approved: 0 },
 ];
 
@@ -68,6 +68,7 @@ export default function AdminFinanciamientoPage() {
   const [form, setForm] = useState({ title: "", tipo: "Evento" as "Evento" | "Iniciativa", pillar: "Educación", eventTitle: "" });
   const [items, setItems] = useState<BudgetItem[]>([{ name: "", amount: "" }]);
   const [openReview, setOpenReview] = useState<string | null>(null);
+  const [notes, setNotes] = useState<Record<string, string>>({});
 
   // ---- chapter request form ----
   const total = items.reduce((sum, item) => sum + (Number(item.amount) || 0), 0);
@@ -87,8 +88,12 @@ export default function AdminFinanciamientoPage() {
     setRequests((prev) => prev.map((request) => (request.id === id ? { ...request, status: "approved", approved: amount ?? request.requested } : request)));
   const setStatus = (id: string, status: FundingStatus) =>
     setRequests((prev) => prev.map((request) => (request.id === id ? { ...request, status } : request)));
-  const setSource = (id: string, source: string) =>
-    setRequests((prev) => prev.map((request) => (request.id === id ? { ...request, source } : request)));
+  const addNote = (id: string) => {
+    const text = (notes[id] ?? "").trim();
+    if (!text) return;
+    setRequests((prev) => prev.map((request) => (request.id === id ? { ...request, note: text } : request)));
+    setNotes((prev) => ({ ...prev, [id]: "" }));
+  };
 
   const visible = filter === "all" ? requests : requests.filter((request) => request.status === filter);
   const submittedCount = requests.filter((request) => request.status === "submitted").length;
@@ -143,38 +148,44 @@ export default function AdminFinanciamientoPage() {
                 </div>
 
                 {open && (
-                  <div className="mt-3 grid gap-4 border-t border-border/60 pt-3 sm:grid-cols-2">
+                  <div className="mt-3 grid gap-5 border-t border-border/60 pt-4 sm:grid-cols-2">
                     <div>
-                      <p className="text-caption font-medium text-muted-foreground">Detalle</p>
-                      <p className="mt-1 text-small text-muted-foreground">
-                        Solicitada por {request.requester}{request.event ? ` · ${request.event}` : ""}
-                      </p>
-                      <div className="mt-2 space-y-1">
+                      <p className="text-caption font-medium text-muted-foreground">Solicitada por</p>
+                      <p className="mt-1 text-small">{request.requester}{request.event ? ` · ${request.event}` : ""}</p>
+
+                      <p className="mt-4 text-caption font-medium text-muted-foreground">Presupuesto</p>
+                      <div className="mt-1 space-y-1">
                         {request.items.map((item, i) => (
-                          <div key={i} className="flex justify-between text-small text-muted-foreground">
-                            <span>{item.name}</span><span className="font-medium text-foreground">${item.amount}</span>
+                          <div key={i} className="flex justify-between text-small">
+                            <span className="text-muted-foreground">{item.name}</span>
+                            <span className="font-medium">${item.amount}</span>
                           </div>
                         ))}
+                        <div className="flex justify-between border-t border-border/40 pt-1.5 text-small font-semibold">
+                          <span>Total</span><span>${request.requested}</span>
+                        </div>
                       </div>
-                      {request.source && (
-                        <p className="mt-2 flex items-center gap-1.5 text-caption text-muted-foreground">
-                          <Landmark className="size-3.5 text-brand-purple-light" /> Fuente: {request.source}
-                        </p>
+                    </div>
+
+                    <div>
+                      <p className="text-caption font-medium text-muted-foreground">Notas</p>
+                      <p className="mt-1 text-small text-muted-foreground">
+                        {request.note ? `“${request.note}”` : "Sin notas."}
+                      </p>
+                      {request.status === "submitted" && (
+                        <div className="mt-4 space-y-2">
+                          <p className="text-caption font-medium text-muted-foreground">Decisión</p>
+                          <div className="flex items-center gap-1.5">
+                            <Input type="number" placeholder="Monto parcial…" className="w-28" aria-label="Monto parcial" />
+                            <Button size="sm" variant="outline" onClick={() => approve(request.id, Number(100))}>Aprobar parcial</Button>
+                          </div>
+                          <div className="flex items-center gap-1.5">
+                            <Input value={notes[request.id] ?? ""} onChange={(e) => setNotes((prev) => ({ ...prev, [request.id]: e.target.value }))} placeholder="Escribe una nota…" className="flex-1" aria-label="Nota" />
+                            <Button size="sm" variant="secondary" onClick={() => addNote(request.id)}>Agregar nota</Button>
+                          </div>
+                        </div>
                       )}
                     </div>
-                    {request.status === "submitted" && (
-                      <div className="space-y-2">
-                        <p className="text-caption font-medium text-muted-foreground">Opciones</p>
-                        <div className="flex items-center gap-1.5">
-                          <Input type="number" placeholder="Monto parcial…" className="w-28" aria-label="Monto parcial" />
-                          <Button size="sm" variant="outline" onClick={() => approve(request.id, Number(100))}>Aprobar parcial</Button>
-                        </div>
-                        <div className="flex items-center gap-1.5">
-                          <Input placeholder="Fuente interna…" className="max-w-44" aria-label="Fuente de fondos" />
-                          <Button size="sm" variant="secondary" onClick={() => setSource(request.id, "Presupuesto 2026")}>Fuente</Button>
-                        </div>
-                      </div>
-                    )}
                   </div>
                 )}
               </div>
