@@ -22,7 +22,7 @@ const groups = [
   },
   {
     name: "miembro",
-    user: "miembro",
+    user: "member",
     views: [
       { path: "/inicio", name: "inicio" },
       { path: "/eventos", name: "eventos" },
@@ -34,7 +34,7 @@ const groups = [
   },
   {
     name: "capitulo",
-    user: "presidente1",
+    user: "maquera",
     views: [
       { path: "/login/capitulo", name: "login-capitulo" },
       { path: "/admin", name: "panel" },

@@ -68,7 +68,32 @@ export const presets: Preset[] = [
     id: "global_eboard", label: "E-board LEAD Americas", scope: "global",
     permissions: ["global.dashboard.access", "global.chapters.manage", "global.countries.manage", "global.funding.review", "global.companies.manage", "global.audit.view", "global.metrics.view"],
   },
+  {
+    id: "global_ceo", label: "CEO LEAD Americas", scope: "global",
+    permissions: ["global.dashboard.access", "global.chapters.manage", "global.countries.manage", "global.funding.review", "global.companies.manage", "global.roles.assign", "global.audit.view", "global.content.manage", "global.metrics.view"],
+  },
+  {
+    id: "vp_operations", label: "VP of Operations", scope: "global",
+    permissions: ["global.dashboard.access", "global.chapters.manage", "global.funding.review", "global.companies.manage", "global.audit.view", "global.metrics.view"],
+  },
+  {
+    id: "member", label: "Miembro", scope: "member",
+    permissions: ["members.view_directory", "profile.edit_own", "events.rsvp"],
+  },
 ];
+
+/** which preset each demo "ver como" user carries. */
+export const userPreset: Record<string, string> = {
+  luis: "global_ceo",
+  antonny: "global_ceo",
+  nicole: "vp_operations",
+  christopher: "country_director",
+  maquera: "presidente",
+  christian: "vp",
+  member: "member",
+  general: "member",
+  recruiter: "member",
+};
 
 /** demo person: Luis Maquera (Presidente · LEAD UTEC), preset + one override. */
 export const demoPermissionUser = {

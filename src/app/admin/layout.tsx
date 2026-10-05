@@ -13,6 +13,18 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const user = useCurrentUser();
   const role: AdminRole = user.scopeType === "global" ? "global" : user.scopeType === "country" ? "country" : "chapter";
 
+  if (user.scopeType === "member" || user.scopeType === "company") {
+    return (
+      <div className="flex min-h-full flex-col items-center justify-center px-6 py-20 text-center">
+        <p className="text-h2 font-bold tracking-tight">Sin acceso al panel</p>
+        <p className="mt-2 max-w-sm text-small text-muted-foreground">
+          {user.name} no tiene un rol de liderazgo. Este espacio es para capítulos, país y LEAD Americas.
+        </p>
+        <Link href="/inicio" className="mt-4 text-small font-medium text-brand-purple-light hover:underline">Volver a la comunidad</Link>
+      </div>
+    );
+  }
+
   const chapterTabs = [
     { href: "/admin", label: "Panel" },
     { href: "/admin/miembros", label: "Miembros" },
@@ -25,6 +37,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     { href: "/admin", label: "Panel" },
     { href: "/admin/capitulos", label: "Capítulos" },
     { href: "/admin/miembros", label: "Miembros" },
+    { href: "/admin/permisos", label: "Permisos" },
     { href: "/admin/eventos", label: "Eventos" },
     { href: "/admin/validaciones", label: "Validaciones" },
     { href: "/admin/financiamiento", label: "Financiamiento" },
@@ -35,6 +48,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     { href: "/admin", label: "Panel" },
     { href: "/admin/capitulos", label: "Capítulos" },
     { href: "/admin/miembros", label: "Miembros" },
+    { href: "/admin/permisos", label: "Permisos" },
     { href: "/admin/validaciones", label: "Validaciones" },
     { href: "/admin/eventos", label: "Eventos" },
     { href: "/admin/financiamiento", label: "Financiamiento" },

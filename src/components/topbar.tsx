@@ -24,7 +24,7 @@ export function Topbar() {
   const adminLinks = user.views
     .filter((view) => view.href === "/admin" || view.href === "/board")
     .map((view) => ({
-      label: view.href === "/board" ? "Board" : "Panel",
+      label: view.label,
       href: view.href,
       special: true,
     }));
