@@ -14,7 +14,7 @@ export type Talent = {
   languages: { name: string; level: string }[];
   workAuth: string;
   availability: string;
-  availabilityType: "Internship" | "Full-time";
+  availabilityType: "Prácticas" | "Tiempo completo";
   verified: boolean;
 };
 
@@ -43,7 +43,7 @@ export const talent: Talent[] = [
     ],
     workAuth: "Autorización de trabajo en Colombia",
     availability: "Disponible · Tiempo completo 2028",
-    availabilityType: "Full-time",
+    availabilityType: "Tiempo completo",
     verified: true,
   },
   {
@@ -69,8 +69,8 @@ export const talent: Talent[] = [
       { name: "Inglés", level: "Profesional" },
     ],
     workAuth: "Remoto desde México",
-    availability: "Disponible · Internship 2027",
-    availabilityType: "Internship",
+    availability: "Disponible · Prácticas 2027",
+    availabilityType: "Prácticas",
     verified: true,
   },
   {
@@ -96,8 +96,8 @@ export const talent: Talent[] = [
       { name: "Portugués", level: "Conversacional" },
     ],
     workAuth: "Autorización de trabajo en Perú",
-    availability: "Disponible · Internship 2029",
-    availabilityType: "Internship",
+    availability: "Disponible · Prácticas 2029",
+    availabilityType: "Prácticas",
     verified: true,
   },
   {
@@ -123,7 +123,7 @@ export const talent: Talent[] = [
     ],
     workAuth: "Autorización de trabajo en Ecuador",
     availability: "Disponible · Tiempo completo 2027",
-    availabilityType: "Full-time",
+    availabilityType: "Tiempo completo",
     verified: true,
   },
   {
@@ -148,8 +148,8 @@ export const talent: Talent[] = [
       { name: "Inglés", level: "Profesional" },
     ],
     workAuth: "Remoto desde Perú",
-    availability: "Disponible · Internship 2028",
-    availabilityType: "Internship",
+    availability: "Disponible · Prácticas 2028",
+    availabilityType: "Prácticas",
     verified: true,
   },
   {
@@ -174,7 +174,7 @@ export const talent: Talent[] = [
     ],
     workAuth: "Remoto desde México",
     availability: "Disponible · Tiempo completo 2029",
-    availabilityType: "Full-time",
+    availabilityType: "Tiempo completo",
     verified: true,
   },
 ];

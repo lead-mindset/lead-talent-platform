@@ -3,7 +3,7 @@ import { StatusBadge } from "@/components/ui/status-badge";
 
 import { useState } from "react";
 import Link from "next/link";
-import { BadgeCheck, Bookmark, CalendarClock, Check, ChevronDown, FileText, GraduationCap, Languages, MapPin, Search, ShieldCheck, X } from "lucide-react";
+import { BadgeCheck, Bookmark, CalendarClock, Check, ChevronDown, FileText, GraduationCap, Languages, MapPin, Search, X } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -16,14 +16,29 @@ import { useSavedTalent } from "@/lib/use-saved-talent";
 import { talent, type Talent } from "@/lib/data/talent";
 
 const areaOptions = [...new Set(talent.map((person) => person.area))].sort();
-const availabilityOptions = ["Internship", "Full-time"] as const;
-const workAuthOptions = ["Local", "Remoto"] as const;
+const availabilityOptions = ["Prácticas", "Tiempo completo"] as const;
 const graduationOptions = [...new Set(talent.map((person) => person.graduation))].sort();
 const languageOptions = [...new Set(talent.flatMap((person) => person.languages.map((lang) => lang.name)))].sort();
 
-function workAuthCat(person: Talent) {
-  if (person.workAuth.includes("Autorización")) return "Local";
-  return "Remoto";
+const fold = (value: string) =>
+  value.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+
+function searchableText(person: Talent) {
+  return fold(
+    [
+      person.name,
+      person.school,
+      person.headline,
+      person.area,
+      person.chapter,
+      person.country,
+      person.location,
+      person.availability,
+      person.availabilityType,
+      ...person.skills.map((skill) => skill.name),
+      ...person.languages.map((language) => language.name),
+    ].join(" ")
+  );
 }
 
 function toggleIn(set: Set<string>, value: string) {
@@ -47,7 +62,7 @@ function TalentCard({
   return (
     <Card className="shadow-sm">
       <CardContent className="p-(--card-spacing)">
-        <div className="flex items-center gap-4">
+        <div className="flex flex-wrap items-center gap-4">
           <InitialsAvatar
             initials={person.initials}
             color={person.avatarColor}
@@ -71,9 +86,6 @@ function TalentCard({
         </p>
 
         <div className="mt-4 flex flex-wrap gap-x-5 gap-y-1.5 border-t border-border/60 pt-3 text-small text-muted-foreground">
-          <span className="flex items-center gap-1.5">
-            <ShieldCheck className="size-4 shrink-0 text-brand-purple-light" /> {person.workAuth}
-          </span>
           <span className="flex items-center gap-1.5">
             <CalendarClock className="size-4 shrink-0 text-brand-purple-light" /> {person.availability}
           </span>
@@ -134,42 +146,30 @@ export default function EmpresaPage() {
   const [availability, setAvailability] = useState<Set<string>>(new Set());
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [skillTags, setSkillTags] = useState<string[]>([]);
-  const [workAuth, setWorkAuth] = useState<Set<string>>(new Set());
   const [languages, setLanguages] = useState<Set<string>>(new Set());
   const [graduation, setGraduation] = useState<Set<string>>(new Set());
   const { saved, toggle } = useSavedTalent();
 
+  const queryTokens = fold(query).split(/\s+/).filter(Boolean);
   const visible = talent.filter((person) => {
-    const q = query.trim().toLowerCase();
-    if (
-      q &&
-      !(
-        person.name.toLowerCase().includes(q) ||
-        person.school.toLowerCase().includes(q) ||
-        person.headline.toLowerCase().includes(q) ||
-        person.area.toLowerCase().includes(q) ||
-        person.skills.some((skill) => skill.name.toLowerCase().includes(q)) ||
-        person.languages.some((lang) => lang.name.toLowerCase().includes(q))
-      )
-    ) {
-      return false;
+    if (queryTokens.length > 0) {
+      const haystack = searchableText(person);
+      if (!queryTokens.every((token) => haystack.includes(token))) return false;
     }
     if (areas.size > 0 && !areas.has(person.area)) return false;
     if (availability.size > 0 && !availability.has(person.availabilityType)) return false;
     if (skillTags.length > 0 && !person.skills.some((skill) => skillTags.some((tag) => skill.name.toLowerCase().includes(tag.toLowerCase())))) return false;
-    if (workAuth.size > 0 && !workAuth.has(workAuthCat(person))) return false;
     if (languages.size > 0 && !person.languages.some((lang) => languages.has(lang.name))) return false;
     if (graduation.size > 0 && !graduation.has(person.graduation)) return false;
     return true;
   });
 
-  const activeChips = [...skillTags, ...areas, ...availability, ...workAuth, ...languages, ...graduation];
-  const hasCriteria = activeChips.length > 0;
+  const activeChips = [...skillTags, ...areas, ...availability, ...languages, ...graduation];
+  const hasCriteria = queryTokens.length > 0 || activeChips.length > 0;
 
   const clearChip = (chip: string) => {
     setAreas((prev) => (prev.has(chip) ? toggleIn(prev, chip) : prev));
     setAvailability((prev) => (prev.has(chip as (typeof availabilityOptions)[number]) ? toggleIn(prev, chip) : prev));
-    setWorkAuth((prev) => (prev.has(chip as (typeof workAuthOptions)[number]) ? toggleIn(prev, chip) : prev));
     setLanguages((prev) => (prev.has(chip) ? toggleIn(prev, chip) : prev));
     setGraduation((prev) => (prev.has(chip) ? toggleIn(prev, chip) : prev));
     setSkillTags((prev) => prev.filter((tag) => tag !== chip));
@@ -178,7 +178,6 @@ export default function EmpresaPage() {
   const clearAll = () => {
     setAreas(new Set());
     setAvailability(new Set());
-    setWorkAuth(new Set());
     setLanguages(new Set());
     setGraduation(new Set());
     setSkillTags([]);
@@ -199,7 +198,7 @@ export default function EmpresaPage() {
         <Input
           value={query}
           onChange={(event) => setQuery(event.target.value)}
-          placeholder="Describe tu rol: backend engineer, remoto, inglés, puede empezar en verano…"
+          placeholder="Describe tu rol: backend, remoto, inglés, disponible para prácticas…"
           className="h-12 rounded-2xl bg-card pl-12 text-body-lg"
           aria-label="Describir el rol"
         />
@@ -240,21 +239,7 @@ export default function EmpresaPage() {
                 hint="Escribe una skill y presiona Enter. Añade las que necesites."
               />
             </div>
-            <div className="grid gap-4 sm:grid-cols-3">
-              <div>
-                <h2 className="text-body font-semibold">Autorización</h2>
-                <div className="mt-2 space-y-1.5">
-                  {workAuthOptions.map((option) => (
-                    <SidebarOption
-                      key={option}
-                      active={workAuth.has(option)}
-                      onClick={() => setWorkAuth((prev) => toggleIn(prev, option))}
-                    >
-                      {option}
-                    </SidebarOption>
-                  ))}
-                </div>
-              </div>
+            <div className="grid gap-4 sm:grid-cols-2">
               <div>
                 <h2 className="text-body font-semibold">Idiomas</h2>
                 <div className="mt-2 space-y-1.5">
@@ -302,6 +287,11 @@ export default function EmpresaPage() {
 
       {hasCriteria && (
         <div className="mt-3 flex flex-wrap gap-1.5">
+          {queryTokens.length > 0 && (
+            <FilterChip active onClick={() => setQuery("")}>
+              “{query.trim()}” <X className="size-3 text-muted-foreground" />
+            </FilterChip>
+          )}
           {activeChips.map((chip) => (
             <FilterChip key={chip} active onClick={() => clearChip(chip)}>
               {chip} <X className="size-3 text-muted-foreground" />

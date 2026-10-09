@@ -3,8 +3,10 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LogOut, Menu, X } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { BrandMark } from "@/components/brand-mark";
+import { LogoutButton } from "@/components/logout-button";
 
 export default function EmpresaLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -20,11 +22,9 @@ export default function EmpresaLayout({ children }: { children: React.ReactNode 
       <header className="sticky top-0 z-40 border-b border-border/60 bg-background/85 backdrop-blur">
         <div className="mx-auto flex h-16 max-w-5xl items-center gap-4 px-6">
           <div className="flex items-center gap-2.5">
-            <span className="brand-gradient flex size-8 items-center justify-center rounded-lg text-sm font-black tracking-tight text-primary-foreground">
-              L
-            </span>
+            <BrandMark className="h-6" />
             <div className="leading-tight">
-              <p className="text-sm font-bold tracking-tight">Portal Empresa</p>
+              <p className="text-body font-bold tracking-tight">Portal Empresa</p>
               <p className="text-caption text-muted-foreground">Talento LEAD</p>
             </div>
           </div>
@@ -48,11 +48,7 @@ export default function EmpresaLayout({ children }: { children: React.ReactNode 
           </nav>
 
           <div className="ml-auto flex items-center gap-2">
-            <Button variant="ghost" size="sm" asChild className="gap-1.5 text-small text-muted-foreground">
-              <Link href="/empresa/login">
-                <LogOut className="size-3.5" /> Cerrar sesión
-              </Link>
-            </Button>
+            <LogoutButton />
             <Button
               variant="ghost"
               size="icon"

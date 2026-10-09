@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Bookmark, Check, FileText, LifeBuoy, Lightbulb, Lock, Mail, Search, ShieldCheck, Sparkles, UserPlus } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { CONTACT_EMAIL } from "@/lib/config";
 
 const steps = [
   { icon: Lock, title: "Acceso por invitación", text: "LEAD invita a tu empresa. Entras con el correo corporativo de la invitación; el acceso es controlado y revocable." },
@@ -100,7 +101,7 @@ export default function AyudaPage() {
             </div>
           </div>
           <Button asChild className="mt-4">
-            <a href="mailto:contact@leadmindset.org">Contactar a LEAD</a>
+            <a href={`mailto:${CONTACT_EMAIL}`}>Contactar a LEAD</a>
           </Button>
         </CardContent>
       </Card>
