@@ -11,7 +11,9 @@ import { Field, useForm } from "@/components/form";
 import { Segmented } from "@/components/ui/segmented";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { InitialsAvatar } from "@/components/initials-avatar";
+import { useToast } from "@/components/ui/toast";
 import { buildValidate, email, required } from "@/lib/validators";
+import { INVITE_STATUS } from "@/lib/status";
 import { companyInvites, type CompanyInvite, type ContactRole } from "@/lib/data/admin";
 
 const ROLE_OPTIONS: ContactRole[] = ["Recruiter", "Talent Partner", "Admin"];
@@ -26,18 +28,6 @@ const validate = buildValidate({
   company: [required("Elige una empresa o escribe su nombre")],
   email: [required("Escribe el correo de contacto"), email()],
 });
-
-const statusTone: Record<string, "info" | "success" | "muted"> = {
-  pending: "info",
-  accepted: "success",
-  revoked: "muted",
-};
-
-const statusLabel: Record<string, string> = {
-  pending: "Pendiente",
-  accepted: "Aceptada",
-  revoked: "Revocada",
-};
 
 const normalize = (value: string) => value.trim().toLowerCase().replace(/\s+/g, "");
 
@@ -56,6 +46,8 @@ export function InviteManagement({ subtitle }: { subtitle: string }) {
   const [selectedId, setSelectedId] = useState<string | undefined>(companies[0]?.id);
   const [role, setRole] = useState<ContactRole>("Recruiter");
 
+  const { toast } = useToast();
+
   const form = useForm({
     initial: { company: "", email: "", note: "" },
     validate,
@@ -73,18 +65,46 @@ export function InviteManagement({ subtitle }: { subtitle: string }) {
         }
         return [...prev, { id: `co-${Date.now()}`, company: companyName, contacts: [contact] }];
       });
+      toast({ title: "Invitación enviada", description: `${values.email.trim()} · ${companyName}`, variant: "success" });
       form.set("company", "");
       form.set("email", "");
       form.set("note", "");
     },
   });
 
-  const setContactStatus = (companyId: string, contactId: string, status: CompanyInvite["contacts"][number]["status"]) =>
+  const setContactStatus = (companyId: string, contactId: string, status: CompanyInvite["contacts"][number]["status"]) => {
+    const previous = companies
+      .find((c) => c.id === companyId)
+      ?.contacts.find((ct) => ct.id === contactId)?.status;
     setCompanies((prev) =>
       prev.map((c) =>
         c.id === companyId ? { ...c, contacts: c.contacts.map((ct) => (ct.id === contactId ? { ...ct, status } : ct)) } : c
       )
     );
+    const title =
+      status === "revoked"
+        ? previous === "pending"
+          ? "Invitación cancelada"
+          : "Acceso revocado"
+        : "Invitación reactivada";
+    toast({
+      title,
+      variant: status === "revoked" ? "destructive" : "success",
+      action: previous
+        ? {
+            label: "Deshacer",
+            onClick: () =>
+              setCompanies((prev) =>
+                prev.map((c) =>
+                  c.id === companyId
+                    ? { ...c, contacts: c.contacts.map((ct) => (ct.id === contactId ? { ...ct, status: previous } : ct)) }
+                    : c
+                )
+              ),
+          }
+        : undefined,
+    });
+  };
 
   const matchSuggestion = companyMode === "new" && form.values.company.trim().length >= 3
     ? companies.find((c) => {
@@ -210,7 +230,7 @@ export function InviteManagement({ subtitle }: { subtitle: string }) {
                           {contact.role} · enviada {contact.sent}
                         </p>
                       </div>
-                      <StatusBadge tone={statusTone[contact.status]}>{statusLabel[contact.status]}</StatusBadge>
+                      <StatusBadge tone={INVITE_STATUS[contact.status].tone}>{INVITE_STATUS[contact.status].label}</StatusBadge>
                       {contact.status === "pending" && (
                         <Button size="sm" variant="outline" onClick={() => setContactStatus(company.id, contact.id, "revoked")}>
                           Cancelar invitación

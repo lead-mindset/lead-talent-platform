@@ -3,24 +3,7 @@ import { Chip } from "@/components/ui/chip";
 
 import { useState } from "react";
 import { X } from "lucide-react";
-
-const skillPool = [
-  "Python",
-  "React",
-  "Java",
-  "SQL",
-  "TypeScript",
-  "Machine Learning",
-  "Data Analysis",
-  "Deep Learning",
-  "AWS",
-  "System Design",
-  "Figma",
-  "Design Systems",
-  "Econometrics",
-  "SolidWorks",
-  "Kotlin",
-];
+import { SKILL_POOL } from "@/lib/data/options";
 
 export function TagInput({
   tags,
@@ -37,7 +20,7 @@ export function TagInput({
 }) {
   const [value, setValue] = useState("");
 
-  const suggestions = skillPool
+  const suggestions = SKILL_POOL
     .filter((skill) => skill.toLowerCase().includes(value.toLowerCase()) && !tags.includes(skill))
     .slice(0, 6);
 

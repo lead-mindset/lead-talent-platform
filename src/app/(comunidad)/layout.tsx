@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Topbar } from "@/components/topbar";
+import { CONTACT_EMAIL } from "@/lib/config";
 
 export default function ComunidadLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -16,7 +17,7 @@ export default function ComunidadLayout({ children }: { children: React.ReactNod
             <Link href="/empresa/login" className="hover:text-foreground">
               Para empresas
             </Link>
-            <a href="mailto:contact@leadmindset.org" className="hover:text-foreground">
+            <a href={`mailto:${CONTACT_EMAIL}`} className="hover:text-foreground">
               Contacto
             </a>
             <Link href="/privacidad" className="hover:text-foreground">

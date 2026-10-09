@@ -2,29 +2,17 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, ArrowRight, Check, Plus, ShieldCheck } from "lucide-react";
+import { ArrowLeft, ArrowRight, Check, ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { FilterChip } from "@/components/ui/filter-chip";
 import { Segmented } from "@/components/ui/segmented";
 import { Field } from "@/components/form";
 import { PhotoUpload } from "@/components/photo-upload";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { TagInput } from "@/components/tag-input";
 import { combine, email, required, url } from "@/lib/validators";
-
-const SKILL_POOL = [
-  "Python", "JavaScript", "TypeScript", "SQL", "React", "Node.js", "HTML/CSS", "Git",
-  "C++", "Java", "Go", "Data Analysis", "Machine Learning", "Figma", "UI/UX", "AWS",
-  "Docker", "Excel", "Marketing Digital", "R", "Linux",
-];
-
-const ROLE_POOL = [
-  "Software Engineer", "Data Science", "Product Manager", "UI/UX", "DevOps",
-  "Research", "Marketing", "Community",
-];
-
-const YEARS = ["2027", "2028", "2029", "2030"];
-
-const CHAPTERS = ["LEAD UTEC", "LEAD PUCP", "LEAD UTP", "LEAD UNI", "LEAD UPC", "LEAD Javeriana"];
+import { AVAILABILITY, CHAPTERS, ROLE_POOL } from "@/lib/data/options";
 
 const STEPS = ["Tú", "Formación", "Skills", "Objetivos", "Listo"];
 
@@ -41,22 +29,14 @@ export function ProfileWizard() {
   const [english, setEnglish] = useState("intermedio");
   const [chapter, setChapter] = useState("");
   const [skills, setSkills] = useState<string[]>([]);
-  const [customSkill, setCustomSkill] = useState("");
   const [topSkills, setTopSkills] = useState<string[]>([]);
   const [roles, setRoles] = useState<string[]>([]);
-  const [availability, setAvailability] = useState("internship");
-  const [workAuth, setWorkAuth] = useState("si");
-  const [errors, setErrors] = useState<{ name?: string; linkedin?: string; university?: string; skills?: string }>({});
+  const [availability, setAvailability] = useState("practicas");
+  const [errors, setErrors] = useState<{ name?: string; linkedin?: string; university?: string; skills?: string; year?: string }>({});
   const [triedNext, setTriedNext] = useState(false);
 
   const toggle = (list: string[], set: (v: string[]) => void, value: string) =>
     set(list.includes(value) ? list.filter((item) => item !== value) : [...list, value]);
-
-  const addCustomSkill = () => {
-    const value = customSkill.trim();
-    if (value && !skills.includes(value)) setSkills([...skills, value]);
-    setCustomSkill("");
-  };
 
   const validateStep = (): boolean => {
     const next: typeof errors = {};
@@ -65,6 +45,12 @@ export function ProfileWizard() {
       next.linkedin = linkedin.trim() ? combine(url())(linkedin) : undefined;
     } else if (step === 1) {
       next.university = required()(university);
+      if (
+        year.trim() &&
+        (!/^\d{4}$/.test(year.trim()) || Number(year) < 1990 || Number(year) > 2040)
+      ) {
+        next.year = "Escribe un año de graduación válido (por ejemplo 2029).";
+      }
     } else if (step === 2) {
       next.skills = skills.length === 0 ? "Elige al menos una skill" : undefined;
     }
@@ -131,7 +117,22 @@ export function ProfileWizard() {
             </Field>
             <div>
               <p className="text-small font-medium">¿Cuándo te gradúas?</p>
-              <Segmented options={YEARS.map((value) => ({ value, label: value }))} value={year} onChange={setYear} className="mt-1.5 w-full" />
+              <Input
+                type="number"
+                inputMode="numeric"
+                min={1990}
+                max={2040}
+                value={year}
+                onChange={(e) => setYear(e.target.value)}
+                placeholder="Ej. 2029"
+                className="mt-1.5"
+              />
+              {triedNext && errors.year && (
+                <p className="mt-1.5 text-caption text-destructive-light" role="alert">{errors.year}</p>
+              )}
+              <p className="mt-1 text-caption text-muted-foreground">
+                Incluye a quienes ya se graduaron.
+              </p>
             </div>
             <div>
               <p className="text-small font-medium">¿Tu inglés?</p>
@@ -144,14 +145,17 @@ export function ProfileWizard() {
             </div>
             <div>
               <p className="text-small font-medium">¿De qué capítulo eres? <span className="text-muted-foreground">(opcional)</span></p>
-              <div className="mt-1.5 flex flex-wrap gap-1.5">
-                {CHAPTERS.map((item) => (
-                  <FilterChip key={item} active={chapter === item} onClick={() => setChapter(chapter === item ? "" : item)}>
-                    {item}
-                  </FilterChip>
-                ))}
-                <FilterChip active={chapter === ""} onClick={() => setChapter("")}>No estoy en un capítulo (general member)</FilterChip>
-              </div>
+              <Select value={chapter} onValueChange={setChapter}>
+                <SelectTrigger className="mt-1.5 h-10 w-full justify-between rounded-md">
+                  <SelectValue placeholder="Elige tu capítulo" />
+                </SelectTrigger>
+                <SelectContent>
+                  {CHAPTERS.map((item) => (
+                    <SelectItem key={item} value={item}>{item}</SelectItem>
+                  ))}
+                  <SelectItem value="">No estoy en un capítulo (general member)</SelectItem>
+                </SelectContent>
+              </Select>
               <p className="mt-1.5 text-caption text-muted-foreground">
                 Sin capítulo eres un general member, y tu perfil lo revisa el equipo global de LEAD.
               </p>
@@ -161,18 +165,16 @@ export function ProfileWizard() {
 
         {step === 2 && (
           <div className="space-y-4">
-            <p className="text-small font-medium">¿Qué sabes hacer? Toca todo lo que aplique.</p>
-            <div className="flex flex-wrap gap-1.5">
-              {SKILL_POOL.map((skill) => (
-                <FilterChip key={skill} active={skills.includes(skill)} onClick={() => toggle(skills, setSkills, skill)}>
-                  {skill}
-                </FilterChip>
-              ))}
-            </div>
-            <div className="flex gap-2">
-              <Input value={customSkill} onChange={(e) => setCustomSkill(e.target.value)} placeholder="Agrega una skill" onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); addCustomSkill(); } }} />
-              <Button type="button" variant="outline" onClick={addCustomSkill} aria-label="Agregar skill"><Plus className="size-4" /></Button>
-            </div>
+            <p className="text-small font-medium">¿Qué sabes hacer? Escribe y elige.</p>
+            <TagInput
+              tags={skills}
+              onAdd={(tag) => setSkills((prev) => [...prev, tag])}
+              onRemove={(tag) => {
+                setSkills((prev) => prev.filter((skill) => skill !== tag));
+                setTopSkills((prev) => prev.filter((skill) => skill !== tag));
+              }}
+              hint="Escribe una skill y presiona Enter, o elige una sugerencia."
+            />
             {triedNext && errors.skills && (
               <p className="text-caption text-destructive-light" role="alert">{errors.skills}</p>
             )}
@@ -195,7 +197,7 @@ export function ProfileWizard() {
         {step === 3 && (
           <div className="space-y-4">
             <div>
-              <p className="text-small font-medium">¿Qué te interesa? (opcional)</p>
+              <p className="text-small font-medium">¿Qué professional path te llama la atención? (opcional)</p>
               <div className="mt-1.5 flex flex-wrap gap-1.5">
                 {ROLE_POOL.map((role) => (
                   <FilterChip key={role} active={roles.includes(role)} onClick={() => toggle(roles, setRoles, role)}>
@@ -207,15 +209,11 @@ export function ProfileWizard() {
             <div>
               <p className="text-small font-medium">¿Qué disponibilidad buscas?</p>
               <Segmented
-                options={[{ value: "internship", label: "Prácticas" }, { value: "part-time", label: "Part-time" }, { value: "full-time", label: "Full-time" }]}
+                options={AVAILABILITY}
                 value={availability}
                 onChange={setAvailability}
                 className="mt-1.5 w-full"
               />
-            </div>
-            <div>
-              <p className="text-small font-medium">¿Autorización de trabajo?</p>
-              <Segmented options={[{ value: "si", label: "Sí" }, { value: "no", label: "Aún no" }]} value={workAuth} onChange={setWorkAuth} className="mt-1.5 w-full" />
             </div>
           </div>
         )}

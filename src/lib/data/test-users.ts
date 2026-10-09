@@ -15,11 +15,11 @@ export type TestUser = {
 export const testUsers: TestUser[] = [
   {
     id: "luis", name: "Luis Coronel", initials: "LC", avatarColor: "brand-purple", group: "Founder", role: "CEO LEAD Americas", scope: "LEAD Americas", scopeType: "global",
-    views: [{ label: "Board", href: "/board" }, { label: "Admin", href: "/admin" }, { label: "Miembro", href: "/inicio" }],
+    views: [{ label: "Junta", href: "/admin/junta" }, { label: "Admin", href: "/admin" }, { label: "Miembro", href: "/inicio" }],
   },
   {
     id: "antonny", name: "Antonny Porlles", initials: "AP", avatarColor: "brand-rose", group: "Founder", role: "CEO LEAD Americas", scope: "LEAD Americas", scopeType: "global",
-    views: [{ label: "Board", href: "/board" }, { label: "Admin", href: "/admin" }, { label: "Miembro", href: "/inicio" }],
+    views: [{ label: "Junta", href: "/admin/junta" }, { label: "Admin", href: "/admin" }, { label: "Miembro", href: "/inicio" }],
   },
   {
     id: "nicole", name: "Nicole Jimenez", initials: "NJ", avatarColor: "brand-red", group: "E-board global", role: "VP of Operations", scope: "LEAD Americas", scopeType: "global",

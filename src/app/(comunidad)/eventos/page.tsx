@@ -1,49 +1,55 @@
 "use client";
 
-import { useState } from "react";
-import { CalendarDays, Check, ChevronLeft, ChevronRight, Clock, Handshake, MapPin, Mic, Users, Wrench } from "lucide-react";
+import { useEffect, useState, type MouseEvent } from "react";
+import { CalendarDays, Check, ChevronLeft, ChevronRight, Clock, ExternalLink, Handshake, Info, MapPin, Mic, Users, Wrench } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { FilterChip } from "@/components/ui/filter-chip";
 import { Segmented } from "@/components/ui/segmented";
-import { events, type LeadEvent } from "@/lib/data/community";
+import { EventSidePanel } from "@/components/event-side-panel";
+import { useToast } from "@/components/ui/toast";
+import { events, getRegistrationMode, type LeadEvent } from "@/lib/data/community";
+import { useCurrentUser } from "@/lib/use-current-user";
+import { DEMO_TODAY, formatDayHeader, MONTHS, WEEKDAY_LABELS } from "@/lib/date";
 
-const dayNames = ["domingo", "lunes", "martes", "miércoles", "jueves", "viernes", "sábado"];
-const monthNames = ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"];
-const weekLabels = ["L", "M", "X", "J", "V", "S", "D"];
-
-const TODAY = "2026-10-01";
-const MY_COMMUNITY = ["LEAD UTEC", "LEAD Javeriana", "LEAD Global"];
-
-function parseDate(date: string) {
-  const [y, m, d] = date.split("-").map(Number);
-  return new Date(y, m - 1, d);
-}
-
-function formatDayHeader(date: string) {
-  const d = parseDate(date);
-  return `${d.getDate()} ${monthNames[d.getMonth()].toLowerCase()} · ${dayNames[d.getDay()]}`;
-}
-
-function inRange(date: string, start: string, days: number) {
-  const target = parseDate(date).getTime();
-  const from = parseDate(start).getTime();
-  const to = from + days * 86400000;
-  return target >= from && target <= to;
-}
-
-function EventRow({ event, registered, onToggle }: { event: LeadEvent; registered: boolean; onToggle: () => void }) {
+function EventRow({
+  event,
+  registered,
+  onOpen,
+  onToggle,
+}: {
+  event: LeadEvent;
+  registered: boolean;
+  onOpen: (event: LeadEvent) => void;
+  onToggle: () => void;
+}) {
   const typeIcon = {
     Workshop: Wrench,
     Panel: Users,
     Networking: Handshake,
     Charla: Mic,
   }[event.type];
+  const mode = getRegistrationMode(event);
+
+  function handleRegister(mouseEvent: MouseEvent) {
+    mouseEvent.stopPropagation();
+    if (mode === "external" && event.registrationUrl) {
+      window.open(event.registrationUrl, "_blank", "noopener,noreferrer");
+      return;
+    }
+    onToggle();
+  }
 
   return (
-    <div className="flex flex-col gap-4 rounded-xl border border-border/60 card-surface p-(--card-spacing) sm:flex-row sm:items-start sm:gap-5">
+    <div className="group relative flex flex-col gap-4 rounded-xl border border-border/60 card-surface p-(--card-spacing) transition-colors hover:border-brand-purple-light/30 sm:flex-row sm:items-start sm:gap-5">
+      <button
+        type="button"
+        onClick={() => onOpen(event)}
+        aria-label={`Ver detalle de ${event.title}`}
+        className="absolute inset-0 z-10 cursor-pointer rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
+      />
       <div className="w-full shrink-0 sm:w-32">
         {event.image ? (
           <img
@@ -78,13 +84,17 @@ function EventRow({ event, registered, onToggle }: { event: LeadEvent; registere
         </p>
       </div>
       <Button
-        variant={registered ? "secondary" : "default"}
+        variant={mode === "external" ? "default" : registered ? "secondary" : "default"}
         size="sm"
-        onClick={onToggle}
-        aria-pressed={registered}
-        className="shrink-0 self-end sm:self-auto"
+        onClick={handleRegister}
+        aria-pressed={mode === "external" ? undefined : registered}
+        className="relative z-20 shrink-0 self-end sm:self-auto"
       >
-        {registered ? (
+        {mode === "external" ? (
+          <>
+            <ExternalLink /> Registrarme
+          </>
+        ) : registered ? (
           <>
             <Check /> Registrado
           </>
@@ -108,12 +118,22 @@ export default function EventosPage() {
   const [year] = useState(2026);
   const [selectedDay, setSelectedDay] = useState<string | null>(null);
   const [registered, setRegistered] = useState<Set<string>>(new Set());
+  const [selected, setSelected] = useState<LeadEvent | null>(null);
+  const [panelOpen, setPanelOpen] = useState(false);
+
+  const user = useCurrentUser();
+  const { toast } = useToast();
+  const hasChapter =
+    user.scopeType === "chapter" ||
+    (user.scopeType === "member" && user.scope.startsWith("LEAD "));
+  const myCommunity = hasChapter ? [user.scope, "LEAD Global"] : ["LEAD Global"];
+  const isGeneralMember = user.scopeType === "member" && !user.scope.startsWith("LEAD ");
 
   const visible = events.filter((event) => {
-    if (view === "mi" && !MY_COMMUNITY.includes(event.calendar)) return false;
+    if (view === "mi" && !myCommunity.includes(event.calendar)) return false;
     if (type !== "Todos" && event.type !== type) return false;
-    if (time === "pasados" && event.date >= TODAY) return false;
-    if (time === "proximos" && event.date < TODAY) return false;
+    if (time === "pasados" && event.date >= DEMO_TODAY) return false;
+    if (time === "proximos" && event.date < DEMO_TODAY) return false;
     return true;
   });
 
@@ -141,13 +161,38 @@ export default function EventosPage() {
     grouped.set(event.date, list);
   }
 
-  const toggle = (id: string) =>
+  const toggle = (event: LeadEvent) => {
+    const removing = registered.has(event.id);
     setRegistered((prev) => {
       const next = new Set(prev);
-      if (next.has(id)) next.delete(id);
-      else next.add(id);
+      if (removing) next.delete(event.id);
+      else next.add(event.id);
       return next;
     });
+    toast({
+      title: removing ? "Cancelaste tu registro" : "Te registraste",
+      description: event.title,
+      variant: removing ? "default" : "success",
+    });
+  };
+
+  const openEvent = (event: LeadEvent) => {
+    setSelected(event);
+    setPanelOpen(true);
+  };
+
+  const selectDay = (date: string) => {
+    setSelectedDay(date);
+    window.setTimeout(() => {
+      document.getElementById(`day-${date}`)?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }, 0);
+  };
+
+  useEffect(() => {
+    if (!selectedDay) return;
+    const timer = window.setTimeout(() => setSelectedDay(null), 2200);
+    return () => window.clearTimeout(timer);
+  }, [selectedDay]);
 
   return (
     <div className="mx-auto w-full max-w-6xl flex-1 px-6 py-8">
@@ -175,15 +220,22 @@ export default function EventosPage() {
             ))}
           </div>
         </div>
+
+        {view === "mi" && isGeneralMember ? (
+          <p className="mt-3 flex items-center gap-2 text-small text-muted-foreground">
+            <Info className="size-3.5 shrink-0 text-brand-purple-light" />
+            Eres miembro general, así que ves los eventos de toda LEAD.
+          </p>
+        ) : null}
       </header>
 
-      <div className="flex gap-8">
-        <aside className="hidden w-72 shrink-0 lg:block">
-          <Card className="sticky top-20 shadow-sm">
+      <div className="flex flex-col gap-6 lg:flex-row lg:gap-8">
+        <aside className="w-full lg:w-72 lg:shrink-0">
+          <Card className="shadow-sm lg:sticky lg:top-20">
             <CardContent className="px-5 py-2">
               <div className="mb-3 flex items-center justify-between">
                 <h2 className="text-h3 font-semibold">
-                  {monthNames[month]} {year}
+                  {MONTHS[month]} {year}
                 </h2>
                 <div className="flex gap-1">
                   <button
@@ -191,7 +243,7 @@ export default function EventosPage() {
                     onClick={() => setMonth((m) => Math.max(8, m - 1))}
                     disabled={month <= 8}
                     aria-label="Mes anterior"
-                    className="flex size-7 items-center justify-center rounded-md text-muted-foreground hover:bg-muted hover:text-foreground disabled:opacity-40"
+                    className="flex size-9 items-center justify-center rounded-md text-muted-foreground hover:bg-muted hover:text-foreground disabled:opacity-40"
                   >
                     <ChevronLeft className="size-4" />
                   </button>
@@ -200,7 +252,7 @@ export default function EventosPage() {
                     onClick={() => setMonth((m) => Math.min(11, m + 1))}
                     disabled={month >= 11}
                     aria-label="Mes siguiente"
-                    className="flex size-7 items-center justify-center rounded-md text-muted-foreground hover:bg-muted hover:text-foreground disabled:opacity-40"
+                    className="flex size-9 items-center justify-center rounded-md text-muted-foreground hover:bg-muted hover:text-foreground disabled:opacity-40"
                   >
                     <ChevronRight className="size-4" />
                   </button>
@@ -208,7 +260,7 @@ export default function EventosPage() {
               </div>
 
               <div className="grid grid-cols-7 gap-1 text-center">
-                {weekLabels.map((label) => (
+                {WEEKDAY_LABELS.map((label) => (
                   <span key={label} className="text-caption font-medium text-muted-foreground">
                     {label}
                   </span>
@@ -225,14 +277,14 @@ export default function EventosPage() {
                     <button
                       key={day}
                       type="button"
-                      onClick={() => setSelectedDay(hasEvents ? (isSelected ? null : date) : null)}
+                      onClick={() => hasEvents && selectDay(date)}
                       disabled={!hasEvents}
                       aria-pressed={isSelected}
-                      aria-label={hasEvents ? `${day} de ${monthNames[month]}, con eventos` : `${day} de ${monthNames[month]}`}
+                      aria-label={hasEvents ? `${day} de ${MONTHS[month]}, con eventos` : `${day} de ${MONTHS[month]}`}
                       className={`relative flex aspect-square items-center justify-center rounded-md text-small transition-colors ${
                         isSelected
                           ? "bg-brand-purple/15 font-semibold text-brand-purple-light"
-                          : date < TODAY
+                          : date < DEMO_TODAY
                             ? "text-muted-foreground/40"
                             : hasEvents
                               ? "text-foreground hover:bg-muted"
@@ -262,12 +314,6 @@ export default function EventosPage() {
         </aside>
 
         <main className="min-w-0 flex-1">
-          {selectedDay && (
-            <p className="mb-4 flex items-center gap-2 text-small text-muted-foreground">
-              <Clock className="size-3.5" /> {formatDayHeader(selectedDay)}
-            </p>
-          )}
-
           {grouped.size === 0 ? (
             <Card className="shadow-sm">
               <CardContent className="p-8 text-center">
@@ -281,7 +327,13 @@ export default function EventosPage() {
           ) : (
             <div className="space-y-6">
               {[...grouped.entries()].map(([date, dayEventsList]) => (
-                <section key={date}>
+                <section
+                  key={date}
+                  id={`day-${date}`}
+                  className={`-m-2 scroll-mt-24 rounded-xl p-2 transition-colors ${
+                    selectedDay === date ? "bg-brand-purple/10 ring-1 ring-brand-purple-light/40" : ""
+                  }`}
+                >
                   <h2 className="mb-4 flex items-center gap-2 text-body font-semibold text-muted-foreground">
                     <CalendarDays className="size-4 text-brand-purple-light" />
                     {formatDayHeader(date)}
@@ -292,7 +344,8 @@ export default function EventosPage() {
                         key={event.id}
                         event={event}
                         registered={registered.has(event.id)}
-                        onToggle={() => toggle(event.id)}
+                        onOpen={openEvent}
+                        onToggle={() => toggle(event)}
                       />
                     ))}
                   </div>
@@ -302,6 +355,14 @@ export default function EventosPage() {
           )}
         </main>
       </div>
+
+      <EventSidePanel
+        event={selected}
+        open={panelOpen}
+        onOpenChange={setPanelOpen}
+        registered={selected ? registered.has(selected.id) : false}
+        onToggleRegister={(event) => toggle(event)}
+      />
     </div>
   );
 }

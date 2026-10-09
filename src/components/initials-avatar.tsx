@@ -20,7 +20,7 @@ export function InitialsAvatar({
     <span
       aria-hidden
       className={cn(
-        "inline-flex size-10 shrink-0 items-center justify-center overflow-hidden rounded-full text-sm font-semibold",
+        "inline-flex size-10 shrink-0 items-center justify-center overflow-hidden rounded-full text-body font-semibold",
         colorClasses[color] ?? "bg-muted text-muted-foreground",
         className
       )}

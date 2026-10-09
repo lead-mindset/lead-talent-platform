@@ -9,10 +9,10 @@ export function ProfileStatusBadge({ status }: { status: "pending" | "approved" 
   }
   if (status === "rejected") {
     return (
-      <StatusBadge tone="destructive"><ShieldAlert className="size-4" /> No validado · revisa tu perfil</StatusBadge>
+      <StatusBadge tone="destructive"><ShieldAlert className="size-4" /> No visible para empresas · revisa tu perfil</StatusBadge>
     );
   }
   return (
-    <StatusBadge tone="info"><ShieldCheck className="size-4" /> En revisión · pendiente de validación</StatusBadge>
+    <StatusBadge tone="info"><ShieldCheck className="size-4" /> En revisión · aún no visible para empresas</StatusBadge>
   );
 }
