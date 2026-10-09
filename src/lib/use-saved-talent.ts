@@ -2,11 +2,13 @@
 
 import { useEffect, useState } from "react";
 import { talent } from "@/lib/data/talent";
+import { useToast } from "@/components/ui/toast";
 
 const KEY = "lead-saved-talent";
 const DEFAULT_SAVED = ["t1", "t4"];
 
 export function useSavedTalent() {
+  const { toast } = useToast();
   const [saved, setSaved] = useState<string[]>([]);
   const [ready, setReady] = useState(false);
 
@@ -21,6 +23,7 @@ export function useSavedTalent() {
   }, []);
 
   const toggle = (id: string) => {
+    const wasSaved = saved.includes(id);
     setSaved((prev) => {
       const next = prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id];
       try {
@@ -29,6 +32,10 @@ export function useSavedTalent() {
         /* ignore */
       }
       return next;
+    });
+    toast({
+      title: wasSaved ? "Quitado de guardados" : "Guardado en tus candidatos",
+      variant: wasSaved ? "default" : "success",
     });
   };
 

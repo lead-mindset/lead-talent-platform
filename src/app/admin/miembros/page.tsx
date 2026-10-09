@@ -8,22 +8,32 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { FilterChip } from "@/components/ui/filter-chip";
+import { useToast } from "@/components/ui/toast";
 import { adminMembers, type AdminMember } from "@/lib/data/admin";
-
-const statusBadge: Record<string, { label: string; tone: "success" | "info" | "destructive" }> = {
-  active: { label: "Activo", tone: "success" },
-  pending: { label: "Pendiente", tone: "info" },
-  rejected: { label: "Rechazado", tone: "destructive" },
-};
+import { MEMBERSHIP_STATUS } from "@/lib/status";
 
 export default function AdminMiembrosPage() {
   const [members, setMembers] = useState(adminMembers);
   const [showInvite, setShowInvite] = useState(false);
   const [inviteEmail, setInviteEmail] = useState("");
   const [invited, setInvited] = useState<string[]>([]);
+  const { toast } = useToast();
 
-  const setStatus = (id: string, status: "active" | "rejected") =>
+  const setStatus = (id: string, status: "active" | "rejected") => {
+    const previous = members.find((member) => member.id === id)?.status;
     setMembers((prev) => prev.map((member) => (member.id === id ? { ...member, status } : member)));
+    toast({
+      title: status === "active" ? "Miembro aprobado" : "Solicitud rechazada",
+      variant: status === "active" ? "success" : "destructive",
+      action: previous
+        ? {
+            label: "Deshacer",
+            onClick: () =>
+              setMembers((prev) => prev.map((member) => (member.id === id ? { ...member, status: previous } : member))),
+          }
+        : undefined,
+    });
+  };
 
   const setRole = (id: string, role: string) =>
     setMembers((prev) => prev.map((member) => (member.id === id ? { ...member, role } : member)));
@@ -31,6 +41,7 @@ export default function AdminMiembrosPage() {
   const sendInvite = () => {
     if (!inviteEmail.includes("@")) return;
     setInvited((prev) => [...prev, inviteEmail]);
+    toast({ title: "Invitación enviada", description: inviteEmail, variant: "success" });
     setInviteEmail("");
     setShowInvite(false);
   };
@@ -40,7 +51,7 @@ export default function AdminMiembrosPage() {
   const regulares = members.filter((member) => member.status === "active" && ["Miembro", "Voluntario"].includes(member.role));
 
   const MemberRow = ({ member, showRole }: { member: AdminMember; showRole?: boolean }) => {
-    const badge = statusBadge[member.status];
+    const badge = MEMBERSHIP_STATUS[member.status];
     return (
       <div className="flex flex-wrap items-center gap-4 px-4 py-3">
         <InitialsAvatar initials={member.initials} color={member.avatarColor} className="size-10 shrink-0" />

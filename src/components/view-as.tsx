@@ -3,7 +3,7 @@ import { FilterChip } from "@/components/ui/filter-chip";
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowUpRight, Eye } from "lucide-react";
+import { ArrowUpRight, Eye, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { InitialsAvatar } from "@/components/initials-avatar";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -24,14 +24,14 @@ export function ViewAs() {
   return (
     <div className="fixed bottom-4 right-4 z-50">
       {open ? (
-        <div className="card-surface w-72 rounded-xl border border-border/60 p-4 shadow-xl">
+        <div className="card-surface w-[min(18rem,calc(100vw-2rem))] rounded-xl border border-border/60 p-4 shadow-xl">
           <div className="flex items-center justify-between">
             <p className="flex items-center gap-1.5 text-caption font-medium text-muted-foreground">
               <Eye className="size-3.5 text-brand-purple-light" /> Ver como
             </p>
-            <button type="button" onClick={() => setOpen(false)} aria-label="Cerrar" className="text-muted-foreground hover:text-foreground">
-              ✕
-            </button>
+            <Button variant="ghost" size="icon-xs" onClick={() => setOpen(false)} aria-label="Cerrar">
+              <X className="size-3.5" />
+            </Button>
           </div>
 
           <div className="mt-3 flex items-center gap-2.5">
@@ -67,9 +67,10 @@ export function ViewAs() {
           </div>
         </div>
       ) : (
-        <Button size="sm" variant="outline" className="gap-1.5 shadow-lg" onClick={() => setOpen(true)}>
+        <Button size="sm" variant="outline" className="max-w-[calc(100vw-2rem)] gap-1.5 shadow-lg" onClick={() => setOpen(true)}>
           <Eye className="size-3.5 text-brand-purple-light" />
-          Ver como: {user.name}
+          <span className="hidden sm:inline">Ver como: {user.name}</span>
+          <span className="sm:hidden">Ver como</span>
         </Button>
       )}
     </div>

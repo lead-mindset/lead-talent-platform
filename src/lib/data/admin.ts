@@ -191,13 +191,94 @@ export type ProfileReview = {
   topSkills: string[];
   submitted: string;
   status: "pending" | "approved" | "rejected";
+  email?: string;
+  about?: string;
+  experience?: { role: string; company: string; period: string }[];
+  education?: { school: string; degree: string; period: string }[];
+  languages?: { name: string; level: string }[];
+  links?: { label: string; href: string }[];
+  availability?: string;
+  workAuth?: string;
+  cv?: { name: string; uploaded: boolean };
+  shareWithCompanies?: boolean;
 };
 
 export const profileReviews: ProfileReview[] = [
-  { id: "r1", name: "Valeria Mendoza", initials: "VM", avatarColor: "brand-purple", university: "UTEC", major: "Ingeniería de Software", year: "2028", chapter: "LEAD UTEC", skills: ["Python", "SQL", "Machine Learning", "Git"], topSkills: ["Python", "SQL"], submitted: "hoy", status: "pending" },
-  { id: "r2", name: "Camila Torres", initials: "CT", avatarColor: "brand-rose", university: "UTEC", major: "Ingeniería de Sistemas", year: "2027", chapter: "LEAD UTEC", skills: ["JavaScript", "React", "TypeScript"], topSkills: ["React"], submitted: "hace 2 días", status: "pending" },
-  { id: "r3", name: "Daniela Castro", initials: "DC", avatarColor: "brand-orange", university: "Universidad de Buenos Aires", major: "Computer Science", year: "2028", chapter: "", skills: ["Python", "C++", "Data Analysis"], topSkills: ["Python"], submitted: "hace 3 días", status: "pending" },
-  { id: "r4", name: "Sofía Ramírez", initials: "SR", avatarColor: "brand-red", university: "UNI", major: "CS + Statistics", year: "2027", chapter: "LEAD UNI", skills: ["SQL", "Data Analysis", "R"], topSkills: ["SQL"], submitted: "hace 1 semana", status: "pending" },
-  { id: "r5", name: "Ana Lucía Paredes", initials: "AP", avatarColor: "brand-purple", university: "Pontificia Universidad Javeriana", major: "Computer Science", year: "2027", chapter: "LEAD Javeriana", skills: ["Java", "AWS", "Docker"], topSkills: ["AWS"], submitted: "hace 3 días", status: "approved" },
-  { id: "r6", name: "Diego Salas", initials: "DS", avatarColor: "brand-rose", university: "UTEC", major: "Ingeniería Mecatrónica", year: "2028", chapter: "LEAD UTEC", skills: ["C++", "Arduino"], topSkills: ["C++"], submitted: "hace 5 días", status: "rejected" },
+  {
+    id: "r1", name: "Valeria Mendoza", initials: "VM", avatarColor: "brand-purple", university: "UTEC", major: "Ingeniería de Software", year: "2028", chapter: "LEAD UTEC",
+    skills: ["Python", "SQL", "Machine Learning", "Git"], topSkills: ["Python", "SQL"], submitted: "hoy", status: "pending",
+    email: "valeria.mendoza@example.com",
+    about: "Estudiante de Ingeniería de Software interesada en construir productos que conecten comunidades. Formé parte del capítulo LEAD UTEC y ahora busco conectar mi experiencia con nuevas oportunidades en tecnología.",
+    experience: [
+      { role: "Practicante de Ingeniería de Software", company: "LEAD UTEC · Tech", period: "2026" },
+      { role: "Tech Lead del capítulo", company: "LEAD UTEC", period: "2025 – 2026" },
+    ],
+    education: [
+      { school: "UTEC", degree: "Ingeniería de Software", period: "2025 – 2029" },
+      { school: "Colegio de Alto Rendimiento", degree: "Bachillerato", period: "2019 – 2024" },
+    ],
+    languages: [
+      { name: "Español", level: "Nativo" },
+      { name: "Inglés", level: "Profesional" },
+    ],
+    links: [
+      { label: "GitHub", href: "https://github.com/valeriamendoza" },
+      { label: "LinkedIn", href: "https://linkedin.com/in/valeriamendoza" },
+    ],
+    availability: "Disponible para prácticas pre-profesionales",
+    workAuth: "Autorización de trabajo en Perú",
+    cv: { name: "cv-valeria-mendoza.pdf", uploaded: true },
+    shareWithCompanies: true,
+  },
+  {
+    id: "r2", name: "Camila Torres", initials: "CT", avatarColor: "brand-rose", university: "UTEC", major: "Ingeniería de Sistemas", year: "2027", chapter: "LEAD UTEC",
+    skills: ["JavaScript", "React", "TypeScript"], topSkills: ["React"], submitted: "hace 2 días", status: "pending",
+    email: "camila.torres@example.com",
+    about: "Frontend developer enfocada en interfaces accesibles. Me gusta trabajar con el e-board en eventos y mentorear a estudiantes que recién empiezan.",
+    experience: [{ role: "Practicante Frontend", company: "Startup local", period: "2025 – 2026" }],
+    education: [
+      { school: "UTEC", degree: "Ingeniería de Sistemas", period: "2024 – 2028" },
+    ],
+    languages: [
+      { name: "Español", level: "Nativo" },
+      { name: "Inglés", level: "Intermedio" },
+    ],
+    links: [{ label: "GitHub", href: "https://github.com/camilatorres" }],
+    availability: "Disponible para prácticas a partir de diciembre",
+    workAuth: "Autorización de trabajo en Perú",
+    cv: { name: "cv-camila-torres.pdf", uploaded: true },
+    shareWithCompanies: true,
+  },
+  {
+    id: "r3", name: "Daniela Castro", initials: "DC", avatarColor: "brand-orange", university: "Rutgers University", major: "Computer Science", year: "2028", chapter: "",
+    skills: ["Python", "C++", "Data Analysis"], topSkills: ["Python"], submitted: "hace 3 días", status: "pending",
+    email: "daniela.castro@example.com",
+    about: "Miembro general de LEAD. Estudio Computer Science en Rutgers y quiero conectar con la comunidad desde Estados Unidos.",
+    education: [{ school: "Rutgers University", degree: "B.S. Computer Science", period: "2025 – 2029" }],
+    languages: [
+      { name: "Español", level: "Nativo" },
+      { name: "Inglés", level: "Nativo" },
+    ],
+    links: [{ label: "LinkedIn", href: "https://linkedin.com/in/danielacastro" }],
+    availability: "Disponible para prácticas (verano)",
+    workAuth: "Autorización de trabajo en Estados Unidos",
+    cv: { name: "cv-daniela-castro.pdf", uploaded: true },
+    shareWithCompanies: true,
+  },
+  {
+    id: "r4", name: "Sofía Ramírez", initials: "SR", avatarColor: "brand-red", university: "UNI", major: "CS + Statistics", year: "2027", chapter: "LEAD UNI",
+    skills: ["SQL", "Data Analysis", "R"], topSkills: ["SQL"], submitted: "hace 1 semana", status: "pending",
+    email: "sofia.ramirez@example.com",
+    about: "Doble especialidad en computación y estadística. Interesada en datos y producto.",
+    experience: [{ role: "Analista de datos (prácticas)", company: "Consultora", period: "2025" }],
+    education: [{ school: "UNI", degree: "Ingeniería de Sistemas", period: "2023 – 2027" }],
+    languages: [{ name: "Español", level: "Nativo" }, { name: "Inglés", level: "Profesional" }],
+    links: [{ label: "LinkedIn", href: "https://linkedin.com/in/sofiaramirez" }],
+    availability: "Disponible para prácticas pre-profesionales",
+    workAuth: "Autorización de trabajo en Perú",
+    cv: { name: "cv-sofia-ramirez.pdf", uploaded: false },
+    shareWithCompanies: true,
+  },
+  { id: "r5", name: "Ana Lucía Paredes", initials: "AP", avatarColor: "brand-purple", university: "Pontificia Universidad Javeriana", major: "Computer Science", year: "2027", chapter: "LEAD Javeriana", skills: ["Java", "AWS", "Docker"], topSkills: ["AWS"], submitted: "hace 3 días", status: "approved", availability: "Disponible para prácticas pre-profesionales", workAuth: "Autorización de trabajo en Colombia", shareWithCompanies: true },
+  { id: "r6", name: "Diego Salas", initials: "DS", avatarColor: "brand-rose", university: "UTEC", major: "Ingeniería Mecatrónica", year: "2028", chapter: "LEAD UTEC", skills: ["C++", "Arduino"], topSkills: ["C++"], submitted: "hace 5 días", status: "rejected", availability: "Disponible para prácticas" },
 ];

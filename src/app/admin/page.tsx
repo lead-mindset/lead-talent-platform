@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { adminMembers, adminStats, juntas } from "@/lib/data/admin";
 import { events } from "@/lib/data/community";
 import { useAdminRole } from "@/lib/admin-role";
+import { isUpcoming } from "@/lib/date";
 
 export default function AdminPage() {
   const { role, scope } = useAdminRole();
@@ -95,7 +96,7 @@ export default function AdminPage() {
 
   // Chapter e-board view (scoped)
   const myEvents = events
-    .filter((event) => event.calendar === "LEAD UTEC" && event.date >= "2026-10-01")
+    .filter((event) => event.calendar === "LEAD UTEC" && isUpcoming(event.date))
     .sort((a, b) => a.date.localeCompare(b.date))
     .slice(0, 3);
 

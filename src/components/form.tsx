@@ -29,11 +29,21 @@ export function Field({
       <div className="mt-1">
         {Children.map(children, (child) =>
           isValidElement(child)
-            ? cloneElement(child as React.ReactElement<{ "aria-invalid"?: boolean; "aria-describedby"?: string; className?: string }>, {
-                "aria-invalid": !!error || undefined,
-                "aria-describedby": error ? `${htmlFor}-error` : undefined,
-                className: cn(child.props.className, error && "border-destructive-light/50 focus-visible:ring-destructive-light/30"),
-              })
+            ? cloneElement(
+                child as React.ReactElement<{
+                  "aria-invalid"?: boolean;
+                  "aria-describedby"?: string;
+                  className?: string;
+                }>,
+                {
+                  "aria-invalid": !!error || undefined,
+                  "aria-describedby": error ? `${htmlFor}-error` : undefined,
+                  className: cn(
+                    (child as React.ReactElement<{ className?: string }>).props.className,
+                    error && "border-destructive-light/50 focus-visible:ring-destructive-light/30"
+                  ),
+                }
+              )
             : child
         )}
       </div>

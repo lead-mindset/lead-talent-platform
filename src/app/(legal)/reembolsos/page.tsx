@@ -1,4 +1,5 @@
 import { LegalDoc } from "@/components/legal-doc";
+import { CONTACT_EMAIL } from "@/lib/config";
 
 export default function ReembolsosPage() {
   return (
@@ -21,7 +22,7 @@ export default function ReembolsosPage() {
         {
           heading: "Contacto",
           body: [
-            "Para consultas sobre pagos o reembolsos, escribe a contact@leadmindset.org con el detalle del evento o programa.",
+            `Para consultas sobre pagos o reembolsos, escribe a ${CONTACT_EMAIL} con el detalle del evento o programa.`,
           ],
         },
       ]}

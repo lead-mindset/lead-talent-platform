@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { BrandMark } from "@/components/brand-mark";
 
 export default function LegalLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -7,10 +8,8 @@ export default function LegalLayout({ children }: { children: React.ReactNode })
       <header className="flex h-16 items-center gap-6 border-b border-border/60">
         <div className="mx-auto flex w-full max-w-3xl items-center px-6">
           <Link href="/" className="flex items-center gap-2.5">
-            <span className="brand-gradient flex size-8 items-center justify-center rounded-lg text-sm font-black tracking-tight text-primary-foreground">
-              L
-            </span>
-            <span className="text-lg font-bold tracking-tight">LEAD</span>
+            <BrandMark className="h-6" />
+            <span className="text-h3 font-bold tracking-tight">LEAD</span>
           </Link>
           <div className="ml-auto">
             <Button asChild size="sm">

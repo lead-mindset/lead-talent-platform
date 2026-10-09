@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { CONTACT_EMAIL } from "@/lib/config";
 
 export function LegalDoc({
   title,
@@ -29,8 +30,8 @@ export function LegalDoc({
       </div>
       <footer className="mt-12 border-t border-border/60 pt-6 text-small text-muted-foreground">
         ¿Dudas? Escríbenos a{" "}
-        <a href="mailto:contact@leadmindset.org" className="font-medium text-brand-purple-light hover:underline">
-          contact@leadmindset.org
+        <a href={`mailto:${CONTACT_EMAIL}`} className="font-medium text-brand-purple-light hover:underline">
+          {CONTACT_EMAIL}
         </a>
         . También puedes <Link href="/eliminar-datos" className="font-medium text-brand-purple-light hover:underline">solicitar el borrado de tus datos</Link>.
       </footer>

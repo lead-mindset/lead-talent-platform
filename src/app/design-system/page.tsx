@@ -13,12 +13,29 @@ import {
 } from "@/components/ui/command";
 import {
   Dialog,
+  DialogBody,
   DialogContent,
   DialogDescription,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { Breadcrumbs } from "@/components/ui/breadcrumbs";
+import { Pagination } from "@/components/ui/pagination";
+import { ProgressBar } from "@/components/ui/progress-bar";
+import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarLayout } from "@/components/ui/sidebar";
+import { LogoMarquee } from "@/components/ui/logo-marquee";
+import { PARTNER_LOGOS } from "@/lib/data/partners";
+import {
+  Sheet,
+  SheetBody,
+  SheetContent,
+  SheetDescription,
+  SheetFooter,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -53,6 +70,7 @@ import {
 } from "@/components/ui/tooltip";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { useToast } from "@/components/ui/toast";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { FilterChip } from "@/components/ui/filter-chip";
@@ -111,6 +129,7 @@ const typeSamples: { name: string; className: string }[] = [
 ];
 
 export default function DesignSystemPage() {
+  const { toast } = useToast();
   return (
     <div className="mx-auto w-full max-w-5xl flex-1 px-6 py-10">
       <header className="mb-8">
@@ -443,20 +462,61 @@ export default function DesignSystemPage() {
         </Section>
 
         <Section title="Popups">
-          <Row label="Dialog">
+          <Row label="Modal con scroll (encabezado y pie fijos, cuerpo con scroll)">
             <Dialog>
-              <DialogTrigger asChild><Button variant="outline">Abrir diálogo</Button></DialogTrigger>
-              <DialogContent>
+              <DialogTrigger asChild><Button variant="outline">Abrir modal con scroll</Button></DialogTrigger>
+              <DialogContent className="sm:max-w-md">
                 <DialogHeader>
-                  <DialogTitle>Confirmar registro</DialogTitle>
-                  <DialogDescription>Estás a punto de registrarte al evento. ¿Continuamos?</DialogDescription>
+                  <DialogTitle>Términos y condiciones</DialogTitle>
+                  <DialogDescription>El encabezado y el pie quedan fijos; solo el contenido hace scroll.</DialogDescription>
                 </DialogHeader>
-                <div className="flex justify-end gap-2">
+                <DialogBody>
+                  <div className="space-y-3 text-body text-muted-foreground">
+                    {Array.from({ length: 14 }).map((_, index) => (
+                      <p key={index}>
+                        Cláusula {index + 1}. Párrafo de ejemplo para mostrar el scroll interno del modal sin mover el
+                        encabezado ni el pie de acciones.
+                      </p>
+                    ))}
+                  </div>
+                </DialogBody>
+                <DialogFooter>
                   <Button variant="secondary">Cancelar</Button>
-                  <Button>Confirmar</Button>
-                </div>
+                  <Button>Aceptar</Button>
+                </DialogFooter>
               </DialogContent>
             </Dialog>
+          </Row>
+          <Row label="Sheet (panel lateral)">
+            <Sheet>
+              <SheetTrigger asChild><Button variant="outline">Abrir panel lateral</Button></SheetTrigger>
+              <SheetContent>
+                <SheetBody className="px-6 py-6">
+                  <SheetTitle className="text-h3">Detalle del evento</SheetTitle>
+                  <SheetDescription className="mt-1">
+                    El panel lateral muestra un detalle sin salir de la página. Se cierra con Escape o al tocar el fondo.
+                  </SheetDescription>
+                </SheetBody>
+                <SheetFooter>
+                  <Button variant="outline">Acción secundaria</Button>
+                  <Button>Acción principal</Button>
+                </SheetFooter>
+              </SheetContent>
+            </Sheet>
+          </Row>
+          <Row label="Toast">
+            <Button variant="outline" onClick={() => toast({ title: "Guardado", description: "Tus cambios se guardaron." })}>
+              Normal
+            </Button>
+            <Button variant="outline" onClick={() => toast({ title: "Listo", variant: "success" })}>
+              Éxito
+            </Button>
+            <Button variant="outline" onClick={() => toast({ title: "Algo salió mal", variant: "destructive" })}>
+              Error
+            </Button>
+            <Button variant="outline" onClick={() => toast({ title: "Evento creado", action: { label: "Deshacer", onClick: () => {} } })}>
+              Con acción
+            </Button>
           </Row>
           <Row label="DropdownMenu">
             <DropdownMenu>
@@ -497,14 +557,52 @@ export default function DesignSystemPage() {
           </Row>
         </Section>
 
-        <Section title="Sidebar (navegación)">
-          <Row label="ejemplo vertical">
-            <div className="w-48 max-w-full space-y-1 rounded-xl border border-border bg-card p-3">
-              <SidebarOption active onClick={() => {}}>Perfil</SidebarOption>
-              <SidebarOption active={false} onClick={() => {}}>Eventos</SidebarOption>
-              <SidebarOption active={false} onClick={() => {}}>Guardados</SidebarOption>
-              <Separator className="my-2" />
-              <SidebarOption active={false} onClick={() => {}}>Ayuda</SidebarOption>
+        <Section title="Sidebar (navegación fija con scroll)">
+          <Row label="app shell: sidebar fija + contenido con scroll">
+            <SidebarLayout
+              className="h-80 w-full rounded-xl border border-border"
+              sidebar={
+                <Sidebar className="h-full w-52">
+                  <SidebarHeader>
+                    <p className="px-1 text-body font-bold">LEAD</p>
+                  </SidebarHeader>
+                  <SidebarContent>
+                    <SidebarOption active onClick={() => {}}>Perfil</SidebarOption>
+                    <SidebarOption active={false} onClick={() => {}}>Eventos</SidebarOption>
+                    <SidebarOption active={false} onClick={() => {}}>Guardados</SidebarOption>
+                    {Array.from({ length: 18 }).map((_, index) => (
+                      <SidebarOption key={index} active={false} onClick={() => {}}>Sección {index + 4}</SidebarOption>
+                    ))}
+                  </SidebarContent>
+                  <SidebarFooter>
+                    <p className="px-1 text-caption text-muted-foreground">Cerrar sesión</p>
+                  </SidebarFooter>
+                </Sidebar>
+              }
+            >
+              <div className="p-4 text-small text-muted-foreground">
+                El contenido principal hace scroll por su cuenta mientras la barra lateral queda fija.
+              </div>
+            </SidebarLayout>
+          </Row>
+        </Section>
+
+        <Section title="Navegación y progreso">
+          <Row label="Breadcrumbs">
+            <Breadcrumbs items={[{ label: "Inicio", href: "/inicio" }, { label: "Admin", href: "/admin" }, { label: "Eventos" }]} />
+          </Row>
+          <Row label="Pagination">
+            <Pagination page={2} totalPages={5} onChange={() => {}} />
+          </Row>
+          <Row label="ProgressBar">
+            <div className="w-full max-w-sm space-y-3">
+              <ProgressBar value={35} />
+              <ProgressBar value={80} />
+            </div>
+          </Row>
+          <Row label="LogoMarquee (aliados)">
+            <div className="w-full">
+              <LogoMarquee items={PARTNER_LOGOS} />
             </div>
           </Row>
         </Section>

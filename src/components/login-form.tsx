@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Field, useForm } from "@/components/form";
 import { buildValidate, email, required } from "@/lib/validators";
+import { login } from "@/lib/session";
 
 const validate = buildValidate({
   email: [required(), email()],
@@ -14,7 +15,7 @@ const validate = buildValidate({
 
 export function LoginForm({ route, submitLabel }: { route: string; submitLabel: string }) {
   const router = useRouter();
-  const form = useForm({ initial: { email: "", password: "" }, validate, onSubmit: () => router.push(route) });
+  const form = useForm({ initial: { email: "", password: "" }, validate, onSubmit: (values) => { login(values.email); router.push(route); } });
 
   return (
     <form onSubmit={form.handleSubmit} className="space-y-3" noValidate>

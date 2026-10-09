@@ -3,10 +3,11 @@ import Link from "next/link";
 import { ArrowUpRight, CalendarDays, Users } from "lucide-react";
 import { events } from "@/lib/data/community";
 import { me } from "@/lib/data/people";
+import { isUpcoming } from "@/lib/date";
 
 export function ChapterHomeCard() {
   const myEvents = events
-    .filter((event) => event.calendar === me.chapter && event.date >= "2026-10-01")
+    .filter((event) => event.calendar === me.chapter && isUpcoming(event.date))
     .sort((a, b) => a.date.localeCompare(b.date));
   const next = myEvents[0];
 

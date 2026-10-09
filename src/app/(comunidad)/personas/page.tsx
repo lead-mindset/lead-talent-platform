@@ -11,7 +11,7 @@ import { people } from "@/lib/data/people";
 const classOptions = ["Todos", "2030", "2029", "2028", "2027", "anteriores"] as const;
 
 function gradYearOf(person: (typeof people)[number]) {
-  return person.classYear.replace("Class of ", "");
+  return person.classYear.replace("Egreso ", "");
 }
 
 export default function PersonasPage() {
@@ -52,9 +52,9 @@ export default function PersonasPage() {
         </p>
       </header>
 
-      <div className="flex gap-10">
-        <aside className="hidden w-56 shrink-0 lg:block">
-          <div className="sticky top-20 space-y-7">
+      <div className="flex flex-col gap-6 lg:flex-row lg:gap-10">
+        <aside className="w-full lg:w-56 lg:shrink-0">
+          <div className="space-y-7 lg:sticky lg:top-20">
             <section>
               <h2 className="text-body font-semibold">Graduación</h2>
               <div className="mt-3 space-y-1.5">

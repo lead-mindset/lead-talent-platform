@@ -8,8 +8,8 @@ import { SocialsCard } from "@/components/socials-card";
 import { ChapterHomeCard } from "@/components/chapter-home-card";
 import { posts, events } from "@/lib/data/community";
 import { me } from "@/lib/data/people";
+import { isUpcoming } from "@/lib/date";
 
-const TODAY = "2026-10-01";
 const MY_COMMUNITY = ["LEAD UTEC", "LEAD América", "LEAD Global"];
 
 const actions = [
@@ -21,13 +21,13 @@ const actions = [
 
 export default function Home() {
   const myEvents = events
-    .filter((event) => MY_COMMUNITY.includes(event.calendar) && event.date >= TODAY)
+    .filter((event) => MY_COMMUNITY.includes(event.calendar) && isUpcoming(event.date))
     .sort((a, b) => a.date.localeCompare(b.date))
     .slice(0, 3);
 
   return (
     <div className="mx-auto w-full max-w-6xl flex-1 px-6 py-8">
-      <div className="flex gap-8">
+      <div className="flex flex-col gap-8 lg:flex-row">
         <main className="min-w-0 flex-1">
           <header className="mb-6">
             <h1 className="text-h1 font-bold tracking-tight">Hola, {me.name.split(" ")[0]}.</h1>
@@ -56,6 +56,35 @@ export default function Home() {
                     <p className="mt-1 text-caption text-muted-foreground">{action.text}</p>
                     <ArrowRight className="mt-3 size-4 text-muted-foreground transition-transform group-hover:translate-x-0.5 group-hover:text-brand-purple-light" />
                   </Link>
+                ))}
+              </div>
+            </section>
+
+            <section>
+              <h2 className="mb-3 text-h3 font-semibold">Anuncios</h2>
+              <div className="space-y-4">
+                {announcements.filter((a) => a.published).map((a) => (
+                  <article key={a.id} className="card-surface rounded-xl border border-border/60 p-5">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <p className="font-medium">{a.title}</p>
+                      <StatusBadge tone="info">Global</StatusBadge>
+                    </div>
+                    <p className="mt-1 text-small text-muted-foreground">{a.body}</p>
+                    {a.image && (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img src={a.image} alt="" className="mt-2 max-h-44 w-full rounded-lg object-cover" />
+                    )}
+                    {a.links.length > 0 && (
+                      <div className="mt-2 flex flex-wrap gap-2">
+                        {a.links.map((l, i) => (
+                          <a key={i} href={l.url} className="inline-flex items-center gap-1 rounded-md bg-brand-purple/15 px-2.5 py-1 text-caption font-medium text-brand-purple-light hover:bg-brand-purple/25">
+                            {l.label} →
+                          </a>
+                        ))}
+                      </div>
+                    )}
+                    <p className="mt-1.5 text-caption text-muted-foreground">{a.author} · {a.at}</p>
+                  </article>
                 ))}
               </div>
             </section>
@@ -92,38 +121,10 @@ export default function Home() {
 
             <ChapterHomeCard />
 
-            <section>
-              <h2 className="mb-3 text-h3 font-semibold">Anuncios</h2>
-              <div className="space-y-4">
-                {announcements.filter((a) => a.published).map((a) => (
-                  <article key={a.id} className="card-surface rounded-xl border border-border/60 p-5">
-                    <div className="flex flex-wrap items-center gap-2">
-                      <p className="font-medium">{a.title}</p>
-                      <StatusBadge tone="info">Global</StatusBadge>
-                    </div>
-                    <p className="mt-1 text-small text-muted-foreground">{a.body}</p>
-                    {a.image && (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img src={a.image} alt="" className="mt-2 max-h-44 w-full rounded-lg object-cover" />
-                    )}
-                    {a.links.length > 0 && (
-                      <div className="mt-2 flex flex-wrap gap-2">
-                        {a.links.map((l, i) => (
-                          <a key={i} href={l.url} className="inline-flex items-center gap-1 rounded-md bg-brand-purple/15 px-2.5 py-1 text-xs font-medium text-brand-purple-light hover:bg-brand-purple/25">
-                            {l.label} →
-                          </a>
-                        ))}
-                      </div>
-                    )}
-                    <p className="mt-1.5 text-caption text-muted-foreground">{a.author} · {a.at}</p>
-                  </article>
-                ))}
-              </div>
-            </section>
           </div>
         </main>
 
-        <aside className="hidden w-80 shrink-0 space-y-5 lg:block">
+        <aside className="w-full space-y-5 lg:w-80 lg:shrink-0">
           <ProfileCard />
           <ResourcesCard />
           <SocialsCard />

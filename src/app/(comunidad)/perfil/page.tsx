@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Award, Briefcase, CalendarClock, Languages, Mail, MapPin, ShieldCheck, Sparkles } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -37,7 +38,9 @@ export default function ProfilePage() {
             </div>
             <div className="flex flex-col items-end gap-3">
               <ProfileStatusBadge status={profile.validationStatus} />
-              <Button variant="secondary">Editar perfil</Button>
+              <Button variant="secondary" asChild>
+                <Link href="/perfil/editar">Editar perfil</Link>
+              </Button>
             </div>
           </div>
 
@@ -67,7 +70,7 @@ export default function ProfilePage() {
         </div>
       </section>
 
-      <div className="mt-6 flex gap-8">
+      <div className="mt-6 flex flex-col gap-8 lg:flex-row">
         <main className="min-w-0 flex-1 space-y-5">
           <ProfileStrength />
 
@@ -108,7 +111,7 @@ export default function ProfilePage() {
           </Card>
         </main>
 
-        <aside className="hidden w-80 shrink-0 space-y-5 lg:block">
+        <aside className="w-full space-y-5 lg:w-80 lg:shrink-0">
           <ResourcesCard />
           <SocialsCard />
         </aside>

@@ -1,4 +1,5 @@
 import type { Person } from "./people";
+import { SOCIALS } from "@/lib/config";
 
 export type Experience = { role: string; company: string; period: string };
 export type Education = { school: string; degree: string; period: string };
@@ -28,7 +29,7 @@ export const profile: Person & {
     avatarColor: "brand-purple",
     headline: "Estudiante de Ingeniería de Software",
     school: "UTEC",
-    classYear: "Class of 2029",
+    classYear: "Egreso 2029",
     major: "Computer Science",
     skills: [
       { name: "TypeScript", level: "Avanzado" },
@@ -38,16 +39,18 @@ export const profile: Person & {
       { name: "SQL", level: "Intermedio" },
     ],
     location: "Lima, Perú",
+    country: "Perú",
+    chapter: "LEAD UTEC",
     openToWork: true,
   } satisfies Person),
   about:
     "Estudiante de Ingeniería de Software interesada en construir productos que conecten comunidades. Formé parte del capítulo LEAD UTEC y ahora busco conectar mi experiencia con nuevas oportunidades en tecnología.",
   experience: [
-    { role: "Software Engineering Intern", company: "LEAD UTEC · Tech", period: "Verano 2026" },
+    { role: "Practicante de Ingeniería de Software", company: "LEAD UTEC · Tech", period: "2026" },
     { role: "Chapter Tech Lead", company: "LEAD UTEC", period: "2025 – 2026" },
   ],
   education: [
-    { school: "UTEC", degree: "B.S. Computer Science", period: "2025 – 2029" },
+    { school: "UTEC", degree: "Ingeniería de Software", period: "2025 – 2029" },
     { school: "Colegio de Alto Rendimiento", degree: "Bachillerato", period: "2019 – 2024" },
   ],
   languages: [
@@ -56,7 +59,7 @@ export const profile: Person & {
     { name: "Portugués", level: "Conversacional" },
   ],
   workAuth: "Autorización de trabajo en Perú",
-  availability: "Disponible para internship · Verano 2027",
+  availability: "Disponible para prácticas pre-profesionales",
   githubUrl: "https://github.com/valeriamendoza",
   linkedinUrl: "https://linkedin.com/in/valeriamendoza",
   contactEmail: "valeria.mendoza@example.com",
@@ -75,8 +78,4 @@ export const resources = [
   { title: "Programas y becas", description: "Oportunidades de financiamiento y programas", href: "/recursos" },
 ];
 
-export const socials = [
-  { name: "Instagram", handle: "@lead_americas", href: "https://www.instagram.com/lead_americas/" },
-  { name: "LinkedIn", handle: "LEAD", href: "https://www.linkedin.com/company/leadmindsetorg/" },
-  { name: "Slack", handle: "LEAD Workspace", href: "https://join.slack.com/t/leadmindsetworkspace/shared_invite/zt-3k9782iqo-lm1xNxkptWdSbkkXOR5mvg" },
-];
+export const socials = SOCIALS;

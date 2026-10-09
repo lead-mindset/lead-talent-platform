@@ -3,11 +3,13 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Bell, Menu, Search, X } from "lucide-react";
+import { Bell, Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { InitialsAvatar } from "@/components/initials-avatar";
+import { BrandMark } from "@/components/brand-mark";
+import { LogoutButton } from "@/components/logout-button";
 import { useCurrentUser } from "@/lib/use-current-user";
+import { getSocial } from "@/lib/config";
 import { cn } from "cn";
 
 const baseNav = [
@@ -16,28 +18,51 @@ const baseNav = [
   { label: "Personas", href: "/personas" },
 ];
 
+function InstagramIcon({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className={className} aria-hidden="true">
+      <rect width="20" height="20" x="2" y="2" rx="5" ry="5" />
+      <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+      <line x1="17.5" x2="17.51" y1="6.5" y2="6.5" />
+    </svg>
+  );
+}
+
+function LinkedInIcon({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className={className} aria-hidden="true">
+      <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z" />
+      <rect width="4" height="12" x="2" y="9" />
+      <circle cx="4" cy="4" r="2" />
+    </svg>
+  );
+}
+
+const socialLinks = [
+  { ...getSocial("instagram"), icon: InstagramIcon },
+  { ...getSocial("linkedin"), icon: LinkedInIcon },
+];
+
 export function Topbar() {
   const pathname = usePathname();
   const user = useCurrentUser();
   const [open, setOpen] = useState(false);
 
   const adminLinks = user.views
-    .filter((view) => view.href === "/admin" || view.href === "/board")
+    .filter((view) => view.href.startsWith("/admin"))
     .map((view) => ({
       label: view.label,
       href: view.href,
       special: true,
     }));
-  const nav = [...baseNav, ...adminLinks];
+  const nav: { label: string; href: string; special?: boolean }[] = [...baseNav, ...adminLinks];
 
   return (
     <header className="sticky top-0 z-40 border-b border-border/60 bg-background/85 backdrop-blur">
       <div className="mx-auto flex h-16 max-w-6xl items-center gap-4 px-6">
         <Link href="/inicio" className="flex items-center gap-2.5" onClick={() => setOpen(false)}>
-          <span className="brand-gradient flex size-8 items-center justify-center rounded-lg text-sm font-black tracking-tight text-primary-foreground">
-            L
-          </span>
-          <span className="text-lg font-bold tracking-tight">LEAD</span>
+          <BrandMark className="h-6" />
+          <span className="text-h3 font-bold tracking-tight">LEAD</span>
         </Link>
 
         <nav className="ml-4 hidden items-center gap-1 md:flex" aria-label="Navegación principal">
@@ -66,12 +91,14 @@ export function Topbar() {
         </nav>
 
         <div className="ml-auto flex items-center gap-2">
-          <div className="relative hidden lg:block">
-            <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
-            <Input
-              placeholder="Buscar personas, universidades…"
-              className="h-9 w-64 rounded-full border-border/60 bg-card pl-9"
-            />
+          <div className="flex items-center gap-1">
+            {socialLinks.map(({ name, href, icon: Icon }) => (
+              <Button key={href} variant="ghost" size="icon-sm" asChild className="text-muted-foreground hover:text-foreground">
+                <a href={href} target="_blank" rel="noreferrer" aria-label={name}>
+                  <Icon className="size-4" />
+                </a>
+              </Button>
+            ))}
           </div>
           <Button variant="ghost" size="icon" aria-label="Notificaciones">
             <Bell />
@@ -79,6 +106,7 @@ export function Topbar() {
           <Link href="/perfil" aria-label="Mi perfil">
             <InitialsAvatar initials={user.initials} color={user.avatarColor} className="cursor-pointer" />
           </Link>
+          <LogoutButton iconOnly />
           <Button
             variant="ghost"
             size="icon"

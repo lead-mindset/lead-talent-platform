@@ -4,10 +4,13 @@ import { ArrowRight, BadgeCheck, Building2, CalendarDays, Check, MapPin, UserPlu
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { InitialsAvatar } from "@/components/initials-avatar";
+import { BrandMark } from "@/components/brand-mark";
 import { AsciiText } from "@/components/ascii-text";
+import { LogoMarquee } from "@/components/ui/logo-marquee";
 import { events } from "@/lib/data/community";
 import { people } from "@/lib/data/people";
 import { talent } from "@/lib/data/talent";
+import { PARTNER_LOGOS } from "@/lib/data/partners";
 
 const stats = [
   { value: "13", label: "capítulos universitarios" },
@@ -24,10 +27,8 @@ export default function LandingPage() {
     <div className="mx-auto w-full max-w-6xl flex-1 px-6">
       <header className="flex h-16 items-center gap-6">
         <Link href="/" className="flex items-center gap-2.5">
-          <span className="brand-gradient flex size-8 items-center justify-center rounded-lg text-sm font-black tracking-tight text-primary-foreground">
-            L
-          </span>
-          <span className="text-lg font-bold tracking-tight">LEAD</span>
+          <BrandMark className="h-6" />
+          <span className="text-h3 font-bold tracking-tight">LEAD</span>
         </Link>
         <nav className="ml-auto flex items-center gap-2">
           <Link
@@ -69,7 +70,7 @@ export default function LandingPage() {
               <Link href="/eventos">Explorar los eventos</Link>
             </Button>
           </div>
-          <div className="mt-10 flex items-center gap-4">
+          <div className="mt-10 flex flex-wrap items-center gap-4">
             <div className="flex -space-x-2">
               {featuredPeople.map((person) => (
                 <InitialsAvatar
@@ -80,7 +81,7 @@ export default function LandingPage() {
                 />
               ))}
             </div>
-            <p className="text-small text-muted-foreground">
+            <p className="min-w-0 text-small text-muted-foreground">
               Únete a {people.length}+ miembros y sé visible para empresas
             </p>
           </div>
@@ -124,9 +125,9 @@ export default function LandingPage() {
         </div>
       </section>
 
-      <section className="grid grid-cols-3 divide-x divide-border/60 border-y border-border/60 py-7">
+      <section className="grid grid-cols-1 divide-y divide-border/60 border-y border-border/60 py-7 sm:grid-cols-3 sm:divide-x sm:divide-y-0">
         {stats.map((stat) => (
-          <div key={stat.label} className="px-6 text-center first:pl-0 last:pr-0">
+          <div key={stat.label} className="px-6 py-4 text-center sm:py-0 sm:first:pl-0 sm:last:pr-0">
             <p className="text-h1 font-bold leading-none">{stat.value}</p>
             <p className="mt-1.5 text-small text-muted-foreground">{stat.label}</p>
           </div>
@@ -137,13 +138,7 @@ export default function LandingPage() {
         <p className="text-center text-small font-medium text-muted-foreground">
           Empresas que confían en el talento LEAD
         </p>
-        <div className="mt-6 flex flex-wrap items-center justify-center gap-x-10 gap-y-4 text-h3 font-bold tracking-tight text-muted-foreground/70">
-          {["Microsoft", "Google", "AWS", "ALPFA", "SHPE"].map((company) => (
-            <span key={company} className="transition-colors hover:text-foreground">
-              {company}
-            </span>
-          ))}
-        </div>
+        <LogoMarquee items={PARTNER_LOGOS} />
       </section>
 
       <section className="py-20">
@@ -250,13 +245,13 @@ export default function LandingPage() {
       </section>
 
       <section className="brand-gradient mb-20 rounded-3xl px-8 py-14 text-center">
-        <h2 className="mx-auto max-w-lg text-h1 font-bold tracking-tight text-white">
+        <h2 className="mx-auto max-w-lg text-h1 font-bold tracking-tight text-primary-foreground">
           Las empresas ya buscan talento LEAD
         </h2>
-        <p className="mx-auto mt-3 max-w-md text-small text-white/85">
+        <p className="mx-auto mt-3 max-w-md text-small text-primary-foreground/85">
           Perfil verificado + resume + idiomas y disponibilidad. Así es como te encuentran.
         </p>
-        <Button asChild size="lg" className="mt-6 gap-1.5 bg-white text-foreground hover:bg-white/90">
+        <Button asChild size="lg" className="mt-6 gap-1.5 bg-primary-foreground text-foreground hover:bg-primary-foreground/90">
           <Link href="/perfil">
             Crear mi perfil ahora <ArrowRight className="size-4" />
           </Link>

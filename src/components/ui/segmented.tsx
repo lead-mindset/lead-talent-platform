@@ -13,7 +13,7 @@ export function Segmented<T extends string>({
   className?: string;
 }) {
   return (
-    <div className={cn("inline-flex rounded-lg bg-muted p-1", className)}>
+    <div className={cn("inline-flex flex-wrap rounded-lg bg-muted p-1", className)}>
       {options.map((option) => {
         const active = value === option.value;
         return (
