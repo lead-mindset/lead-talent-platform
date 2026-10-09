@@ -7,6 +7,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Field, useForm } from "@/components/form";
 import { buildValidate, email, required } from "@/lib/validators";
+import { CONTACT_EMAIL } from "@/lib/config";
 
 const validate = buildValidate({
   email: [required("Escribe el correo de tu cuenta"), email()],
@@ -34,8 +35,8 @@ export default function EliminarDatosPage() {
             <CheckCircle2 className="mx-auto size-8 text-success" />
             <p className="mt-3 font-medium">Solicitud recibida</p>
             <p className="mt-1 text-small text-muted-foreground">
-              Te escribiremos a {email} para confirmar el borrado. Si cambias de opinión, puedes
-              escribirnos a contact@leadmindset.org.
+              Te escribiremos a {form.values.email} para confirmar el borrado. Si cambias de opinión, puedes
+              escribirnos a {CONTACT_EMAIL}.
             </p>
           </CardContent>
         </Card>

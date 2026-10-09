@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ArrowRight, GraduationCap, Info } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { BrandMark } from "@/components/brand-mark";
 import { OtpLogin } from "@/components/otp-login";
 import { LoginDivider, SocialLogin } from "@/components/social-login";
 
@@ -8,9 +9,7 @@ export default function LoginPage() {
   return (
     <div className="mx-auto w-full max-w-3xl flex-1 px-6 py-12">
       <div className="text-center">
-        <span className="brand-gradient mx-auto flex size-12 items-center justify-center rounded-2xl text-h2 font-black tracking-tight text-primary-foreground">
-          L
-        </span>
+        <BrandMark className="mx-auto block h-10" />
         <h1 className="mt-4 text-h1 font-bold tracking-tight">Bienvenida a LEAD</h1>
         <p className="mx-auto mt-2 max-w-md text-small text-muted-foreground">
           Inicia sesión o crea tu perfil en 2 minutos. Las empresas te encuentran por tus skills.
@@ -47,7 +46,8 @@ export default function LoginPage() {
       <div className="mt-6 flex items-start gap-2.5 rounded-xl border border-border/60 bg-muted/30 p-4 text-caption text-muted-foreground">
         <Info className="mt-0.5 size-4 shrink-0 text-brand-purple-light" />
         <p>
-          <span className="font-medium text-foreground">Decisión pendiente: Google vs OTP.</span> Hoy el registro es con Google, que deja fuera cuentas de Microsoft, dominios universitarios y personales. Proponemos OTP por email porque funciona con cualquier dominio y no depende de tener Gmail. Lo decidimos en la reunión.
+          <span className="font-medium text-foreground">Entra con tu correo.</span> El código de 6 dígitos funciona con
+          cualquier correo: institucional, Microsoft o personal. Google queda como atajo para quien lo tenga.
         </p>
       </div>
     </div>

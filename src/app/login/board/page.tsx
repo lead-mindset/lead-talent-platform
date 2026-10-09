@@ -18,9 +18,9 @@ export default function LoginBoardPage() {
           Eres estudiante y además parte del board de LEAD. Entra con tu cuenta a la vista estratégica: tu comunidad sigue ahí.
         </p>
         <div className="mt-5">
-          <SocialLogin route="/board" label="Entrar" />
+          <SocialLogin route="/admin/junta" label="Entrar" />
           <LoginDivider />
-          <LoginForm route="/board" submitLabel="Entrar con correo" />
+          <LoginForm route="/admin/junta" submitLabel="Entrar con correo" />
         </div>
         <p className="mt-4 text-center text-caption text-muted-foreground">
           <Link href="/inicio" className="font-medium text-brand-purple-light hover:underline">
