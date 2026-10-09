@@ -26,7 +26,7 @@ export const boardKpis = {
 
 export const boardInsights = [
   { title: "Crecimiento de miembros", value: "+12%", note: "vs. mes anterior" },
-  { title: "Capítulos activos", value: "4", note: "Perú, México y Colombia" },
+  { title: "Capítulos activos", value: "6", note: "Perú, México y Colombia" },
   { title: "Eventos este mes", value: "9", note: "workshops, paneles y networking" },
   { title: "Talento visible para empresas", value: "6", note: "perfiles completos y verificados" },
 ];

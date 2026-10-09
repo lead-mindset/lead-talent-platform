@@ -8,6 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Field } from "@/components/form";
 import { StatusBadge } from "@/components/ui/status-badge";
+import { useToast } from "@/components/ui/toast";
 import { InitialsAvatar } from "@/components/initials-avatar";
 import { useCurrentUser } from "@/lib/use-current-user";
 import { announcements as seed, type Announcement, type AnnouncementLink } from "@/lib/data/announcements";
@@ -126,18 +127,21 @@ export default function AdminAnunciosPage() {
   const [draft, setDraft] = useState<Draft>(empty);
   const [editing, setEditing] = useState<string | null>(null);
   const [editDraft, setEditDraft] = useState<Draft>(empty);
-  const [toast, setToast] = useState<{ msg: string; undo: () => void } | null>(null);
+  const { toast } = useToast();
 
   const publish = () => {
     setList((prev) => [{ id: `an-${Date.now()}`, title: draft.title.trim(), body: draft.body.trim(), author: user.name, at: "ahora mismo", links: draft.links, image: draft.image || undefined, published: draft.published }, ...prev]);
     setDraft(empty); setCreating(false);
+    toast({ title: draft.published ? "Anuncio publicado" : "Borrador guardado", variant: "success" });
   };
 
   const remove = (a: Announcement) => {
     const index = list.findIndex((x) => x.id === a.id);
     setList((prev) => prev.filter((x) => x.id !== a.id));
-    setToast({ msg: `Borraste “${a.title}”.`, undo: () => { setList((prev) => [...prev.slice(0, index), a, ...prev.slice(index)]); setToast(null); } });
-    setTimeout(() => setToast((t) => (t && t.msg.includes(a.title) ? null : t)), 7000);
+    toast({
+      title: `Borraste “${a.title}”.`,
+      action: { label: "Deshacer", onClick: () => setList((prev) => [...prev.slice(0, index), a, ...prev.slice(index)]) },
+    });
   };
 
   return (
@@ -208,13 +212,6 @@ export default function AdminAnunciosPage() {
           </div>
         ))}
       </div>
-
-      {toast && (
-        <div role="status" className="fixed bottom-4 left-1/2 z-50 flex max-w-[90vw] -translate-x-1/2 items-center gap-3 rounded-xl border border-border/60 bg-card px-4 py-2.5 shadow-xl">
-          <span className="text-small">{toast.msg}</span>
-          <button type="button" onClick={toast.undo} className="shrink-0 text-small font-medium text-brand-purple-light hover:underline">Deshacer</button>
-        </div>
-      )}
     </div>
   );
 }

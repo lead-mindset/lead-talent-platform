@@ -7,8 +7,10 @@ import { StatusBadge } from "@/components/ui/status-badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Segmented } from "@/components/ui/segmented";
+import { useToast } from "@/components/ui/toast";
 import { useAdminRole } from "@/lib/admin-role";
 import { useCurrentUser } from "@/lib/use-current-user";
+import { FUNDING_STATUS } from "@/lib/status";
 
 type BudgetItem = { name: string; amount: string };
 type FundingStatus = "submitted" | "approved" | "changes_requested" | "rejected" | "receipts_due";
@@ -27,22 +29,6 @@ type FundingReq = {
   approved: number;
   note?: string;
   late?: boolean;
-};
-
-const statusTone: Record<FundingStatus, "info" | "success" | "muted" | "destructive"> = {
-  submitted: "info",
-  approved: "success",
-  changes_requested: "muted",
-  rejected: "destructive",
-  receipts_due: "info",
-};
-
-const statusLabel: Record<FundingStatus, string> = {
-  submitted: "Enviado",
-  approved: "Aprobado",
-  changes_requested: "Cambios pedidos",
-  rejected: "Rechazado",
-  receipts_due: "Recibos pendientes",
 };
 
 const initialRequests: FundingReq[] = [
@@ -70,7 +56,7 @@ export default function AdminFinanciamientoPage() {
   const [openReview, setOpenReview] = useState<string | null>(null);
   const [notes, setNotes] = useState<Record<string, string>>({});
   const [partial, setPartial] = useState<Record<string, string>>({});
-  const [toast, setToast] = useState<{ msg: string; undo?: () => void } | null>(null);
+  const { toast } = useToast();
   const [recent, setRecent] = useState<Set<string>>(new Set());
 
   // ---- chapter request form ----
@@ -104,15 +90,16 @@ export default function AdminFinanciamientoPage() {
     setRequests((all) => all.map((r) => (r.id === id ? { ...r, status, approved: amount ?? (status === "approved" ? r.requested : r.approved), note: (notes[id] ?? "").trim() || r.note } : r)));
     setRecent((prevSet) => new Set(prevSet).add(id));
     setOpenReview(null);
-    setToast({
-      msg,
-      undo: () => {
-        setRequests((all) => all.map((r) => (r.id === id ? { ...r, status: prevStatus } : r)));
-        setRecent((prevSet) => { const n = new Set(prevSet); n.delete(id); return n; });
-        setToast(null);
+    toast({
+      title: msg,
+      action: {
+        label: "Deshacer",
+        onClick: () => {
+          setRequests((all) => all.map((r) => (r.id === id ? { ...r, status: prevStatus } : r)));
+          setRecent((prevSet) => { const n = new Set(prevSet); n.delete(id); return n; });
+        },
       },
     });
-    setTimeout(() => setToast((t) => (t && t.msg === msg ? null : t)), 7000);
   };
 
   const visible = filter === "all" ? requests : requests.filter((request) => request.status === filter || recent.has(request.id));
@@ -148,7 +135,7 @@ export default function AdminFinanciamientoPage() {
                     </p>
                   </div>
                   <span className="font-semibold">${request.requested}</span>
-                  <StatusBadge tone={statusTone[request.status]}>{statusLabel[request.status]}</StatusBadge>
+                  <StatusBadge tone={FUNDING_STATUS[request.status].tone}>{FUNDING_STATUS[request.status].label}</StatusBadge>
 
                   {request.status === "submitted" ? (
                     <Button size="sm" variant={open ? "secondary" : "outline"} onClick={() => setOpenReview(open ? null : request.id)}>
@@ -233,17 +220,6 @@ export default function AdminFinanciamientoPage() {
             );
           })}
         </div>
-
-        {toast && (
-          <div role="status" className="fixed bottom-4 left-1/2 z-50 flex max-w-[90vw] -translate-x-1/2 items-center gap-3 rounded-xl border border-border/60 bg-card px-4 py-2.5 shadow-xl">
-            <span className="text-small">{toast.msg}</span>
-            {toast.undo && (
-              <button type="button" onClick={toast.undo} className="shrink-0 text-small font-medium text-brand-purple-light hover:underline">
-                Deshacer
-              </button>
-            )}
-          </div>
-        )}
       </div>
     );
   }
@@ -313,7 +289,7 @@ export default function AdminFinanciamientoPage() {
                 )}
               </div>
               <span className="font-semibold">${request.requested}</span>
-              <StatusBadge tone={statusTone[request.status]}>{statusLabel[request.status]}</StatusBadge>
+              <StatusBadge tone={FUNDING_STATUS[request.status].tone}>{FUNDING_STATUS[request.status].label}</StatusBadge>
               {request.status === "changes_requested" && (
                 <Button size="sm" className="gap-1" onClick={() => setStatus(request.id, "submitted")}>
                   <RotateCcw className="size-3.5" /> Reenviar

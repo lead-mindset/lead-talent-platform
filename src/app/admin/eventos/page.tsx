@@ -1,177 +1,381 @@
 "use client";
 
 import { useState } from "react";
-import { Check, MapPin, Pencil, Plus, Video, X } from "lucide-react";
+import { CalendarDays, Check, MapPin, Pencil, Plus, Video, X } from "lucide-react";
+
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Switch } from "@/components/ui/switch";
 import { Segmented } from "@/components/ui/segmented";
-import { Textarea } from "@/components/ui/textarea";
-import { events } from "@/lib/data/community";
-import { useCurrentUser } from "@/lib/use-current-user";
 import { StatusBadge } from "@/components/ui/status-badge";
+import { Switch } from "@/components/ui/switch";
+import { Textarea } from "@/components/ui/textarea";
+import { useToast } from "@/components/ui/toast";
+import {
+  events as seedEvents,
+  getEventScope,
+  type AttendanceMode,
+  type LeadEvent,
+  type RegistrationMode,
+} from "@/lib/data/community";
+import { useCurrentUser } from "@/lib/use-current-user";
+import { formatMonthShortUpper } from "@/lib/date";
 
-type EventType = "in_person" | "online" | "hybrid";
-type AccessModel = "open" | "application";
+type Modality = "in_person" | "online" | "hybrid";
+type EventType = LeadEvent["type"];
+type Speaker = { name: string; role: string };
 
-const emptyForm = {
-  title: "",
-  description: "",
-  eventType: "in_person" as EventType,
-  startAt: "",
-  endAt: "",
-  locationName: "",
-  locationAddress: "",
-  locationCity: "",
-  meetingUrl: "",
-  capacity: "",
-  accessModel: "open" as AccessModel,
-  coverImageUrl: "",
-  published: false,
+type Form = {
+  title: string;
+  type: EventType;
+  modality: Modality;
+  startAt: string;
+  location: string;
+  host: string;
+  registrationMode: RegistrationMode;
+  registrationUrl: string;
+  attendanceMode: AttendanceMode;
+  capacity: string;
+  image: string;
+  description: string;
+  longDescription: string;
+  agenda: string[];
+  speakers: Speaker[];
+  published: boolean;
 };
+
+const eventTypes: EventType[] = ["Workshop", "Panel", "Networking", "Charla"];
+
+const makeEmptyForm = (): Form => ({
+  title: "",
+  type: "Workshop",
+  modality: "in_person",
+  startAt: "",
+  location: "",
+  host: "",
+  registrationMode: "external",
+  registrationUrl: "",
+  attendanceMode: "manual",
+  capacity: "",
+  image: "",
+  description: "",
+  longDescription: "",
+  agenda: [""],
+  speakers: [],
+  published: true,
+});
+
+function splitDate(dateTime: string) {
+  if (!dateTime) return null;
+  const [date, time = "00:00"] = dateTime.split("T");
+  const [, month, day] = date.split("-").map(Number);
+  if (!month || !day) return null;
+  return { date, time, month: formatMonthShortUpper(month), day: String(day).padStart(2, "0") };
+}
+
+function FieldHint({ children }: { children: React.ReactNode }) {
+  return <p className="text-caption text-muted-foreground">{children}</p>;
+}
 
 export default function AdminEventosPage() {
   const user = useCurrentUser();
   const isGlobal = user.scopeType === "global";
   const hasChapter = user.scopeType === "chapter";
   const [scope, setScope] = useState<"global" | "chapter">(isGlobal && !hasChapter ? "global" : "chapter");
-  const [list, setList] = useState(
-    events
-      .filter((event) => event.calendar === "LEAD Global" || (isGlobal && scope === "global") || event.calendar === user.scope)
-      .map((event) => ({ id: event.id, title: event.title, date: `${event.month} ${event.day}`, location: event.location, type: event.type }))
+  const [list, setList] = useState<LeadEvent[]>(() =>
+    hasChapter ? seedEvents.filter((event) => event.calendar === user.scope) : seedEvents
   );
   const [creating, setCreating] = useState(false);
-  const [form, setForm] = useState(emptyForm);
+  const [form, setForm] = useState<Form>(makeEmptyForm);
+  const { toast } = useToast();
 
-  const set = <K extends keyof typeof form>(key: K, value: (typeof form)[K]) => setForm((prev) => ({ ...prev, [key]: value }));
+  const set = <K extends keyof Form>(key: K, value: Form[K]) => setForm((prev) => ({ ...prev, [key]: value }));
+  const setAgenda = (index: number, value: string) =>
+    setForm((prev) => ({ ...prev, agenda: prev.agenda.map((item, i) => (i === index ? value : item)) }));
+  const addAgenda = () => setForm((prev) => ({ ...prev, agenda: [...prev.agenda, ""] }));
+  const removeAgenda = (index: number) =>
+    setForm((prev) => ({ ...prev, agenda: prev.agenda.filter((_, i) => i !== index) }));
+  const setSpeaker = (index: number, key: keyof Speaker, value: string) =>
+    setForm((prev) => ({
+      ...prev,
+      speakers: prev.speakers.map((speaker, i) => (i === index ? { ...speaker, [key]: value } : speaker)),
+    }));
+  const addSpeaker = () => setForm((prev) => ({ ...prev, speakers: [...prev.speakers, { name: "", role: "" }] }));
+  const removeSpeaker = (index: number) =>
+    setForm((prev) => ({ ...prev, speakers: prev.speakers.filter((_, i) => i !== index) }));
 
-  const canSubmit = form.title.trim() && form.startAt && (form.eventType === "online" || form.meetingUrl || form.locationName);
+  const isExternal = form.registrationMode === "external";
+  const canSubmit = Boolean(form.title.trim() && form.startAt && (!isExternal || form.registrationUrl.trim()));
 
   const create = () => {
-    if (!canSubmit) return;
-    const { month, day } = monthDay(form.startAt);
-    setList((prev) => [{ id: `new-${Date.now()}`, title: form.title, date: `${month} ${day}`, location: form.locationName || (form.eventType === "online" ? "Virtual" : form.locationCity || "Por confirmar"), type: form.eventType === "online" ? "Online" : form.eventType === "hybrid" ? "Híbrido" : "Presencial" }, ...prev]);
-    setForm(emptyForm);
+    const dt = splitDate(form.startAt);
+    if (!canSubmit || !dt) return;
+
+    const calendar = isGlobal && scope === "global" ? "LEAD Global" : hasChapter ? user.scope : "LEAD Global";
+    const agenda = form.agenda.map((item) => item.trim()).filter(Boolean);
+    const speakers = form.speakers
+      .map((speaker) => ({ name: speaker.name.trim(), role: speaker.role.trim() }))
+      .filter((speaker) => speaker.name);
+
+    const event: LeadEvent = {
+      id: `new-${Date.now()}`,
+      month: dt.month,
+      day: dt.day,
+      title: form.title.trim(),
+      location: form.modality === "online" ? form.location.trim() || "Virtual · Zoom" : form.location.trim() || "Por confirmar",
+      type: form.type,
+      description: form.description.trim(),
+      date: dt.date,
+      time: dt.time,
+      host: form.host.trim() || calendar,
+      calendar,
+      image: form.image.trim() || undefined,
+      registrationMode: form.registrationMode,
+      registrationUrl: isExternal ? form.registrationUrl.trim() || undefined : undefined,
+      attendanceMode: form.attendanceMode,
+      capacity: form.capacity ? Number(form.capacity) : undefined,
+      longDescription: form.longDescription.trim() || undefined,
+      agenda: agenda.length ? agenda : undefined,
+      speakers: speakers.length ? speakers : undefined,
+    };
+
+    setList((prev) => [event, ...prev]);
+    setForm(makeEmptyForm());
     setCreating(false);
+    toast({
+      title: "Evento creado",
+      description: event.title,
+      variant: "success",
+      action: { label: "Deshacer", onClick: () => setList((prev) => prev.filter((item) => item.id !== event.id)) },
+    });
   };
 
   return (
     <div className="space-y-6">
       <header className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="text-h1 font-bold tracking-tight">Eventos del capítulo</h1>
-          <p className="mt-1 text-small text-muted-foreground">Crea y administra los eventos de LEAD UTEC.</p>
+          <h1 className="text-h1 font-bold tracking-tight">Eventos</h1>
+          <p className="mt-1 text-small text-muted-foreground">
+            Crea y administra los eventos de {hasChapter ? user.scope : "LEAD"}.
+          </p>
         </div>
         <Button size="sm" className="gap-1.5" onClick={() => setCreating((prev) => !prev)}>
-          {creating ? <><X className="size-3.5" /> Cancelar</> : <><Plus className="size-3.5" /> Crear evento</>}
+          {creating ? (
+            <>
+              <X className="size-3.5" /> Cerrar
+            </>
+          ) : (
+            <>
+              <Plus className="size-3.5" /> Crear evento
+            </>
+          )}
         </Button>
       </header>
 
       {creating && (
         <div className="card-surface rounded-xl border border-border/60 p-5">
           <h2 className="text-h3 font-semibold">Nuevo evento</h2>
+          <p className="mt-1 text-small text-muted-foreground">Completa lo básico y guarda. Puedes editarlo después.</p>
 
-          {isGlobal && (
-            <div className="mt-4 space-y-1.5">
-              <Label>Alcance</Label>
-              {hasChapter ? (
-                <Segmented value={scope} onChange={(v) => setScope(v)} options={[{ value: "global", label: "Global · toda LEAD" }, { value: "chapter", label: "Mi capítulo" }]} className="w-full" />
-              ) : (
-                <div className="rounded-lg bg-muted/40 px-3 py-2 text-small text-muted-foreground">Global · toda LEAD (no perteneces a un capítulo)</div>
-              )}
-              {scope === "global" && (
-                <p className="text-caption text-muted-foreground">Lo verá toda LEAD. Requiere el permiso <code className="rounded bg-muted px-1 text-caption">global.events.manage</code>.</p>
-              )}
-            </div>
-          )}
-
-          <div className="mt-4 space-y-4">
+          <div className="mt-5 space-y-5">
+            {/* Basics */}
             <div className="space-y-1.5">
-              <Label htmlFor="ev-title">Título <span className="text-destructive-light">*</span></Label>
-              <Input id="ev-title" value={form.title} onChange={(e) => set("title", e.target.value)} placeholder="Workshop de entrevistas técnicas" />
-            </div>
-            <div className="space-y-1.5">
-              <Label htmlFor="ev-desc">Descripción</Label>
-              <Textarea id="ev-desc" rows={3} value={form.description} onChange={(e) => set("description", e.target.value)} placeholder="De qué trata el evento…" />
+              <Label htmlFor="ev-title">
+                Nombre del evento <span className="text-destructive-light">*</span>
+              </Label>
+              <Input
+                id="ev-title"
+                value={form.title}
+                onChange={(event) => set("title", event.target.value)}
+                placeholder="Ej. Discover Day 2026"
+              />
             </div>
 
             <div className="space-y-1.5">
-              <Label>Modalidad</Label>
+              <Label>Tipo de evento</Label>
               <Segmented
-                value={form.eventType}
-                onChange={(value) => set("eventType", value)}
+                value={form.type}
+                onChange={(value) => set("type", value)}
+                options={eventTypes.map((value) => ({ value, label: value }))}
+                className="w-full flex-wrap"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label>¿Cómo se realiza?</Label>
+              <Segmented
+                value={form.modality}
+                onChange={(value) => set("modality", value)}
                 options={[
                   { value: "in_person", label: "Presencial" },
                   { value: "online", label: "Online" },
                   { value: "hybrid", label: "Híbrido" },
                 ]}
+                className="w-full flex-wrap"
               />
             </div>
 
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="space-y-1.5">
-                <Label htmlFor="ev-start">Inicio <span className="text-destructive-light">*</span></Label>
-                <Input id="ev-start" type="datetime-local" value={form.startAt} onChange={(e) => set("startAt", e.target.value)} />
+                <Label htmlFor="ev-start">
+                  Fecha y hora <span className="text-destructive-light">*</span>
+                </Label>
+                <Input id="ev-start" type="datetime-local" value={form.startAt} onChange={(event) => set("startAt", event.target.value)} />
               </div>
               <div className="space-y-1.5">
-                <Label htmlFor="ev-end">Fin</Label>
-                <Input id="ev-end" type="datetime-local" value={form.endAt} onChange={(e) => set("endAt", e.target.value)} />
+                <Label htmlFor="ev-loc">{form.modality === "online" ? "Enlace o nota" : "Lugar"}</Label>
+                <Input
+                  id="ev-loc"
+                  value={form.location}
+                  onChange={(event) => set("location", event.target.value)}
+                  placeholder={form.modality === "online" ? "Virtual · Zoom" : "Ej. UTEC · Lima"}
+                />
               </div>
             </div>
 
-            {form.eventType !== "online" && (
-              <div className="grid gap-4 sm:grid-cols-3">
-                <div className="space-y-1.5">
-                  <Label htmlFor="ev-loc">Lugar</Label>
-                  <Input id="ev-loc" value={form.locationName} onChange={(e) => set("locationName", e.target.value)} placeholder="Auditorio, sala, etc." />
-                </div>
-                <div className="space-y-1.5">
-                  <Label htmlFor="ev-addr">Dirección</Label>
-                  <Input id="ev-addr" value={form.locationAddress} onChange={(e) => set("locationAddress", e.target.value)} />
-                </div>
-                <div className="space-y-1.5">
-                  <Label htmlFor="ev-city">Ciudad</Label>
-                  <Input id="ev-city" value={form.locationCity} onChange={(e) => set("locationCity", e.target.value)} placeholder="Ciudad" />
-                </div>
-              </div>
-            )}
-
-            {form.eventType !== "in_person" && (
-              <div className="space-y-1.5">
-                <Label htmlFor="ev-url">Enlace de reunión</Label>
-                <Input id="ev-url" type="url" value={form.meetingUrl} onChange={(e) => set("meetingUrl", e.target.value)} placeholder="https://zoom.us/…" />
-              </div>
-            )}
-
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="space-y-1.5">
-                <Label htmlFor="ev-cap">Capacidad</Label>
-                <Input id="ev-cap" type="number" value={form.capacity} onChange={(e) => set("capacity", e.target.value)} placeholder="50" />
+                <Label htmlFor="ev-host">Organiza</Label>
+                <Input id="ev-host" value={form.host} onChange={(event) => set("host", event.target.value)} placeholder="Ej. LEAD UTEC · LEAD Academia" />
+                <FieldHint>Déjalo vacío para usar el nombre del capítulo o de LEAD.</FieldHint>
               </div>
               <div className="space-y-1.5">
-                <Label htmlFor="ev-cover">Imagen de portada (URL)</Label>
-                <Input id="ev-cover" value={form.coverImageUrl} onChange={(e) => set("coverImageUrl", e.target.value)} placeholder="https://…" />
+                <Label htmlFor="ev-cap">Cupos</Label>
+                <Input id="ev-cap" type="number" value={form.capacity} onChange={(event) => set("capacity", event.target.value)} placeholder="Ej. 60" />
+                <FieldHint>Cuántas personas pueden registrarse.</FieldHint>
               </div>
+            </div>
+
+            {/* Registration */}
+            <div className="space-y-2">
+              <Label>Inscripción</Label>
+              <Segmented
+                value={form.registrationMode}
+                onChange={(value) => set("registrationMode", value)}
+                options={[
+                  { value: "external", label: "Link externo" },
+                  { value: "platform", label: "Registro en la plataforma" },
+                ]}
+                className="w-full flex-wrap"
+              />
+              {isExternal ? (
+                <div className="space-y-1.5">
+                  <Input
+                    type="url"
+                    value={form.registrationUrl}
+                    onChange={(event) => set("registrationUrl", event.target.value)}
+                    placeholder="https://forms.gle/…"
+                  />
+                  <FieldHint>Pega el link donde la gente se inscribe (tu formulario, Luma, Eventbrite…).</FieldHint>
+                </div>
+              ) : (
+                <FieldHint>Los participantes se inscriben aquí mismo con un clic.</FieldHint>
+              )}
+            </div>
+
+            {/* Attendance */}
+            <div className="space-y-2">
+              <Label>Asistencia</Label>
+              <Segmented
+                value={form.attendanceMode}
+                onChange={(value) => set("attendanceMode", value)}
+                options={[
+                  { value: "qr", label: "QR en la puerta" },
+                  { value: "link", label: "Link (virtual)" },
+                  { value: "manual", label: "Conteo manual" },
+                ]}
+                className="w-full flex-wrap"
+              />
+              <FieldHint>Así se registra quién asistió de verdad.</FieldHint>
+            </div>
+
+            {/* Cover + description */}
+            <div className="space-y-1.5">
+              <Label htmlFor="ev-image">Imagen de portada (opcional)</Label>
+              <Input id="ev-image" value={form.image} onChange={(event) => set("image", event.target.value)} placeholder="/media/events/discover-day-workshop.webp" />
+              <FieldHint>Pega la dirección de una imagen o una ruta como la del ejemplo.</FieldHint>
             </div>
 
             <div className="space-y-1.5">
-              <Label>Acceso</Label>
-              <Segmented
-                value={form.accessModel}
-                onChange={(value) => set("accessModel", value)}
-                options={[
-                  { value: "open", label: "Abierto" },
-                  { value: "application", label: "Con postulación" },
-                ]}
-              />
-              {form.accessModel === "application" && (
-                <p className="mt-1.5 text-caption text-muted-foreground">
-                  Los participantes postulan y el e-board revisa las solicitudes antes de aprobar.
-                </p>
-              )}
+              <Label htmlFor="ev-desc">Descripción corta</Label>
+              <Textarea id="ev-desc" rows={2} value={form.description} onChange={(event) => set("description", event.target.value)} placeholder="Una o dos frases sobre el evento." />
             </div>
+
+            <div className="space-y-1.5">
+              <Label htmlFor="ev-long">Descripción completa (opcional)</Label>
+              <Textarea id="ev-long" rows={3} value={form.longDescription} onChange={(event) => set("longDescription", event.target.value)} placeholder="El detalle que se ve al abrir el evento." />
+            </div>
+
+            {/* Agenda — dynamic list */}
+            <div className="space-y-3">
+              <div>
+                <Label>Qué incluye</Label>
+                <FieldHint>Agrega los puntos del evento, uno por uno.</FieldHint>
+              </div>
+              <div className="space-y-2">
+                {form.agenda.map((item, index) => (
+                  <div key={index} className="flex items-center gap-2">
+                    <Input value={item} onChange={(event) => setAgenda(index, event.target.value)} placeholder={`Punto ${index + 1} (ej. Bienvenida y formación de grupos)`} />
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon-sm"
+                      aria-label="Quitar punto"
+                      onClick={() => removeAgenda(index)}
+                      disabled={form.agenda.length === 1 && !item}
+                    >
+                      <X />
+                    </Button>
+                  </div>
+                ))}
+              </div>
+              <Button type="button" variant="outline" size="sm" className="gap-1.5" onClick={addAgenda}>
+                <Plus className="size-3.5" /> Agregar punto
+              </Button>
+            </div>
+
+            {/* Speakers — dynamic list */}
+            <div className="space-y-3">
+              <div>
+                <Label>Quiénes participan (opcional)</Label>
+                <FieldHint>Agrega personas y su rol o empresa.</FieldHint>
+              </div>
+              <div className="space-y-2">
+                {form.speakers.map((speaker, index) => (
+                  <div key={index} className="flex flex-col gap-2 sm:flex-row sm:items-center">
+                    <Input value={speaker.name} onChange={(event) => setSpeaker(index, "name", event.target.value)} placeholder="Nombre" />
+                    <Input value={speaker.role} onChange={(event) => setSpeaker(index, "role", event.target.value)} placeholder="Rol o empresa (ej. Ingeniera, Google)" />
+                    <Button type="button" variant="ghost" size="icon-sm" aria-label="Quitar persona" onClick={() => removeSpeaker(index)} className="shrink-0 self-end sm:self-auto">
+                      <X />
+                    </Button>
+                  </div>
+                ))}
+              </div>
+              <Button type="button" variant="outline" size="sm" className="gap-1.5" onClick={addSpeaker}>
+                <Plus className="size-3.5" /> Agregar persona
+              </Button>
+            </div>
+
+            {/* Scope + publish */}
+            {isGlobal && (
+              <div className="space-y-2">
+                <Label>¿Para quién es?</Label>
+                {hasChapter ? (
+                  <Segmented
+                    value={scope}
+                    onChange={(value) => setScope(value)}
+                    options={[
+                      { value: "global", label: "Toda LEAD" },
+                      { value: "chapter", label: "Solo mi capítulo" },
+                    ]}
+                    className="w-full flex-wrap"
+                  />
+                ) : (
+                  <FieldHint>Global · toda LEAD (no perteneces a un capítulo).</FieldHint>
+                )}
+              </div>
+            )}
 
             <label className="flex items-center gap-2 text-small">
               <Switch checked={form.published} onCheckedChange={(checked) => set("published", checked === true)} />
@@ -179,29 +383,48 @@ export default function AdminEventosPage() {
             </label>
           </div>
 
-          <div className="mt-5 flex gap-2 border-t border-border/60 pt-4">
+          <div className="mt-6 flex flex-wrap gap-2 border-t border-border/60 pt-4">
             <Button size="sm" className="gap-1.5" onClick={create} disabled={!canSubmit}>
               <Check className="size-3.5" /> Guardar evento
             </Button>
-            <Button size="sm" variant="secondary" onClick={() => setCreating(false)}>Guardar borrador</Button>
+            <Button size="sm" variant="secondary" onClick={() => { setForm(makeEmptyForm()); setCreating(false); }}>
+              Cancelar
+            </Button>
           </div>
         </div>
       )}
 
-      <div className="card-surface divide-y divide-border/60 rounded-xl border border-border/60">
-        {list.map((event) => (
-          <div key={event.id} className="flex items-center gap-4 px-4 py-3">
-            <span className="flex size-11 shrink-0 items-center justify-center rounded-lg bg-muted text-caption font-bold text-brand-purple-light">{event.date}</span>
-            <div className="min-w-0 flex-1">
-              <p className="truncate font-medium">{event.title}</p>
-              <p className="flex items-center gap-1 truncate text-caption text-muted-foreground">
-                {event.type === "Online" ? <Video className="size-3" /> : <MapPin className="size-3" />} {event.location}
-              </p>
-            </div>
-            <Badge variant="secondary" className="rounded-full">{event.type}</Badge>
-            <Button size="sm" variant="ghost" aria-label={`Editar ${event.title}`}><Pencil className="size-3.5" /></Button>
+      <div className="card-surface max-h-128 divide-y divide-border/60 overflow-y-auto rounded-xl border border-border/60">
+        {list.length === 0 ? (
+          <div className="px-4 py-10 text-center text-small text-muted-foreground">
+            <CalendarDays className="mx-auto mb-2 size-6 text-muted-foreground" />
+            Todavía no hay eventos. Crea el primero.
           </div>
-        ))}
+        ) : (
+          list.map((event) => {
+            const global = getEventScope(event) === "global";
+            return (
+              <div key={event.id} className="flex flex-wrap items-center gap-x-4 gap-y-2 px-4 py-3">
+                <span className="flex size-11 shrink-0 flex-col items-center justify-center rounded-lg bg-muted text-caption font-bold leading-none text-brand-purple-light">
+                  <span>{event.month}</span>
+                  <span className="text-small text-foreground">{event.day}</span>
+                </span>
+                <div className="min-w-0 flex-1">
+                  <p className="truncate font-medium">{event.title}</p>
+                  <p className="flex items-center gap-1 truncate text-caption text-muted-foreground">
+                    {event.location.toLowerCase().includes("virtual") ? <Video className="size-3" /> : <MapPin className="size-3" />}
+                    {event.time} · {event.location}
+                  </p>
+                </div>
+                {global ? <StatusBadge tone="success">Global</StatusBadge> : <Badge variant="outline" className="rounded-full">{event.calendar}</Badge>}
+                <Badge variant="secondary" className="rounded-full">{event.type}</Badge>
+                <Button size="sm" variant="ghost" aria-label={`Editar ${event.title}`}>
+                  <Pencil className="size-3.5" />
+                </Button>
+              </div>
+            );
+          })
+        )}
       </div>
     </div>
   );
