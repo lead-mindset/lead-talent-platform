@@ -10,9 +10,12 @@ export function Field({
   hint,
   htmlFor,
   className,
+  badge,
   children,
 }: {
   label: string;
+  /** Algo junto a la etiqueta, por ejemplo la marca "Sugerido por IA". */
+  badge?: React.ReactNode;
   required?: boolean;
   error?: string;
   hint?: string;
@@ -25,6 +28,7 @@ export function Field({
       <label htmlFor={htmlFor} className="text-small font-medium">
         {label}
         {required && <span className="ml-0.5 text-destructive-light">*</span>}
+        {badge}
       </label>
       <div className="mt-1">
         {Children.map(children, (child) =>

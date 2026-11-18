@@ -1,4 +1,4 @@
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ProgressBar } from "@/components/ui/progress-bar";
 import { TOTAL_STEPS } from "@/lib/registration";
@@ -151,5 +151,19 @@ export function FieldError({ children }: { children?: string }) {
     <p className="text-caption text-destructive-light" role="alert">
       {children}
     </p>
+  );
+}
+
+/** Marca de los campos prellenados por la lectura del CV. El campo sigue siendo editable. */
+export function AiBadge({ show }: { show: boolean }) {
+  if (!show) return null;
+  return (
+    <span
+      data-testid="ai-badge"
+      className="ml-2 inline-flex items-center gap-1 rounded-full bg-brand-purple/15 px-2 py-0.5 align-middle text-[11px] font-semibold text-brand-purple-light"
+    >
+      <Sparkles className="size-3" aria-hidden="true" />
+      Sugerido por IA
+    </span>
   );
 }

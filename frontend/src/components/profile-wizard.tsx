@@ -8,6 +8,7 @@ import { combine, required, url } from "@/lib/validators";
 import {
   clearDrafts,
   completenessPercent,
+  device,
   loadDraft,
   newSessionId,
   saveDraft,
@@ -16,16 +17,18 @@ import {
 } from "@/lib/registration";
 import { getSupabase } from "@/lib/supabase";
 import {
+  applySuggestions,
   completenessOf,
   EMPTY_FORM,
   formFromProfile,
   toProfileInput,
+  withoutTouchedAiFields,
   type RegistrationForm,
 } from "@/components/registration/form";
 import { FieldError, StepFooter, StepHeader } from "@/components/registration/shell";
 import { StepCareer } from "@/components/registration/step-career";
 import { StepResume } from "@/components/registration/step-resume";
-import { StepDetails, type DetailsErrors } from "@/components/registration/step-details";
+import { StepDetails, type CvNotice, type DetailsErrors } from "@/components/registration/step-details";
 import { StepSkills } from "@/components/registration/step-skills";
 import { StepGoals } from "@/components/registration/step-goals";
 import { StepDone } from "@/components/registration/step-done";
@@ -43,6 +46,23 @@ type Draft = { step: number; sessionId: string; form: RegistrationForm };
 
 type StepErrors = DetailsErrors & { careerStage?: string; resume?: string; skills?: string; save?: string };
 
+/** El backend corta a los 30 s; esto cubre la descarga y la red. Después, se sigue a mano. */
+const CV_READ_TIMEOUT_MS = 40_000;
+
+/** Mensajes amables por motivo. Nunca bloquean: el registro sigue a mano. */
+function cvFailureMessage(reason: string): string {
+  switch (reason) {
+    case "formato_no_soportado":
+      return "No pudimos leer tu CV porque está en formato .doc. Completa tus datos aquí; tu CV quedó guardado igual.";
+    case "sin_texto":
+      return "Tu CV parece ser una imagen escaneada y no pudimos leer el texto. Completa tus datos aquí; tu CV quedó guardado.";
+    case "limite_alcanzado":
+      return "Ya leímos varios CV en la última hora. Completa tus datos aquí; tu CV quedó guardado.";
+    default:
+      return "Esta vez no pudimos leer tu CV. Completa tus datos aquí; tu CV quedó guardado.";
+  }
+}
+
 function Wizard() {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
@@ -55,13 +75,16 @@ function Wizard() {
   const [form, setForm] = useState<RegistrationForm>(EMPTY_FORM);
   const [errors, setErrors] = useState<StepErrors>({});
   const [saving, setSaving] = useState(false);
+  const [readingCv, setReadingCv] = useState(false);
+  const [cvNotice, setCvNotice] = useState<CvNotice>();
 
   // Tiempo en el paso actual, para los eventos del embudo.
   const stepStartedAt = useRef(Date.now());
   const lastViewed = useRef(0);
 
+  // Si el estudiante cambia un campo sugerido por la IA, ese campo deja de llevar la marca.
   const update = useCallback((patch: Partial<RegistrationForm>) => {
-    setForm((prev) => ({ ...prev, ...patch }));
+    setForm((prev) => ({ ...prev, ...patch, aiFields: withoutTouchedAiFields(prev, patch) }));
   }, []);
 
   // Precarga: perfil existente (editar), borrador local (volvió después de "Guardar y salir")
@@ -189,6 +212,37 @@ function Wizard() {
 
   const back = () => goTo(Math.max(1, step - 1));
 
+  /**
+   * Paso 2: después de subir el CV, la IA lo lee y prellena el paso 3. Solo sugiere: nada se guarda
+   * hasta terminar. Si falla (o tarda demasiado), se pasa al paso 3 a mano con un aviso amable.
+   */
+  const readCv = async () => {
+    setReadingCv(true);
+    setCvNotice(undefined);
+    const controller = new AbortController();
+    const timer = window.setTimeout(() => controller.abort(), CV_READ_TIMEOUT_MS);
+    let notice: CvNotice | undefined;
+    try {
+      // En "Editar perfil" no hay embudo: sin session_id el backend no registra la falla.
+      const body = isEdit ? {} : { session_id: sessionId, device: device() };
+      const result = await api.parseResume(body, controller.signal);
+      if (result?.status === "ok") {
+        setForm((prev) => applySuggestions(prev, result.suggestions));
+        notice = { kind: "ok" };
+      } else if (result && result.reason !== "ia_desactivada") {
+        notice = { kind: "failed", message: cvFailureMessage(result.reason) };
+      }
+    } catch {
+      notice = { kind: "failed", message: cvFailureMessage("ia_no_disponible") };
+    } finally {
+      window.clearTimeout(timer);
+    }
+    setReadingCv(false);
+    setCvNotice(notice);
+    funnel("registro_paso_completado", 2, secondsOnStep());
+    goTo(3);
+  };
+
   /** Registro: guarda el avance en este navegador. Editar: guarda en el backend si todo es válido. */
   const saveAndExit = async () => {
     if (!isEdit) {
@@ -257,7 +311,7 @@ function Wizard() {
         step={step}
         onSaveAndExit={saveAndExit}
         saveLabel={isEdit ? "Guardar y volver" : "Guardar y salir"}
-        busy={saving}
+        busy={saving || readingCv}
       />
 
       <div className="flex-1">
@@ -278,10 +332,12 @@ function Wizard() {
             noCv={form.noCv}
             percentWithCv={percent}
             error={errors.resume}
+            reading={readingCv}
             onUploaded={(resume) => {
               update({ resume, noCv: false });
               setErrors({});
               funnel("cv_subido", 2, secondsOnStep());
+              readCv();
             }}
             onNoCv={() => {
               update({ noCv: true });
@@ -299,6 +355,7 @@ function Wizard() {
             errors={errors}
             withResume={Boolean(form.resume)}
             showLinkedin={isEdit}
+            notice={cvNotice}
           />
         )}
         {step === 4 && (
@@ -310,6 +367,7 @@ function Wizard() {
               if (skills.length > 0) setErrors({});
             }}
             showTopSkills={isEdit}
+            fromCv={form.aiFields.includes("skills")}
             error={errors.skills}
           />
         )}
@@ -322,7 +380,7 @@ function Wizard() {
         onBack={back}
         onNext={next}
         nextLabel={step === 5 ? (saving ? "Guardando…" : "Terminar") : "Siguiente"}
-        busy={saving}
+        busy={saving || readingCv}
       />
     </div>
   );

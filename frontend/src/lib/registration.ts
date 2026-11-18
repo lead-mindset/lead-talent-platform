@@ -57,7 +57,7 @@ export function pendingActions(done: Completeness): { key: CompletenessKey; labe
 }
 
 // ------------------------------------------------------------- embudo
-function device(): FunnelEvent["device"] {
+export function device(): FunnelEvent["device"] {
   const width = typeof window === "undefined" ? 1280 : window.innerWidth;
   if (width < 640) return "mobile";
   if (width < 1024) return "tablet";

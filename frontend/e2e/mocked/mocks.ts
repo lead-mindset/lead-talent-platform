@@ -92,6 +92,12 @@ export type MockState = {
   calls: { method: string; path: string; body?: Json }[];
   otpRequests: Json[];
   storageUploads: string[];
+  /** Respuesta de POST /talent/resume/parse (lectura del CV con IA). */
+  parse?: Json;
+  /** Demora de esa respuesta, para ver el estado "Leyendo tu CV…". */
+  parseDelayMs?: number;
+  /** Simula que el backend no responde (red caída). */
+  parseNetworkError?: boolean;
 };
 
 export function newState(overrides: Partial<MockState> = {}): MockState {
@@ -287,6 +293,14 @@ export async function mockApi(page: Page, state: MockState) {
         onboarding_completed_at: state.profile?.onboarding_completed_at ?? new Date().toISOString(),
       };
       return reply(route, 200, { person: state.person, profile: state.profile });
+    }
+
+    if (path === "/talent/events" && req.method() === "POST") return reply(route, 204);
+
+    if (path === "/talent/resume/parse" && req.method() === "POST") {
+      if (state.parseDelayMs) await new Promise((r) => setTimeout(r, state.parseDelayMs));
+      if (state.parseNetworkError) return route.abort("connectionrefused");
+      return reply(route, 200, state.parse ?? { status: "failed", reason: "ia_desactivada", suggestions: null });
     }
 
     if (path === "/countries") return reply(route, 200, state.countries);

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Check } from "lucide-react";
+import { Check, Info, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { FilterChip } from "@/components/ui/filter-chip";
@@ -9,8 +9,8 @@ import { Field } from "@/components/form";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Command, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
 import { api, cityLabel, type City, type Country, type University } from "@/lib/api";
-import type { RegistrationForm, UpdateForm } from "./form";
-import { FieldError, StepTitle } from "./shell";
+import type { AiField, RegistrationForm, UpdateForm } from "./form";
+import { AiBadge, FieldError, StepTitle } from "./shell";
 
 export type DetailsErrors = { name?: string; country?: string; university?: string; year?: string; linkedin?: string };
 
@@ -21,6 +21,9 @@ const CITY_RESET: Partial<RegistrationForm> = {
   cityOther: "",
 };
 
+/** Resultado de la lectura del CV, para el aviso de arriba del paso 3. */
+export type CvNotice = { kind: "ok" } | { kind: "failed"; message: string };
+
 /** Paso 3: nombres, apellidos, país, ciudad, universidad, carrera y egreso. */
 export function StepDetails({
   form,
@@ -29,6 +32,7 @@ export function StepDetails({
   errors,
   withResume,
   showLinkedin,
+  notice,
 }: {
   form: RegistrationForm;
   update: UpdateForm;
@@ -36,7 +40,9 @@ export function StepDetails({
   errors: DetailsErrors;
   withResume: boolean;
   showLinkedin: boolean;
+  notice?: CvNotice;
 }) {
+  const ai = (field: AiField) => <AiBadge show={form.aiFields.includes(field)} />;
   const [cityQuery, setCityQuery] = useState("");
   const [cityResults, setCityResults] = useState<City[]>([]);
   const [searchingCity, setSearchingCity] = useState(false);
@@ -114,8 +120,29 @@ export function StepDetails({
         }
       />
 
+      {notice?.kind === "ok" && form.aiFields.length > 0 && (
+        <p
+          data-testid="cv-notice"
+          className="flex items-start gap-2.5 rounded-xl bg-brand-purple/15 px-4 py-3 text-small"
+        >
+          <Sparkles className="mt-0.5 size-4 shrink-0 text-brand-purple-light" aria-hidden="true" />
+          Leímos tu CV y completamos los campos marcados. Revísalos y corrige lo que haga falta: nada se
+          guarda hasta que termines.
+        </p>
+      )}
+      {notice?.kind === "failed" && (
+        <p
+          data-testid="cv-notice"
+          role="status"
+          className="flex items-start gap-2.5 rounded-xl bg-muted px-4 py-3 text-small"
+        >
+          <Info className="mt-0.5 size-4 shrink-0 text-muted-foreground" aria-hidden="true" />
+          {notice.message}
+        </p>
+      )}
+
       <div className="grid grid-cols-2 gap-3">
-        <Field label="Nombres" htmlFor="w-given" required error={errors.name}>
+        <Field label="Nombres" htmlFor="w-given" required error={errors.name} badge={ai("givenNames")}>
           <Input
             id="w-given"
             value={form.givenNames}
@@ -124,7 +151,7 @@ export function StepDetails({
             autoComplete="given-name"
           />
         </Field>
-        <Field label="Apellidos" htmlFor="w-family" hint="Si tienes">
+        <Field label="Apellidos" htmlFor="w-family" hint="Si tienes" badge={ai("familyNames")}>
           <Input
             id="w-family"
             value={form.familyNames}
@@ -139,6 +166,7 @@ export function StepDetails({
         <div>
           <label htmlFor="w-country" className="text-small font-medium">
             País<span className="ml-0.5 text-destructive-light">*</span>
+            {ai("country")}
           </label>
           <Select value={form.country} onValueChange={changeCountry}>
             <SelectTrigger
@@ -165,6 +193,7 @@ export function StepDetails({
         <div>
           <label htmlFor={form.cityMode === "other" ? "w-city-other" : "w-city"} className="text-small font-medium">
             Ciudad <span className="font-normal text-muted-foreground">Opcional</span>
+            {ai("city")}
           </label>
 
           {form.cityId ? (
@@ -228,7 +257,7 @@ export function StepDetails({
       </div>
 
       <div className="space-y-2">
-        <Field label="Universidad" htmlFor="w-uni" required error={errors.university}>
+        <Field label="Universidad" htmlFor="w-uni" required error={errors.university} badge={ai("university")}>
           <Input
             id="w-uni"
             value={form.university}
@@ -261,7 +290,7 @@ export function StepDetails({
       </div>
 
       <div className="grid grid-cols-[1fr_7rem] gap-3">
-        <Field label="Carrera" htmlFor="w-major">
+        <Field label="Carrera" htmlFor="w-major" badge={ai("major")}>
           <Input
             id="w-major"
             value={form.major}
@@ -269,7 +298,7 @@ export function StepDetails({
             placeholder="Ej. Ingeniería de Sistemas"
           />
         </Field>
-        <Field label="Egreso" htmlFor="w-year" error={errors.year}>
+        <Field label="Egreso" htmlFor="w-year" error={errors.year} badge={ai("year")}>
           <Input
             id="w-year"
             type="number"
@@ -284,7 +313,7 @@ export function StepDetails({
       </div>
 
       {showLinkedin && (
-        <Field label="LinkedIn" htmlFor="w-li" hint="Opcional" error={errors.linkedin}>
+        <Field label="LinkedIn" htmlFor="w-li" hint="Opcional" error={errors.linkedin} badge={ai("linkedin")}>
           <Input
             id="w-li"
             value={form.linkedin}

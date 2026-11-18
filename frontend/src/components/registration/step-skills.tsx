@@ -4,11 +4,11 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { FilterChip } from "@/components/ui/filter-chip";
-import { FieldError, StepTitle } from "./shell";
+import { AiBadge, FieldError, StepTitle } from "./shell";
 
 const MAX_SKILLS = 30;
 
-/** Skills comunes para elegir con un toque. En el Paso 4 del plan vendrán del CV. */
+/** Skills comunes para elegir con un toque. Las del CV se agregan ya marcadas (fromCv). */
 export const COMMON_SKILLS = [
   "Python", "SQL", "Excel", "Data Analysis", "JavaScript", "React",
   "Figma", "UI/UX", "Liderazgo", "Comunicación", "Trabajo en equipo", "Gestión de proyectos",
@@ -22,17 +22,22 @@ export function StepSkills({
   topSkills,
   onChange,
   showTopSkills,
+  fromCv = false,
   error,
 }: {
   skills: string[];
   topSkills: string[];
   onChange: (skills: string[], topSkills: string[]) => void;
   showTopSkills: boolean;
+  /** Las skills marcadas vienen de la lectura del CV con IA. */
+  fromCv?: boolean;
   error?: string;
 }) {
   const [draft, setDraft] = useState("");
   const [addError, setAddError] = useState<string>();
-  const options = [...COMMON_SKILLS, ...skills.filter((s) => !COMMON_SKILLS.includes(s))];
+  // Con CV, primero las del CV (ya marcadas) y después las comunes.
+  const extra = skills.filter((s) => !COMMON_SKILLS.includes(s));
+  const options = fromCv ? [...extra, ...COMMON_SKILLS.filter((s) => !extra.includes(s))] : [...COMMON_SKILLS, ...extra];
 
   const toggle = (skill: string) => {
     if (skills.includes(skill)) onChange(skills.filter((s) => s !== skill), topSkills.filter((s) => s !== skill));
@@ -62,7 +67,8 @@ export function StepSkills({
 
       <div className="space-y-2.5">
         <p className="text-caption font-semibold tracking-[0.08em] text-muted-foreground uppercase">
-          Sugeridas · toca para confirmar
+          {fromCv ? "De tu CV · quita las que no dominas" : "Sugeridas · toca para confirmar"}
+          <AiBadge show={fromCv} />
         </p>
         <div className="flex flex-wrap gap-2">
           {options.map((skill) => (

@@ -1,4 +1,13 @@
-import type { Availability, CareerStage, EnglishLevel, Person, ProfileInput, TalentProfile } from "@/lib/api";
+import {
+  cityLabel,
+  type Availability,
+  type CareerStage,
+  type CvSuggestions,
+  type EnglishLevel,
+  type Person,
+  type ProfileInput,
+  type TalentProfile,
+} from "@/lib/api";
 import type { Completeness } from "@/lib/registration";
 
 /** Todo lo que junta el registro. Vive en el wizard y se guarda al terminar el paso 5. */
@@ -31,7 +40,20 @@ export type RegistrationForm = {
   linkedin: string;
   english: EnglishLevel | null;
   headline: string | null;
+  /** Campos prellenados por la lectura del CV con IA. La marca se quita cuando el estudiante los cambia. */
+  aiFields: AiField[];
 };
+
+export type AiField =
+  | "givenNames"
+  | "familyNames"
+  | "country"
+  | "city"
+  | "university"
+  | "major"
+  | "year"
+  | "skills"
+  | "linkedin";
 
 export type UpdateForm = (patch: Partial<RegistrationForm>) => void;
 
@@ -58,6 +80,7 @@ export const EMPTY_FORM: RegistrationForm = {
   linkedin: "",
   english: null,
   headline: null,
+  aiFields: [],
 };
 
 export function formFromProfile(person: Person, profile: TalentProfile | null): RegistrationForm {
@@ -127,4 +150,89 @@ export function completenessOf(form: RegistrationForm): Completeness {
     linkedin: Boolean(form.linkedin.trim()),
     topSkills: topNeeded > 0 && form.topSkills.filter((s) => form.skills.includes(s)).length >= topNeeded,
   };
+}
+
+/** Qué campo marcado por la IA toca cada clave del formulario. */
+const AI_FIELD_OF: Partial<Record<keyof RegistrationForm, AiField>> = {
+  givenNames: "givenNames",
+  familyNames: "familyNames",
+  country: "country",
+  cityMode: "city",
+  cityId: "city",
+  cityOther: "city",
+  university: "university",
+  universityId: "university",
+  major: "major",
+  year: "year",
+  skills: "skills",
+  linkedin: "linkedin",
+};
+
+/** Quita la marca "sugerido por IA" de los campos que el estudiante cambió en este patch. */
+export function withoutTouchedAiFields(form: RegistrationForm, patch: Partial<RegistrationForm>): AiField[] {
+  if (form.aiFields.length === 0) return form.aiFields;
+  const touched = new Set<AiField>();
+  for (const key of Object.keys(patch) as (keyof RegistrationForm)[]) {
+    const field = AI_FIELD_OF[key];
+    if (field && patch[key] !== form[key]) touched.add(field);
+  }
+  // Una ciudad es de un solo país: si cambia el país, la ciudad sugerida tampoco vale.
+  if (touched.has("country")) touched.add("city");
+  return form.aiFields.filter((f) => !touched.has(f));
+}
+
+const MAX_SKILLS = 30;
+
+/**
+ * Prellena con las sugerencias del CV solo los campos vacíos: nunca pisa lo que el estudiante ya
+ * escribió. Devuelve el formulario nuevo con los campos prellenados marcados en aiFields.
+ */
+export function applySuggestions(form: RegistrationForm, s: CvSuggestions): RegistrationForm {
+  const next: RegistrationForm = { ...form };
+  const marked = new Set(form.aiFields);
+  const fill = (key: "givenNames" | "familyNames" | "country" | "major" | "year" | "linkedin", value: string | null) => {
+    if (!value || form[key].trim() !== "") return;
+    next[key] = value;
+    marked.add(key);
+  };
+
+  fill("givenNames", s.given_names);
+  fill("familyNames", s.family_names);
+  fill("country", s.country_code);
+  fill("major", s.major);
+  fill("year", s.graduation_year ? String(s.graduation_year) : null);
+  fill("linkedin", s.linkedin);
+
+  // Ciudad: solo si es del país que quedó elegido y todavía no hay ciudad.
+  const noCity = form.cityId === null && form.cityOther.trim() === "";
+  if (noCity && next.country && next.country === s.country_code) {
+    if (s.city_id !== null) {
+      Object.assign(next, {
+        cityMode: "search",
+        cityId: s.city_id,
+        cityText: cityLabel(s.city_name, s.city_admin1),
+        cityOther: "",
+      });
+      marked.add("city");
+    } else if (s.city_other) {
+      Object.assign(next, { cityMode: "other", cityId: null, cityText: "", cityOther: s.city_other });
+      marked.add("city");
+    }
+  }
+
+  // Universidad: la del catálogo si hubo coincidencia; si no, el nombre del CV como texto.
+  if (!form.university.trim() && s.university_name) {
+    Object.assign(next, { university: s.university_name, universityId: s.university_id });
+    marked.add("university");
+  }
+
+  // Skills: se agregan las del CV que falten, sin pasar del máximo.
+  const added = s.skills.filter((skill) => !form.skills.some((have) => have.toLowerCase() === skill.toLowerCase()));
+  if (added.length > 0) {
+    next.skills = [...form.skills, ...added].slice(0, MAX_SKILLS);
+    if (next.skills.length > form.skills.length) marked.add("skills");
+  }
+
+  next.aiFields = [...marked];
+  return next;
 }

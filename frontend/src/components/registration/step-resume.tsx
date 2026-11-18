@@ -17,6 +17,7 @@ export function StepResume({
   noCv,
   percentWithCv,
   error,
+  reading = false,
   onUploaded,
   onNoCv,
 }: {
@@ -24,6 +25,8 @@ export function StepResume({
   noCv: boolean;
   percentWithCv: number;
   error?: string;
+  /** La IA está leyendo el CV recién subido. */
+  reading?: boolean;
   onUploaded: (resume: NonNullable<RegistrationForm["resume"]>) => void;
   onNoCv: () => void;
 }) {
@@ -35,7 +38,7 @@ export function StepResume({
       type="file"
       className="sr-only"
       accept={RESUME_ACCEPT}
-      disabled={uploading}
+      disabled={uploading || reading}
       aria-label={resume ? "Cambiar mi CV" : "Subir mi CV"}
       onChange={(e) => onFile(e.target.files?.[0])}
     />
@@ -55,11 +58,23 @@ export function StepResume({
               <span className="truncate text-body font-semibold" data-testid="resume-file">
                 {resume.fileName}
               </span>
-              <span className="text-caption text-success">
-                {uploading ? "Subiendo el nuevo archivo…" : `Listo. Tu CV quedó guardado (${formatSize(resume.sizeBytes)}).`}
-              </span>
+              {reading ? (
+                <span className="flex items-center gap-1.5 text-caption text-brand-purple-light" role="status" data-testid="cv-reading">
+                  <Loader2 className="size-3.5 animate-spin" aria-hidden="true" />
+                  Leyendo tu CV…
+                </span>
+              ) : (
+                <span className="text-caption text-success">
+                  {uploading ? "Subiendo el nuevo archivo…" : `Listo. Tu CV quedó guardado (${formatSize(resume.sizeBytes)}).`}
+                </span>
+              )}
             </span>
-            <label className="cursor-pointer px-1 py-2.5 text-small font-semibold text-brand-purple-light hover:underline">
+            <label
+              className={cn(
+                "cursor-pointer px-1 py-2.5 text-small font-semibold text-brand-purple-light hover:underline",
+                reading && "pointer-events-none opacity-50",
+              )}
+            >
               {uploading ? <Loader2 className="size-4 animate-spin" aria-label="Subiendo" /> : "Cambiar"}
               {picker}
             </label>
@@ -67,7 +82,9 @@ export function StepResume({
           <div className="flex items-center gap-3 rounded-xl bg-brand-purple/15 px-4 py-3.5">
             <span className="font-heading text-[18px] font-extrabold text-brand-purple-light">{percentWithCv}%</span>
             <span className="text-small">
-              Con tu CV, el perfil ya va a la mitad. En el siguiente paso completas tus datos.
+              {reading
+                ? "Estamos sacando tus datos del CV para que no tengas que escribirlos. Toma unos segundos."
+                : "Con tu CV, el perfil ya va a la mitad. En el siguiente paso completas tus datos."}
             </span>
           </div>
         </div>

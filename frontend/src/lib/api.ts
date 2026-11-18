@@ -90,6 +90,31 @@ export type FunnelEvent = {
   reason?: string | null;
 };
 
+/** Sugerencias de la lectura del CV con IA. No se guardan hasta que el estudiante confirma. */
+export type CvSuggestions = {
+  given_names: string | null;
+  family_names: string | null;
+  email: string | null;
+  phone: string | null;
+  linkedin: string | null;
+  country_code: string | null;
+  city_id: number | null;
+  city_name: string | null;
+  city_admin1: string | null;
+  city_other: string | null;
+  university_id: string | null;
+  university_name: string | null;
+  major: string | null;
+  graduation_year: number | null;
+  career_stage: CareerStage | null;
+  skills: string[];
+  languages: { name: string; level: string | null }[];
+};
+
+export type ResumeParseResult =
+  | { status: "ok"; reason: null; suggestions: CvSuggestions }
+  | { status: "failed"; reason: string; suggestions: null };
+
 export type University = { id: string; name: string; country_code: string };
 
 export type Country = { code: string; name_es: string; name_en: string };
@@ -180,6 +205,13 @@ export const api = {
   /** Evento del embudo. keepalive: llega aunque la página navegue justo después. */
   sendEvent: (event: FunnelEvent) =>
     request<null>("/talent/events", { method: "POST", body: JSON.stringify(event), keepalive: true }),
+
+  /**
+   * Lee el CV vigente con IA y devuelve sugerencias. Siempre responde 200: si falla, trae un reason.
+   * session_id y device solo sirven para registrar cv_lectura_fallida en el embudo.
+   */
+  parseResume: (body: { session_id?: string; device?: FunnelEvent["device"] }, signal?: AbortSignal) =>
+    request<ResumeParseResult>("/talent/resume/parse", { method: "POST", body: JSON.stringify(body), signal }),
 
   /** Pide URL firmada, sube el archivo directo a Storage y confirma en el backend. */
   async uploadResume(file: File): Promise<Resume> {
