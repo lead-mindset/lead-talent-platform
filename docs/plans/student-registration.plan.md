@@ -107,6 +107,11 @@ Toda regla de negocio vive en `service.py`. El router solo autentica, valida y l
 - [ ] Proyecto Vercel para `backend/` (FastAPI), igual que Aspire.
 - [ ] Variable `NEXT_PUBLIC_API_URL` en el frontend.
 
+### Pendiente: lectura del CV con IA
+- [ ] Job de limpieza: borrar de `talent.resume_parse_attempt` las filas con más de 1 día. Solo sirven para el límite de 5 lecturas por hora.
+- [ ] Variables de Azure (`AZURE_*`, `FOUNDRY_*`) en el proyecto Vercel del backend. Sin ellas la lectura queda desactivada y el registro sigue a mano.
+- [ ] Application Insights: activar `attach_exporters` en `backend/app/core/logging.py` y definir `APPLICATIONINSIGHTS_CONNECTION_STRING`.
+
 ## Mejoras a revisar en las pruebas manuales
 
 - Ciudad es texto libre. Cada persona puede escribirla distinto ("Lima", "lima", "Lima, Perú"). Opciones: catálogo `core.city` por país, o un autocompletado con un servicio de lugares que guarde un id.
