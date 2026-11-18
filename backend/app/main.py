@@ -12,7 +12,7 @@ from app.modules.talent.router import router as talent_router
 
 settings = get_settings()
 
-app = FastAPI(title="LEAD Talent API", version="0.1.0")
+app = FastAPI(title="LEAD Talent API", version="0.1.0", **settings.api_docs_urls)
 log = setup_logging(
     allow_cv_debug=lambda: get_settings().cv_debug_allowed,
     connection_string=settings.applicationinsights_connection_string,

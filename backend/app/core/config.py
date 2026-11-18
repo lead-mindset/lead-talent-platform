@@ -64,8 +64,19 @@ class Settings(BaseSettings):
         return self.foundry_api_version.strip() or "2025-04-01-preview"
 
     @property
+    def is_local(self) -> bool:
+        return self.env.strip().lower() == "local"
+
+    @property
     def cv_debug_allowed(self) -> bool:
-        return self.log_cv_debug and self.env.strip().lower() == "local"
+        return self.log_cv_debug and self.is_local
+
+    @property
+    def api_docs_urls(self) -> dict[str, str | None]:
+        # /docs, /redoc y /openapi.json solo en local. En QA y producción no se publica el contrato.
+        if self.is_local:
+            return {"docs_url": "/docs", "redoc_url": "/redoc", "openapi_url": "/openapi.json"}
+        return {"docs_url": None, "redoc_url": None, "openapi_url": None}
 
     @property
     def cors_origin_list(self) -> list[str]:
