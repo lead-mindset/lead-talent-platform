@@ -239,6 +239,10 @@ Forms use `Field` + `useForm` + `validators`, and the shared UI primitives live 
 
 Read [`CONTRIBUTING.md`](CONTRIBUTING.md) before opening a pull request.
 
+> [!CAUTION]
+> **Never merge or push `qa`, `feat/registro`, or any branch created from them into `master` or `dev`.**
+> `master` and `dev` hold the previous LEAD platform, a different application. `dev` also runs a workflow (`deploy-qa.yml`) that applies migrations to another database. LEAD Talent work starts from `qa` and goes back to `qa`.
+
 ---
 
 ## Attribution
