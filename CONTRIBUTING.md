@@ -10,17 +10,21 @@ Thanks for helping build the LEAD platform. This guide covers how we work. For s
 
 ## Branches
 
-`master` is the main branch. Never commit to it directly.
+`qa` is the base branch for LEAD Talent. Never commit to it directly.
 
-Make a branch from `master` named `<type>/<short-description>`:
+> [!CAUTION]
+> **Never merge or push `qa`, `feat/registro`, or any branch created from them into `master` or `dev`.**
+> `master` and `dev` hold the previous LEAD platform, a different application. `dev` also runs a workflow (`deploy-qa.yml`) that applies migrations to another database. Never open a PR against `master` or `dev` from these branches.
+
+Make a branch from `qa` named `<type>/<short-description>`:
 
 ```
-feat/student-registration
+feat/registro
 fix/resume-upload-size
 docs/contributing-guide
 ```
 
-Keep a branch focused on one thing. Rebase on `master` before opening the PR if it has moved.
+Keep a branch focused on one thing. Rebase on `qa` before opening the PR if it has moved.
 
 ## Commits
 
@@ -119,7 +123,7 @@ pnpm test:e2e
 
 If the change touches auth, the API or the database, also run the real E2E (`pnpm test:e2e:real`) against `lead-core-qa`.
 
-Open the PR against `master` with:
+Open the PR against `qa` (never `master` or `dev`) with:
 
 - **Title** in Conventional Commit format.
 - **What and why:** one or two short paragraphs. Link the issue or plan.
@@ -132,7 +136,7 @@ Open the PR against `master` with:
   - [ ] New migrations, if any, tested on local or QA
   - [ ] Docs updated (`README.md`, `docs/`) if behavior or setup changed
 
-Every PR needs at least one approving review before it is merged. Prefer **squash and merge** so `master` stays one commit per change. Delete the branch after merging.
+Every PR needs at least one approving review before it is merged. Prefer **squash and merge** so `qa` stays one commit per change. Delete the branch after merging.
 
 ## Reviewing
 
