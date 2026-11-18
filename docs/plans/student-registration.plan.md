@@ -93,6 +93,9 @@ Toda regla de negocio vive en `service.py`. El router solo autentica, valida y l
 - [ ] Conectar `cv-card` con el flujo de subida: pedir URL, subir el archivo, confirmar.
 - [ ] Ocultar en la navegación todo lo que no es perfil y resume.
 
+### Pendiente: API del perfil
+- [ ] Cambiar `PUT /talent/profile` por `PATCH`, para no reenviar el perfil completo en cada cambio. Hoy el wizard, el paso 6 y el switch de visibilidad de `/perfil` mandan todos los campos (incluido `career_stage`) porque el PUT reemplaza lo que no llega.
+
 ### Pendiente: seguridad antes de abrir el registro
 - [ ] Templates de correo: pegar `supabase/templates/confirm-signup.html` en "Confirm sign up" (cuentas nuevas) y `supabase/templates/magic-link.html` en "Magic link or OTP" (login). Repetir en QA.
 - [ ] Mantener activado "Confirm email" en Auth > Sign In / Providers > Email.
