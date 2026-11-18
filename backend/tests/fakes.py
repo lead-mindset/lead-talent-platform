@@ -70,6 +70,7 @@ class FakeTalent:
     def __init__(self) -> None:
         self.profiles: dict[str, dict[str, Any]] = {}
         self.resumes: list[dict[str, Any]] = []
+        self.events: list[dict[str, Any]] = []
 
     def get_profile(self, person_id: str) -> dict[str, Any] | None:
         return self.profiles.get(person_id)
@@ -77,6 +78,9 @@ class FakeTalent:
     def upsert_profile(self, person_id: str, data: dict[str, Any]) -> dict[str, Any]:
         self.profiles[person_id] = {**self.profiles.get(person_id, {}), **data}
         return self.profiles[person_id]
+
+    def insert_event(self, data: dict[str, Any]) -> None:
+        self.events.append(data)
 
     def get_current_resume(self, person_id: str) -> dict[str, Any] | None:
         return next(

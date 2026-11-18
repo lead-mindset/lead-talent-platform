@@ -5,7 +5,7 @@ from typing import Any
 import psycopg
 
 PROFILE_COLUMNS = """
-  headline, english_level, skills, top_skills, target_roles, availability,
+  career_stage, headline, english_level, skills, top_skills, target_roles, availability,
   recruiter_visible, recruiter_visible_consented_at, onboarding_completed_at
 """
 RESUME_COLUMNS = "id, storage_path, file_name, mime_type, size_bytes, uploaded_at"
@@ -50,3 +50,12 @@ class TalentRepository:
             f"returning {RESUME_COLUMNS}",
             {**data, "person_id": person_id},
         ).fetchone()
+
+    def insert_event(self, data: dict[str, Any]) -> None:
+        self.conn.execute(
+            "insert into talent.registration_event "
+            "(session_id, name, step, device, seconds_on_step, reason) "
+            "values (%(session_id)s, %(name)s, %(step)s, %(device)s, "
+            "%(seconds_on_step)s, %(reason)s)",
+            data,
+        )

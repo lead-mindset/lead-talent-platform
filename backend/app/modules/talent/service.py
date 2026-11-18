@@ -14,6 +14,7 @@ from app.modules.core.repository import CoreRepository
 from app.modules.talent.repository import TalentRepository
 from app.modules.talent.schemas import (
     RESUME_MIME_TYPES,
+    FunnelEventIn,
     ProfileIn,
     ResumeConfirmIn,
     ResumeUploadIn,
@@ -27,7 +28,10 @@ PERSON_FIELDS = {
     "university_id",
     "university_other", "major", "graduation_year",
 }
-PROFILE_FIELDS = {"headline", "english_level", "skills", "top_skills", "target_roles", "availability"}
+PROFILE_FIELDS = {
+    "career_stage", "headline", "english_level", "skills", "top_skills", "target_roles",
+    "availability",
+}
 
 
 class TalentError(Exception):
@@ -147,3 +151,8 @@ class TalentService:
             self.settings.resume_bucket, resume["storage_path"], self.settings.signed_url_seconds
         )
         return {**resume, "download_url": url}
+
+    # ----------------------------------------------------------------- embudo
+    def record_event(self, data: FunnelEventIn) -> None:
+        """Guarda un evento del embudo. No se cruza con la persona a propósito."""
+        self.talent.insert_event(data.model_dump(mode="json"))

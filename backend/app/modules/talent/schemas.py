@@ -2,12 +2,16 @@ from datetime import datetime
 from typing import Literal
 from uuid import UUID
 
-from pydantic import BaseModel, Field, HttpUrl, field_validator, model_validator
+from pydantic import BaseModel, ConfigDict, Field, HttpUrl, field_validator, model_validator
 
 from app.modules.core.schemas import PersonOut
 
 EnglishLevel = Literal["basico", "intermedio", "avanzado", "nativo"]
 Availability = Literal["practicas", "part", "full"]
+# Paso 1 del registro: "¿Cuál te describe mejor?"
+CareerStage = Literal[
+    "estudiante_universitario", "recien_graduado", "posgrado", "profesional_joven"
+]
 
 RESUME_MIME_TYPES: dict[str, str] = {
     "application/pdf": ".pdf",
@@ -29,6 +33,7 @@ class ProfileIn(BaseModel):
     major: str | None = Field(default=None, max_length=120)
     graduation_year: int | None = Field(default=None, ge=1990, le=2045)
     # talent.profile
+    career_stage: CareerStage | None = None
     headline: str | None = Field(default=None, max_length=160)
     english_level: EnglishLevel | None = None
     skills: list[str] = Field(default_factory=list, max_length=30)
@@ -69,6 +74,7 @@ class ProfileIn(BaseModel):
 
 
 class TalentProfileOut(BaseModel):
+    career_stage: str | None = None
     headline: str | None
     english_level: str | None
     skills: list[str]
@@ -110,3 +116,34 @@ class ResumeOut(BaseModel):
     size_bytes: int
     uploaded_at: datetime
     download_url: str | None = None
+
+
+# ------------------------------------------------------------ embudo del registro
+FunnelEventName = Literal[
+    "registro_paso_visto",
+    "registro_paso_completado",
+    "cv_subido",
+    "registro_sin_cv",
+    "cv_lectura_fallida",
+    "registro_terminado",
+]
+Device = Literal["mobile", "tablet", "desktop"]
+
+
+class FunnelEventIn(BaseModel):
+    """Un evento del embudo. No acepta campos extra: así no entra ningún dato personal."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    session_id: UUID  # aleatorio por intento de registro, lo crea el navegador
+    name: FunnelEventName
+    step: int = Field(ge=1, le=6)
+    device: Device
+    seconds_on_step: int | None = Field(default=None, ge=0, le=86400)
+    reason: str | None = Field(default=None, pattern=r"^[a-z_]{1,40}$")
+
+    @model_validator(mode="after")
+    def reason_only_on_failure(self) -> "FunnelEventIn":
+        if self.reason is not None and self.name != "cv_lectura_fallida":
+            raise ValueError("reason solo va con cv_lectura_fallida")
+        return self

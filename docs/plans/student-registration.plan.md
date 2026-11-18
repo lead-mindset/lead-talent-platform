@@ -55,6 +55,7 @@ Base: `/api/v1`. Todas las rutas piden `Authorization: Bearer <access token de S
 | POST | `/talent/resume/upload-url` | Valida tipo y tamaño, devuelve URL firmada y ruta |
 | POST | `/talent/resume` | Confirma la subida y la marca como vigente |
 | GET | `/talent/resume` | Resume vigente con URL de descarga (5 minutos). 204 si no hay |
+| POST | `/talent/events` | Evento del embudo de registro (6 nombres fijos). 204. Sin datos personales: guarda paso, dispositivo, segundos y un `session_id` aleatorio |
 
 Estructura:
 

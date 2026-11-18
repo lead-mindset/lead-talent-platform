@@ -9,6 +9,7 @@ from app.core.storage import Storage, get_storage
 from app.modules.core.repository import CoreRepository
 from app.modules.talent.repository import TalentRepository
 from app.modules.talent.schemas import (
+    FunnelEventIn,
     ProfileIn,
     ProfileOut,
     ResumeConfirmIn,
@@ -87,3 +88,10 @@ def get_current_resume(user: CurrentUser, service: Service) -> ResumeOut | Respo
     if resume is None:
         return Response(status_code=status.HTTP_204_NO_CONTENT)
     return ResumeOut(**resume)
+
+
+@router.post("/events", status_code=status.HTTP_204_NO_CONTENT)
+def record_event(body: FunnelEventIn, user: CurrentUser, service: Service) -> Response:
+    """Evento del embudo de registro. Exige sesión, pero no guarda quién lo mandó."""
+    service.record_event(body)
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
