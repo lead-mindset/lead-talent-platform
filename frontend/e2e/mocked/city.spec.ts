@@ -36,7 +36,8 @@ function citySearches(state: MockState) {
 async function start(page: Page, state = newState()) {
   await setup(page, state);
   await loginViaUi(page, state);
-  await expect(page).toHaveURL(/\/perfil\/nuevo$/);
+  // Con todos los workers en paralelo, el login puede tardar más de los 5 s por defecto.
+  await expect(page).toHaveURL(/\/perfil\/nuevo$/, { timeout: 15_000 });
   await page.getByLabel("Nombres").fill("Valeria");
   return state;
 }
@@ -154,7 +155,7 @@ test.describe("Ciudad en el wizard", () => {
     const state = completedState();
     await setup(page, state);
     await loginViaUi(page, state);
-    await expect(page).toHaveURL(/\/perfil$/);
+    await expect(page).toHaveURL(/\/perfil$/, { timeout: 15_000 });
     await page.goto("/perfil/editar");
     await expect(page.getByTestId("selected-city")).toHaveText("Lima, Lima");
   });
