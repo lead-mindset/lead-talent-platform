@@ -6,31 +6,66 @@ import psycopg
 
 PERSON_COLUMNS = """
   id, email, given_names, family_names, full_name, country_code, city_id, city_other,
-  (select c.name from core.city c where c.id = person.city_id) as city_name,
-  (select c.admin1 from core.city c where c.id = person.city_id) as city_admin1,
+  (select coalesce(c.name_es, c.name) from core.city c where c.id = person.city_id) as city_name,
+  (select coalesce(c.admin1_es, c.admin1) from core.city c where c.id = person.city_id)
+    as city_admin1,
   university_id, university_other,
   (select u.name from core.university u where u.id = person.university_id) as university_name,
   major, graduation_year, linkedin_url
 """
 
-# Orden de resultados: coincidencia exacta, prefijo, similitud (pg_trgm) y población.
+# Busca en el nombre original (core.city.name) y en todos los nombres en español
+# (core.city_alias, que incluye name_es). Cada ciudad se queda con su mejor coincidencia.
+# Orden: coincidencia exacta, prefijo, similitud (pg_trgm) y población.
 # core.search_key = lower(unaccent(x)), así "chillan" encuentra "Chillán".
+# Se muestra el nombre en español si existe; si no, el original.
 SEARCH_CITIES = """
 with q as (
   select core.search_key(%(q)s) as k, core.search_key(%(q_like)s) || '%%' as prefix
+),
+names as (
+  select c.id, core.search_key(c.name) as key
+  from core.city c, q
+  where c.country_code = %(country)s
+    and (core.search_key(c.name) like q.prefix
+         or core.search_key(c.name) operator(extensions.%%) q.k)
+  union all
+  select a.city_id, core.search_key(a.name)
+  from core.city_alias a
+  join core.city c on c.id = a.city_id, q
+  where c.country_code = %(country)s
+    and (core.search_key(a.name) like q.prefix
+         or core.search_key(a.name) operator(extensions.%%) q.k)
+),
+best as (
+  select n.id,
+         bool_or(n.key = q.k) as exact,
+         bool_or(n.key like q.prefix) as prefix,
+         max(extensions.similarity(n.key, q.k)) as similarity
+  from names n, q
+  group by n.id
+),
+stats as (
+  select bool_or(exact or prefix) as has_strong,
+         coalesce(max(similarity) filter (where not exact and not prefix), 0) as top_fuzzy
+  from best
 )
-select c.id, c.name, c.admin1, c.country_code
-from core.city c, q
-where c.country_code = %(country)s
-  and (core.search_key(c.name) like q.prefix
-       or core.search_key(c.name) operator(extensions.%%) q.k)
-order by core.search_key(c.name) = q.k desc,
-         core.search_key(c.name) like q.prefix desc,
-         extensions.similarity(core.search_key(c.name), q.k) desc,
-         c.population desc,
-         c.id
+select c.id,
+       coalesce(c.name_es, c.name) as name,
+       coalesce(c.admin1_es, c.admin1) as admin1,
+       c.country_code
+from best b
+join core.city c on c.id = b.id, stats s
+-- Exactas y de prefijo siempre. Por similitud solo las fuertes, salvo que no haya nada
+-- mejor (la persona escribió con errores): ahí también las cercanas al mejor puntaje.
+where b.exact or b.prefix
+   or b.similarity >= %(min_similarity)s
+   or (not s.has_strong and b.similarity >= s.top_fuzzy - %(fuzzy_margin)s)
+order by b.exact desc, b.prefix desc, b.similarity desc, c.population desc, c.id
 limit %(limit)s
 """
+MIN_SIMILARITY = 0.5
+FUZZY_MARGIN = 0.1
 
 
 def escape_like(value: str) -> str:
@@ -112,5 +147,12 @@ class CoreRepository:
     def search_cities(self, country_code: str, query: str, limit: int) -> list[dict[str, Any]]:
         return self.conn.execute(
             SEARCH_CITIES,
-            {"q": query, "q_like": escape_like(query), "country": country_code, "limit": limit},
+            {
+                "q": query,
+                "q_like": escape_like(query),
+                "country": country_code,
+                "limit": limit,
+                "min_similarity": MIN_SIMILARITY,
+                "fuzzy_margin": FUZZY_MARGIN,
+            },
         ).fetchall()
