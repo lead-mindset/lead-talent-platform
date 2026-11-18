@@ -1,0 +1,100 @@
+<!-- Supabase: Authentication > Emails > Confirm sign up
+     Se envía la PRIMERA vez que un correo pide código (cuenta nueva).
+     Subject: Tu código para crear tu perfil en LEAD: {{ .Token }}
+     Variables: {{ .Token }} (código de 6 dígitos), {{ .ConfirmationURL }} (enlace) -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tu código para crear tu perfil en LEAD</title>
+</head>
+<body style="margin:0;padding:0;background-color:#f5f5f5;font-family:Arial,Helvetica,sans-serif;">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#f5f5f5;">
+    <tr>
+      <td align="center" style="padding:24px 12px;">
+        <table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" style="width:100%;max-width:600px;background-color:#ffffff;border-radius:12px;overflow:hidden;box-shadow:0 4px 16px rgba(3,12,64,0.08);">
+
+          <!-- Header -->
+          <tr>
+            <td align="center" bgcolor="#912d91" style="background-color:#912d91;background-image:linear-gradient(135deg,#c34146 0%,#912d91 50%,#6e55e1 100%);padding:32px 24px;">
+              <p style="margin:0;font-size:36px;line-height:40px;font-weight:900;letter-spacing:4px;color:#ffffff;">LEAD</p>
+              <p style="margin:6px 0 0;font-size:13px;line-height:18px;color:#ffffff;letter-spacing:1px;">Learn · Explore · Aspire · Discover</p>
+            </td>
+          </tr>
+
+          <!-- Body -->
+          <tr>
+            <td style="padding:32px 32px 8px;">
+              <h1 style="margin:0;font-size:24px;line-height:32px;font-weight:700;color:#030c40;">¡Bienvenida o bienvenido a LEAD!</h1>
+              <p style="margin:12px 0 0;font-size:16px;line-height:1.6;color:#333333;">
+                Escribe este código en la página de LEAD Talent para confirmar tu correo y crear tu perfil:
+              </p>
+            </td>
+          </tr>
+
+          <!-- Code -->
+          <tr>
+            <td style="padding:16px 32px;">
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+                <tr>
+                  <td align="center" style="background-color:#f5f5f5;border-left:4px solid #c34146;border-radius:8px;padding:20px;">
+                    <p style="margin:0;font-family:'Courier New',Courier,monospace;font-size:36px;line-height:44px;font-weight:700;letter-spacing:10px;color:#030c40;">{{ .Token }}</p>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- Button -->
+          <tr>
+            <td style="padding:8px 32px 0;">
+              <p style="margin:0 0 16px;font-size:16px;line-height:1.6;color:#333333;">
+                ¿Estás en el mismo navegador donde pediste el código? Confirma con un clic:
+              </p>
+              <table role="presentation" cellpadding="0" cellspacing="0" border="0">
+                <tr>
+                  <td align="center" bgcolor="#912d91" style="background-color:#912d91;background-image:linear-gradient(135deg,#c34146 0%,#912d91 50%,#6e55e1 100%);border-radius:30px;">
+                    <a href="{{ .ConfirmationURL }}" target="_blank" style="display:inline-block;padding:14px 32px;font-size:16px;font-weight:700;color:#ffffff;text-decoration:none;border-radius:30px;">Crear mi perfil</a>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- Notes -->
+          <tr>
+            <td style="padding:24px 32px 8px;">
+              <p style="margin:0 0 6px;font-size:14px;line-height:1.6;color:#333333;"><span style="color:#c34146;font-weight:700;">→</span> El código y el enlace expiran pronto y sirven una sola vez.</p>
+              <p style="margin:0 0 6px;font-size:14px;line-height:1.6;color:#333333;"><span style="color:#c34146;font-weight:700;">→</span> Nadie de LEAD te va a pedir este código. No lo compartas.</p>
+              <p style="margin:0;font-size:14px;line-height:1.6;color:#333333;"><span style="color:#c34146;font-weight:700;">→</span> Si no te registraste en LEAD, ignora este correo. No se creará ninguna cuenta.</p>
+            </td>
+          </tr>
+
+          <!-- English -->
+          <tr>
+            <td style="padding:16px 32px 24px;">
+              <p style="margin:0;font-size:13px;line-height:1.6;color:#666666;border-top:1px solid #eeeeee;padding-top:16px;">
+                <strong>English:</strong> Welcome to LEAD! Enter the code above on LEAD Talent to confirm your email and create your profile, or use the button if you are in the same browser. If you did not sign up, you can ignore this email.
+              </p>
+            </td>
+          </tr>
+
+          <!-- Footer -->
+          <tr>
+            <td align="center" bgcolor="#030c40" style="background-color:#030c40;padding:20px 24px;">
+              <p style="margin:0;font-size:13px;line-height:1.6;color:#ffffff;">
+                LEAD · Empoderando a la próxima generación de líderes latinos
+              </p>
+              <p style="margin:4px 0 0;font-size:12px;line-height:1.6;">
+                <a href="https://www.leadmindset.org" target="_blank" style="color:#ffffff;text-decoration:underline;">leadmindset.org</a>
+              </p>
+            </td>
+          </tr>
+
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
