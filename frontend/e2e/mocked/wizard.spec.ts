@@ -5,6 +5,11 @@ async function next(page: Page) {
   await page.getByRole("button", { name: "Continuar" }).click();
 }
 
+async function pickCountry(page: Page, name: string) {
+  await page.getByRole("combobox", { name: "País" }).click();
+  await page.getByRole("option", { name }).click();
+}
+
 test.describe("Wizard de registro", () => {
   test("pide los nombres antes de avanzar", async ({ page }) => {
     const state = newState();
@@ -34,9 +39,10 @@ test.describe("Wizard de registro", () => {
     // Paso 1: tú
     await page.getByLabel("Nombres").fill("María José");
     await page.getByLabel("Apellidos").fill("García López");
-    await page.getByRole("combobox").click();
-    await page.getByRole("option", { name: "Perú" }).click();
-    await page.getByLabel("¿En qué ciudad?").fill("Lima");
+    await pickCountry(page, "Perú");
+    await page.getByLabel("Buscar ciudad").fill("lim");
+    await page.getByRole("option", { name: "Lima, Lima" }).click();
+    await expect(page.getByTestId("selected-city")).toHaveText("Lima, Lima");
     await page.getByRole("textbox", { name: "LinkedIn" }).fill("linkedin.com/in/mariajose");
     await next(page);
 
@@ -72,7 +78,8 @@ test.describe("Wizard de registro", () => {
       given_names: "María José",
       family_names: "García López",
       country_code: "PE",
-      city: "Lima",
+      city_id: 3936456,
+      city_other: null,
       linkedin_url: "https://linkedin.com/in/mariajose",
       university_id: null,
       university_other: "Universidad Nacional de Ingeniería",
@@ -96,6 +103,7 @@ test.describe("Wizard de registro", () => {
     await setup(page, state);
     await loginViaUi(page, state);
     await page.getByLabel("Nombres").fill("Sukarno");
+    await pickCountry(page, "Perú");
     await next(page);
     await expect(page.getByText("Paso 2 de 5")).toBeVisible();
   });
@@ -105,6 +113,7 @@ test.describe("Wizard de registro", () => {
     await setup(page, state);
     await loginViaUi(page, state);
     await page.getByLabel("Nombres").fill("Valeria");
+    await pickCountry(page, "Perú");
     await next(page);
     await page.getByLabel("¿A qué universidad vas?").fill("ute");
     await page.getByRole("button", { name: "UTEC" }).click();

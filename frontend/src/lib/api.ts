@@ -11,8 +11,17 @@ export type Person = {
   family_names: string | null;
   /** Calculado en la base de datos: nombres + apellidos. Solo lectura. */
   full_name: string | null;
-  city: string | null;
   country_code: string | null;
+  /** Nombre del país en español (core.country), para mostrar. */
+  country_name: string | null;
+  /** Ciudad del catálogo (geonameid). */
+  city_id: number | null;
+  /** Nombre de la ciudad para mostrar (en español si existe). */
+  city_name: string | null;
+  /** Región o estado de la ciudad, para mostrar. */
+  city_admin1: string | null;
+  /** Texto libre cuando la persona no encontró su ciudad. Nunca junto con city_id. */
+  city_other: string | null;
   university_id: string | null;
   university_other: string | null;
   university_name: string | null;
@@ -41,8 +50,9 @@ export type ProfileResponse = { person: Person; profile: TalentProfile | null };
 export type ProfileInput = {
   given_names: string;
   family_names?: string | null;
-  city?: string | null;
-  country_code?: string | null;
+  country_code: string;
+  city_id?: number | null;
+  city_other?: string | null;
   linkedin_url?: string | null;
   university_id?: string | null;
   university_other?: string | null;
@@ -58,6 +68,15 @@ export type ProfileInput = {
 };
 
 export type University = { id: string; name: string; country_code: string };
+
+export type Country = { code: string; name_es: string; name_en: string };
+
+export type City = { id: number; name: string; admin1: string | null; country_code: string };
+
+/** "Ciudad, Región", como se muestra en el selector y en el perfil. */
+export function cityLabel(name: string | null, admin1: string | null): string {
+  return [name, admin1].filter(Boolean).join(", ");
+}
 
 export type Resume = {
   id: string;
@@ -125,6 +144,13 @@ export const api = {
 
   searchUniversities: (q: string) =>
     request<University[]>(`/universities?q=${encodeURIComponent(q)}`) as Promise<University[]>,
+
+  getCountries: () => request<Country[]>("/countries") as Promise<Country[]>,
+
+  searchCities: (country: string, q: string) =>
+    request<City[]>(
+      `/cities?country=${encodeURIComponent(country)}&q=${encodeURIComponent(q)}&limit=10`,
+    ) as Promise<City[]>,
 
   getResume: () => request<Resume>("/talent/resume"),
 

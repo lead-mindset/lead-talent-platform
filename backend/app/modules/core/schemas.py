@@ -29,6 +29,7 @@ class PersonOut(BaseModel):
     family_names: str | None
     full_name: str | None
     country_code: str | None
+    country_name: str | None = None  # nombre en español, para mostrar
     city_id: int | None = None
     city_name: str | None = None  # para mostrar: nombre del catálogo
     city_admin1: str | None = None  # región o estado de la ciudad del catálogo

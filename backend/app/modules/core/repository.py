@@ -5,7 +5,9 @@ from typing import Any
 import psycopg
 
 PERSON_COLUMNS = """
-  id, email, given_names, family_names, full_name, country_code, city_id, city_other,
+  id, email, given_names, family_names, full_name, country_code,
+  (select co.name_es from core.country co where co.code = person.country_code) as country_name,
+  city_id, city_other,
   (select coalesce(c.name_es, c.name) from core.city c where c.id = person.city_id) as city_name,
   (select coalesce(c.admin1_es, c.admin1) from core.city c where c.id = person.city_id)
     as city_admin1,

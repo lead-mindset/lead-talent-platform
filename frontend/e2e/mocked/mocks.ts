@@ -20,8 +20,12 @@ export type Person = {
   given_names: string | null;
   family_names: string | null;
   full_name: string | null;
-  city: string | null;
   country_code: string | null;
+  country_name: string | null;
+  city_id: number | null;
+  city_name: string | null;
+  city_admin1: string | null;
+  city_other: string | null;
   university_id: string | null;
   university_other: string | null;
   university_name: string | null;
@@ -51,6 +55,29 @@ export type Resume = {
   download_url: string | null;
 };
 
+export type Country = { code: string; name_es: string; name_en: string };
+export type City = { id: number; name: string; admin1: string | null; country_code: string };
+
+export const COUNTRIES: Country[] = [
+  { code: "CL", name_es: "Chile", name_en: "Chile" },
+  { code: "MX", name_es: "México", name_en: "Mexico" },
+  { code: "PE", name_es: "Perú", name_en: "Peru" },
+];
+
+/** Ciudades del catálogo simulado. Los id son geonameid reales. */
+export const CITIES: City[] = [
+  { id: 3936456, name: "Lima", admin1: "Lima", country_code: "PE" },
+  { id: 3947322, name: "Arequipa", admin1: "Arequipa", country_code: "PE" },
+  { id: 3871336, name: "Santiago", admin1: "Metropolitana", country_code: "CL" },
+  { id: 3895088, name: "Chillán", admin1: "Ñuble", country_code: "CL" },
+  { id: 3530597, name: "Ciudad de México", admin1: "Ciudad de México", country_code: "MX" },
+];
+
+/** Minúsculas y sin tildes, como core.search_key en la base. */
+export function searchKey(value: string): string {
+  return value.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+}
+
 /** Estado en memoria del "backend". Cada test arranca con el suyo. */
 export type MockState = {
   email: string;
@@ -58,6 +85,8 @@ export type MockState = {
   profile: Profile | null;
   resume: Resume | null;
   universities: { id: string; name: string; country_code: string }[];
+  countries: Country[];
+  cities: City[];
   /** Fuerza respuestas de error en GET /talent/profile. */
   profileError?: "network" | "unconfirmed";
   calls: { method: string; path: string; body?: Json }[];
@@ -75,8 +104,12 @@ export function newState(overrides: Partial<MockState> = {}): MockState {
       given_names: null,
       family_names: null,
       full_name: null,
-      city: null,
       country_code: null,
+      country_name: null,
+      city_id: null,
+      city_name: null,
+      city_admin1: null,
+      city_other: null,
       university_id: null,
       university_other: null,
       university_name: null,
@@ -87,6 +120,8 @@ export function newState(overrides: Partial<MockState> = {}): MockState {
     profile: null,
     resume: null,
     universities: [],
+    countries: COUNTRIES,
+    cities: CITIES,
     calls: [],
     otpRequests: [],
     storageUploads: [],
@@ -102,8 +137,11 @@ export function completedState(overrides: Partial<MockState> = {}): MockState {
     given_names: "Valeria",
     family_names: "Mendoza",
     full_name: "Valeria Mendoza",
-    city: "Lima",
     country_code: "PE",
+    country_name: "Perú",
+    city_id: 3936456,
+    city_name: "Lima",
+    city_admin1: "Lima",
     university_other: "UTEC",
     major: "Computer Science",
     graduation_year: 2029,
@@ -222,13 +260,17 @@ export async function mockApi(page: Page, state: MockState) {
     if (path === "/talent/profile" && req.method() === "PUT" && body) {
       const p = { ...state.person } as Person;
       for (const key of [
-        "given_names", "family_names", "city", "country_code", "linkedin_url",
+        "given_names", "family_names", "country_code", "city_id", "city_other", "linkedin_url",
         "university_id", "university_other", "major", "graduation_year",
       ] as const) {
         (p as Record<string, unknown>)[key] = body[key] ?? null;
       }
       p.full_name = [p.given_names, p.family_names].filter(Boolean).join(" ") || null;
       p.university_name = state.universities.find((u) => u.id === p.university_id)?.name ?? null;
+      p.country_name = state.countries.find((c) => c.code === p.country_code)?.name_es ?? null;
+      const city = state.cities.find((c) => c.id === p.city_id);
+      p.city_name = city?.name ?? null;
+      p.city_admin1 = city?.admin1 ?? null;
       state.person = p;
       const visible = Boolean(body.recruiter_visible);
       state.profile = {
@@ -245,6 +287,18 @@ export async function mockApi(page: Page, state: MockState) {
         onboarding_completed_at: state.profile?.onboarding_completed_at ?? new Date().toISOString(),
       };
       return reply(route, 200, { person: state.person, profile: state.profile });
+    }
+
+    if (path === "/countries") return reply(route, 200, state.countries);
+
+    if (path === "/cities") {
+      const country = url.searchParams.get("country") ?? "";
+      const q = searchKey(url.searchParams.get("q") ?? "");
+      return reply(
+        route,
+        200,
+        state.cities.filter((c) => c.country_code === country && searchKey(c.name).includes(q)),
+      );
     }
 
     if (path === "/universities") {

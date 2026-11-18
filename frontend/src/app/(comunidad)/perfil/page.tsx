@@ -13,7 +13,6 @@ import { CvCard } from "@/components/cv-card";
 import { RequireAuth } from "@/components/require-auth";
 import { api, ApiError, type ProfileResponse, type TalentProfile } from "@/lib/api";
 import { initialsOf } from "@/lib/auth";
-import { countryName } from "@/lib/countries";
 import { AVAILABILITY } from "@/lib/data/options";
 
 const ENGLISH_LABEL: Record<string, string> = {
@@ -56,7 +55,8 @@ function Profile() {
   const { person } = data;
   const profile: TalentProfile = data.profile;
   const university = person.university_name ?? person.university_other;
-  const place = [person.city, countryName(person.country_code)].filter(Boolean).join(", ");
+  // Ciudad del catálogo o, si no la encontró, la que escribió.
+  const place = [person.city_name ?? person.city_other, person.country_name].filter(Boolean).join(", ");
   const study = [university, person.major, person.graduation_year ? `Egreso ${person.graduation_year}` : null]
     .filter(Boolean)
     .join(" · ");
@@ -69,8 +69,9 @@ function Profile() {
       const res = await api.saveProfile({
         given_names: person.given_names ?? "",
         family_names: person.family_names,
-        city: person.city,
-        country_code: person.country_code,
+        country_code: person.country_code ?? "",
+        city_id: person.city_id,
+        city_other: person.city_other,
         linkedin_url: person.linkedin_url,
         university_id: person.university_id,
         university_other: person.university_id ? null : person.university_other,

@@ -17,6 +17,7 @@ def make_person(**overrides: Any) -> dict[str, Any]:
         "family_names": None,
         "full_name": None,
         "country_code": None,
+        "country_name": None,
         "city_id": None,
         "city_name": None,
         "city_admin1": None,

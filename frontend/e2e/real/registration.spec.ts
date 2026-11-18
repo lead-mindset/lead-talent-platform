@@ -56,7 +56,7 @@ test("registro real: código, wizard, perfil y CV", async ({ page }) => {
 
   await page.getByLabel("Nombres").fill("Prueba E2E");
   await page.getByLabel("Apellidos").fill("Talent");
-  await page.getByRole("combobox").click();
+  await page.getByRole("combobox", { name: "País" }).click();
   await page.getByRole("option", { name: "Perú" }).click();
   await page.getByRole("button", { name: "Continuar" }).click();
 

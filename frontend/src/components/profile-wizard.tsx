@@ -10,12 +10,21 @@ import { FilterChip } from "@/components/ui/filter-chip";
 import { Segmented } from "@/components/ui/segmented";
 import { Field } from "@/components/form";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Command, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
 import { TagInput } from "@/components/tag-input";
 import { RequireAuth } from "@/components/require-auth";
 import { combine, required, url } from "@/lib/validators";
 import { AVAILABILITY, ROLE_POOL } from "@/lib/data/options";
-import { COUNTRIES } from "@/lib/countries";
-import { api, ApiError, type Availability, type EnglishLevel, type University } from "@/lib/api";
+import {
+  api,
+  ApiError,
+  cityLabel,
+  type Availability,
+  type City,
+  type Country,
+  type EnglishLevel,
+  type University,
+} from "@/lib/api";
 import { getSupabase } from "@/lib/supabase";
 
 const STEPS = ["Tú", "Formación", "Skills", "Objetivos", "Listo"];
@@ -48,8 +57,16 @@ function Wizard() {
   const [step, setStep] = useState(0);
   const [givenNames, setGivenNames] = useState("");
   const [familyNames, setFamilyNames] = useState("");
+  const [countries, setCountries] = useState<Country[]>([]);
   const [country, setCountry] = useState("");
-  const [city, setCity] = useState("");
+  // Ciudad: del catálogo (cityId) o escrita a mano (cityOther), nunca las dos.
+  const [cityMode, setCityMode] = useState<"search" | "other">("search");
+  const [cityId, setCityId] = useState<number | null>(null);
+  const [cityText, setCityText] = useState(""); // "Ciudad, Región" de la ciudad elegida
+  const [cityQuery, setCityQuery] = useState("");
+  const [cityResults, setCityResults] = useState<City[]>([]);
+  const [searchingCity, setSearchingCity] = useState(false);
+  const [cityOther, setCityOther] = useState("");
   const [linkedin, setLinkedin] = useState("");
   const [university, setUniversity] = useState("");
   const [universityId, setUniversityId] = useState<string | null>(null);
@@ -62,19 +79,33 @@ function Wizard() {
   const [roles, setRoles] = useState<string[]>([]);
   const [availability, setAvailability] = useState<Availability>("practicas");
   const [visible, setVisible] = useState(false);
-  const [errors, setErrors] = useState<{ name?: string; linkedin?: string; university?: string; skills?: string; year?: string; save?: string }>({});
+  const [errors, setErrors] = useState<{
+    name?: string;
+    country?: string;
+    linkedin?: string;
+    university?: string;
+    skills?: string;
+    year?: string;
+    save?: string;
+  }>({});
   const [triedNext, setTriedNext] = useState(false);
   const [saving, setSaving] = useState(false);
 
   // Precarga: datos de Google (nombre) o el perfil existente si viene a editar.
   useEffect(() => {
-    api
-      .getProfile()
-      .then(({ person, profile }) => {
+    Promise.all([api.getProfile(), api.getCountries()])
+      .then(([{ person, profile }, countryList]) => {
+        setCountries(countryList);
         setGivenNames(person.given_names ?? "");
         setFamilyNames(person.family_names ?? "");
         setCountry(person.country_code ?? "");
-        setCity(person.city ?? "");
+        if (person.city_id) {
+          setCityId(person.city_id);
+          setCityText(cityLabel(person.city_name, person.city_admin1));
+        } else if (person.city_other) {
+          setCityMode("other");
+          setCityOther(person.city_other);
+        }
         setLinkedin(person.linkedin_url ?? "");
         setUniversityId(person.university_id);
         setUniversity(person.university_name ?? person.university_other ?? "");
@@ -109,6 +140,59 @@ function Wizard() {
     return () => window.clearTimeout(timer);
   }, [university, universityId]);
 
+  // Búsqueda de ciudades del país elegido. Igual que universidades: 2 letras y 250 ms.
+  useEffect(() => {
+    const q = cityQuery.trim();
+    if (!country || cityId || cityMode === "other" || q.length < 2) {
+      setCityResults([]);
+      setSearchingCity(false);
+      return;
+    }
+    let cancelled = false;
+    setSearchingCity(true);
+    const timer = window.setTimeout(() => {
+      api
+        .searchCities(country, q)
+        .then((list) => !cancelled && setCityResults(list))
+        .catch(() => !cancelled && setCityResults([]))
+        .finally(() => !cancelled && setSearchingCity(false));
+    }, 250);
+    return () => {
+      cancelled = true;
+      window.clearTimeout(timer);
+    };
+  }, [cityQuery, country, cityId, cityMode]);
+
+  const resetCity = () => {
+    setCityMode("search");
+    setCityId(null);
+    setCityText("");
+    setCityQuery("");
+    setCityResults([]);
+    setCityOther("");
+  };
+
+  // Una ciudad es de un solo país: al cambiar de país se borra la ciudad.
+  const changeCountry = (code: string) => {
+    if (code === country) return;
+    setCountry(code);
+    resetCity();
+  };
+
+  const pickCity = (city: City) => {
+    setCityId(city.id);
+    setCityText(cityLabel(city.name, city.admin1));
+    setCityQuery("");
+    setCityResults([]);
+  };
+
+  const cityNotFound = () => {
+    setCityMode("other");
+    setCityOther(cityQuery.trim());
+    setCityQuery("");
+    setCityResults([]);
+  };
+
   const toggle = (list: string[], set: (v: string[]) => void, value: string, max?: number) => {
     if (list.includes(value)) set(list.filter((item) => item !== value));
     else if (!max || list.length < max) set([...list, value]);
@@ -118,6 +202,7 @@ function Wizard() {
     const next: typeof errors = {};
     if (step === 0) {
       next.name = required("Escribe tu nombre")(givenNames);
+      next.country = country ? undefined : "Elige tu país";
       next.linkedin = linkedin.trim()
         ? combine(url())(linkedin) ?? (/linkedin\.com\//i.test(linkedin) ? undefined : "Debe ser un enlace de LinkedIn")
         : undefined;
@@ -140,8 +225,9 @@ function Wizard() {
       await api.saveProfile({
         given_names: givenNames.trim(),
         family_names: familyNames.trim() || null,
-        country_code: country || null,
-        city: city.trim() || null,
+        country_code: country,
+        city_id: cityMode === "search" ? cityId : null,
+        city_other: cityMode === "other" ? cityOther.trim() || null : null,
         linkedin_url: normalizeLinkedin(linkedin),
         university_id: universityId,
         university_other: universityId ? null : university.trim(),
@@ -212,21 +298,92 @@ function Wizard() {
               </Field>
             </div>
             <div>
-              <p className="text-small font-medium">¿En qué país estás?</p>
-              <Select value={country} onValueChange={setCountry}>
-                <SelectTrigger className="mt-1.5 h-10 w-full justify-between rounded-md">
+              <label htmlFor="w-country" className="text-small font-medium">
+                ¿En qué país estás?<span className="ml-0.5 text-destructive-light">*</span>
+              </label>
+              <Select value={country} onValueChange={changeCountry}>
+                <SelectTrigger
+                  id="w-country"
+                  aria-label="País"
+                  aria-invalid={Boolean(errors.country)}
+                  className="mt-1.5 h-10 w-full justify-between rounded-md"
+                >
                   <SelectValue placeholder="Elige tu país" />
                 </SelectTrigger>
                 <SelectContent>
-                  {COUNTRIES.map((item) => (
-                    <SelectItem key={item.code} value={item.code}>{item.name}</SelectItem>
+                  {countries.map((item) => (
+                    <SelectItem key={item.code} value={item.code}>{item.name_es}</SelectItem>
                   ))}
                 </SelectContent>
               </Select>
+              {errors.country && (
+                <p className="mt-1.5 text-caption text-destructive-light" role="alert">{errors.country}</p>
+              )}
             </div>
-            <Field label="¿En qué ciudad?" htmlFor="w-city">
-              <Input id="w-city" value={city} onChange={(e) => setCity(e.target.value)} placeholder="Ciudad" />
-            </Field>
+
+            <div>
+              <label htmlFor={cityMode === "other" ? "w-city-other" : "w-city"} className="text-small font-medium">
+                ¿En qué ciudad? <span className="font-normal text-muted-foreground">Opcional</span>
+              </label>
+
+              {cityId ? (
+                <div className="mt-1.5 flex h-10 items-center justify-between gap-2 rounded-md border border-input px-3">
+                  <span className="flex min-w-0 items-center gap-1.5 text-small">
+                    <Check className="size-3.5 shrink-0 text-success" />
+                    <span className="truncate" data-testid="selected-city">{cityText}</span>
+                  </span>
+                  <Button type="button" variant="ghost" size="sm" onClick={resetCity}>
+                    Cambiar
+                  </Button>
+                </div>
+              ) : cityMode === "other" ? (
+                <div className="mt-1.5 space-y-1.5">
+                  <Input
+                    id="w-city-other"
+                    value={cityOther}
+                    onChange={(e) => setCityOther(e.target.value)}
+                    placeholder="Escribe tu ciudad"
+                    maxLength={80}
+                    autoFocus
+                  />
+                  <button
+                    type="button"
+                    onClick={resetCity}
+                    className="text-caption text-muted-foreground underline underline-offset-2 hover:text-foreground"
+                  >
+                    Buscar en la lista
+                  </button>
+                </div>
+              ) : (
+                // cmdk nombra el input con su propia etiqueta (aria-labelledby): por eso va en `label`.
+                <Command label="Buscar ciudad" shouldFilter={false} className="mt-1.5 h-auto border border-border/60">
+                  <CommandInput
+                    id="w-city"
+                    value={cityQuery}
+                    onValueChange={setCityQuery}
+                    placeholder={country ? "Escribe tu ciudad" : "Elige primero tu país"}
+                    disabled={!country}
+                  />
+                  {country && cityQuery.trim().length >= 2 && (
+                    <CommandList aria-label="Ciudades">
+                      {cityResults.map((city) => (
+                        <CommandItem key={city.id} value={String(city.id)} onSelect={() => pickCity(city)}>
+                          {cityLabel(city.name, city.admin1)}
+                        </CommandItem>
+                      ))}
+                      {!searchingCity && cityResults.length === 0 && (
+                        <p className="px-2 py-1.5 text-caption text-muted-foreground">
+                          No encontramos “{cityQuery.trim()}”.
+                        </p>
+                      )}
+                      <CommandItem value="__other__" onSelect={cityNotFound} className="text-muted-foreground">
+                        No encuentro mi ciudad
+                      </CommandItem>
+                    </CommandList>
+                  )}
+                </Command>
+              )}
+            </div>
             <Field label="LinkedIn" htmlFor="w-li" hint="Opcional" error={errors.linkedin}>
               <Input id="w-li" value={linkedin} onChange={(e) => setLinkedin(e.target.value)} placeholder="linkedin.com/in/tu-usuario" />
             </Field>
