@@ -125,6 +125,15 @@ supabase db reset       # applies every migration from scratch
 
 `supabase start` prints the local URL and keys; put them in both `.env` files.
 
+**City catalog:** after the migrations, load the cities once per database (they are not stored in the repo):
+
+```bash
+cd backend
+uv run python -m scripts.load_geonames
+```
+
+See [`docs/city-catalog.md`](docs/city-catalog.md) for options and how to point it at the local database.
+
 ### 4. Run it locally
 
 Use two terminals:
@@ -229,3 +238,9 @@ Forms use `Field` + `useForm` + `validators`, and the shared UI primitives live 
 ## Contributing
 
 Read [`CONTRIBUTING.md`](CONTRIBUTING.md) before opening a pull request.
+
+---
+
+## Attribution
+
+City data comes from [GeoNames](https://www.geonames.org), licensed under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/).
