@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Tus skills</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Montserrat:wght@600;700;800;900&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:oklch(0.28 0.05 272)}a:hover{color:oklch(0.52 0.2 287)}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; background: oklch(0.975 0.008 272); color: oklch(0.28 0.05 272); font-family: 'Geist', system-ui, sans-serif; display: flex; flex-direction: column;">
+
+  <div style="padding: 52px 24px 0; display: flex; justify-content: space-between; align-items: center;">
+    <span style="font-size: 13px; font-weight: 600; letter-spacing: 0.1em; color: oklch(0.5 0.03 272);">PASO 4 DE 6</span>
+    <a href="Bienvenida.dc.html" style="font-size: 14px; padding: 8px 14px; border-radius: 9999px; box-shadow: 0 0 0 1px oklch(0.8 0.02 272); text-decoration: none;">Guardar y salir</a>
+  </div>
+
+  <div style="flex-grow: 1; padding: 24px 24px 0; display: flex; flex-direction: column; gap: 18px;">
+    <div style="display: flex; flex-direction: column; gap: 8px;">
+      <h1 style="margin: 0; font-family: 'Montserrat', sans-serif; font-weight: 800; font-size: 28px; line-height: 1.2;">Tus skills</h1>
+      <p style="margin: 0; font-size: 15px; line-height: 1.5; color: oklch(0.5 0.03 272);">Encontramos estas en tu CV. Toca las que de verdad dominas.</p>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 10px;">
+      <span style="font-size: 12px; font-weight: 600; letter-spacing: 0.1em; color: oklch(0.5 0.03 272);">SUGERIDAS · TOCA PARA CONFIRMAR</span>
+      <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+        <sc-for list="{{chips}}" as="c" hint-placeholder-count="6">
+          <button type="button" aria-pressed="{{c.pressed}}" onClick="{{c.toggle}}" style="{{c.style}}">{{c.label}}</button>
+        </sc-for>
+      </div>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 6px;">
+      <label for="sk-add" style="font-size: 13px; font-weight: 600;">¿Falta alguna?</label>
+      <div style="display: flex; gap: 8px;">
+        <input id="sk-add" placeholder="Escribe una skill" style="flex-grow: 1; min-width: 0; height: 44px; box-sizing: border-box; border-radius: 12px; border: 1px solid oklch(0.8 0.02 272 / 0.8); background: oklch(0.995 0.004 272); color: oklch(0.28 0.05 272); font-family: inherit; font-size: 15px; padding: 0 12px;">
+        <button type="button" style="height: 44px; padding: 0 16px; border-radius: 12px; border: none; background: oklch(0.5584 0.2066 286.65 / 0.12); color: oklch(0.45 0.2 287); font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer;">Agregar</button>
+      </div>
+    </div>
+
+    <div style="background: oklch(0.995 0.004 272); border-radius: 16.8px; padding: 14px 16px; display: flex; align-items: center; gap: 12px; box-shadow: 0 0 0 1px oklch(0.28 0.05 272 / 0.1);">
+      <span style="font-family: 'Montserrat', sans-serif; font-weight: 800; font-size: 20px; color: oklch(0.52 0.2 287);">{{count}}</span>
+      <span style="font-size: 13px; line-height: 1.45; color: oklch(0.5 0.03 272);">skills confirmadas. Las empresas buscan por skills: confirma solo las reales.</span>
+    </div>
+  </div>
+
+  <div style="padding: 0 0 36px;">
+    <div style="display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 4px; padding: 0 0 20px;">
+      <div style="height: 4px; background: oklch(0.52 0.2 287);"></div>
+      <div style="height: 4px; background: oklch(0.52 0.2 287);"></div>
+      <div style="height: 4px; background: oklch(0.52 0.2 287);"></div>
+      <div style="height: 4px; background-image: linear-gradient(90deg, oklch(0.5584 0.2066 286.65), oklch(0.487 0.2087 322.04));"></div>
+      <div style="height: 4px; background: oklch(0.9 0.015 272);"></div>
+      <div style="height: 4px; background: oklch(0.9 0.015 272);"></div>
+    </div>
+    <div style="padding: 0 24px; display: flex; justify-content: space-between; align-items: center;">
+      <a href="RevisaDatos.dc.html" style="font-size: 15px; font-weight: 600; text-decoration: underline; padding: 12px 4px;">Atrás</a>
+      <a href="QueBuscas.dc.html" style="height: 48px; padding: 0 28px; border-radius: 12px; background-image: linear-gradient(120deg, oklch(0.5584 0.2066 286.65), oklch(0.487 0.2087 322.04)); color: #fff; font-weight: 600; font-size: 15px; text-decoration: none; display: flex; align-items: center;">Siguiente</a>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+constructor(props) { super(props); this.state = { on: { Python: true, SQL: true, 'Power BI': true } }; }
+renderVals() {
+  const on = this.state.on;
+  const base = 'min-height: 40px; padding: 8px 14px; border-radius: 9.6px; border: none; font-family: inherit; font-size: 14px; cursor: pointer; ';
+  const labels = ['Python', 'SQL', 'Power BI', 'Liderazgo', 'Inglés C1', 'Figma'];
+  return {
+    count: String(labels.filter((l) => on[l]).length),
+    chips: labels.map((l) => ({
+      label: on[l] ? l + ' ✓' : l,
+      pressed: on[l] ? 'true' : 'false',
+      style: base + (on[l] ? 'background: oklch(0.5584 0.2066 286.65 / 0.14); color: oklch(0.45 0.2 287); font-weight: 600;' : 'background: oklch(0.94 0.012 272); color: oklch(0.28 0.05 272);'),
+      toggle: () => this.setState({ on: { ...on, [l]: !on[l] } })
+    }))
+  };
+}
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Perfil listo</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Montserrat:wght@600;700;800;900&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:oklch(0.28 0.05 272)}a:hover{color:oklch(0.52 0.2 287)}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; background: oklch(0.975 0.008 272); color: oklch(0.28 0.05 272); font-family: 'Geist', system-ui, sans-serif; display: flex; flex-direction: column; padding: 56px 24px 36px; gap: 20px;">
+
+  <div style="display: flex; flex-direction: column; align-items: center; gap: 16px; text-align: center;">
+    <span style="font-size: 12px; font-weight: 600; letter-spacing: 0.1em; color: oklch(0.5 0.03 272);">PASO 6 DE 6 · LISTO</span>
+    <div style="width: 160px; height: 160px; border-radius: 9999px; background-image: conic-gradient(oklch(0.5584 0.2066 286.65) 0turn, oklch(0.487 0.2087 322.04) 0.8turn, oklch(0.9 0.015 272) 0.8turn); display: flex; align-items: center; justify-content: center;">
+      <div style="width: 134px; height: 134px; border-radius: 9999px; background: oklch(0.975 0.008 272); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;">
+        <span style="font-family: 'Montserrat', sans-serif; font-weight: 900; font-size: 38px;">80%</span>
+        <span style="font-size: 12px; color: oklch(0.5 0.03 272);">perfil completo</span>
+      </div>
+    </div>
+    <h1 style="margin: 0; font-family: 'Montserrat', sans-serif; font-weight: 800; font-size: 30px; line-height: 1.15;">¡Listo, Sofía!</h1>
+    <p style="margin: 0; font-size: 15px; line-height: 1.55; color: oklch(0.5 0.03 272);">Tu perfil está guardado. Termina estos dos pasos y llega al 100%.</p>
+  </div>
+
+  <div style="background: oklch(0.995 0.004 272); border-radius: 16.8px; box-shadow: 0 0 0 1px oklch(0.28 0.05 272 / 0.1); display: flex; flex-direction: column;">
+    <a href="Perfil.dc.html" style="min-height: 52px; padding: 0 16px; display: flex; align-items: center; justify-content: space-between; text-decoration: none; font-size: 14px; border-bottom: 1px solid oklch(0.85 0.02 272 / 0.6);">
+      <span>Agrega tu LinkedIn</span><span style="font-weight: 600; color: oklch(0.52 0.2 287);">+10%</span>
+    </a>
+    <a href="Perfil.dc.html" style="min-height: 52px; padding: 0 16px; display: flex; align-items: center; justify-content: space-between; text-decoration: none; font-size: 14px;">
+      <span>Elige tus 3 skills principales</span><span style="font-weight: 600; color: oklch(0.52 0.2 287);">+10%</span>
+    </a>
+  </div>
+
+  <div style="background: oklch(0.995 0.004 272); border-radius: 16.8px; padding: 16px; display: flex; align-items: center; gap: 14px; box-shadow: 0 0 0 1px oklch(0.28 0.05 272 / 0.1);">
+    <div style="flex-grow: 1; display: flex; flex-direction: column; gap: 4px;">
+      <label for="vis" style="font-size: 15px; font-weight: 600;">Visible para empresas aliadas</label>
+      <span style="font-size: 13px; line-height: 1.45; color: oklch(0.5 0.03 272);">{{visText}}</span>
+    </div>
+    <button id="vis" type="button" role="switch" aria-checked="{{visAria}}" onClick="{{toggle}}" style="{{switchStyle}}">
+      <span style="width: 24px; height: 24px; border-radius: 9999px; background: #fff; display: block; box-shadow: 0 1px 2px oklch(0.28 0.05 272 / 0.3);"></span>
+    </button>
+  </div>
+
+  <div style="flex-grow: 1;"></div>
+
+  <a href="Inicio.dc.html" style="height: 52px; border-radius: 12px; background-image: linear-gradient(120deg, oklch(0.5584 0.2066 286.65), oklch(0.487 0.2087 322.04)); color: #fff; font-weight: 600; font-size: 16px; text-decoration: none; display: flex; align-items: center; justify-content: center;">Ir a mi perfil</a>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+constructor(props) { super(props); this.state = { on: false }; }
+renderVals() {
+  const on = this.state.on;
+  return {
+    toggle: () => this.setState({ on: !on }),
+    visAria: on ? 'true' : 'false',
+    visText: on ? 'Las empresas aliadas pueden ver tu perfil y tu CV.' : 'Privado. Solo tú lo ves. Lo elegiste en el paso anterior.',
+    switchStyle: 'flex-shrink: 0; width: 52px; height: 30px; border-radius: 9999px; border: none; padding: 3px; cursor: pointer; display: flex; justify-content: ' + (on ? 'flex-end' : 'flex-start') + '; background: ' + (on ? 'oklch(0.5584 0.2066 286.65)' : 'oklch(0.62 0.03 272)') + ';'
+  };
+}
+}
+</script>
+</body>
+</html>

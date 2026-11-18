@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Revisa tus datos</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Montserrat:wght@600;700;800;900&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:oklch(0.28 0.05 272)}a:hover{color:oklch(0.52 0.2 287)}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; background: oklch(0.975 0.008 272); color: oklch(0.28 0.05 272); font-family: 'Geist', system-ui, sans-serif; display: flex; flex-direction: column;">
+
+  <div style="padding: 52px 24px 0; display: flex; justify-content: space-between; align-items: center;">
+    <span style="font-size: 13px; font-weight: 600; letter-spacing: 0.1em; color: oklch(0.5 0.03 272);">PASO 3 DE 6</span>
+    <a href="Bienvenida.dc.html" style="font-size: 14px; padding: 8px 14px; border-radius: 9999px; box-shadow: 0 0 0 1px oklch(0.8 0.02 272); text-decoration: none;">Guardar y salir</a>
+  </div>
+
+  <div style="flex-grow: 1; padding: 22px 24px 0; display: flex; flex-direction: column; gap: 14px;">
+    <div style="display: flex; flex-direction: column; gap: 6px;">
+      <h1 style="margin: 0; font-family: 'Montserrat', sans-serif; font-weight: 800; font-size: 28px; line-height: 1.2;">Revisa tus datos</h1>
+      <p style="margin: 0; font-size: 15px; line-height: 1.5; color: oklch(0.5 0.03 272);">{{intro}}</p>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px;">
+      <div style="display: flex; flex-direction: column; gap: 5px;">
+        <label for="rd-nombres" style="font-size: 13px; font-weight: 600; display: flex; gap: 6px; align-items: center;">Nombres <span style="color: oklch(0.5 0.22 24);">*</span></label>
+        <input id="rd-nombres" value="{{nombres}}" placeholder="Ej. María José" style="height: 44px; box-sizing: border-box; border-radius: 12px; border: 1px solid oklch(0.8 0.02 272 / 0.8); background: oklch(0.995 0.004 272); color: oklch(0.28 0.05 272); font-family: inherit; font-size: 15px; padding: 0 12px; min-width: 0;">
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 5px;">
+        <label for="rd-apellidos" style="font-size: 13px; font-weight: 600;">Apellidos <span style="font-weight: 400; color: oklch(0.5 0.03 272);">(si tienes)</span></label>
+        <input id="rd-apellidos" value="{{apellidos}}" placeholder="Ej. García López" style="height: 44px; box-sizing: border-box; border-radius: 12px; border: 1px solid oklch(0.8 0.02 272 / 0.8); background: oklch(0.995 0.004 272); color: oklch(0.28 0.05 272); font-family: inherit; font-size: 15px; padding: 0 12px; min-width: 0;">
+      </div>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px;">
+      <div style="display: flex; flex-direction: column; gap: 5px;">
+        <label for="rd-pais" style="font-size: 13px; font-weight: 600;">País <span style="color: oklch(0.5 0.22 24);">*</span></label>
+        <select id="rd-pais" style="height: 44px; box-sizing: border-box; border-radius: 12px; border: 1px solid oklch(0.8 0.02 272 / 0.8); background: oklch(0.995 0.004 272); color: oklch(0.28 0.05 272); font-family: inherit; font-size: 15px; padding: 0 8px;">
+          <option>Perú</option>
+          <option>Colombia</option>
+          <option>Chile</option>
+          <option>México</option>
+          <option>Estados Unidos</option>
+        </select>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 5px;">
+        <label for="rd-ciudad" style="font-size: 13px; font-weight: 600;">Ciudad</label>
+        <input id="rd-ciudad" value="{{ciudad}}" placeholder="Busca tu ciudad" style="height: 44px; box-sizing: border-box; border-radius: 12px; border: 1px solid oklch(0.8 0.02 272 / 0.8); background: oklch(0.995 0.004 272); color: oklch(0.28 0.05 272); font-family: inherit; font-size: 15px; padding: 0 12px; min-width: 0;">
+      </div>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 5px;">
+      <label for="rd-uni" style="font-size: 13px; font-weight: 600; display: flex; gap: 8px; align-items: center;">Universidad <span style="color: oklch(0.5 0.22 24);">*</span>
+        <sc-if value="{{fromCv}}" hint-placeholder-val="{{true}}"><span style="font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 9999px; background: oklch(0.5584 0.2066 286.65 / 0.12); color: oklch(0.52 0.2 287);">Del CV</span></sc-if>
+      </label>
+      <input id="rd-uni" value="{{universidad}}" placeholder="Busca tu universidad" style="height: 44px; box-sizing: border-box; border-radius: 12px; border: 1px solid oklch(0.8 0.02 272 / 0.8); background: oklch(0.995 0.004 272); color: oklch(0.28 0.05 272); font-family: inherit; font-size: 15px; padding: 0 12px;">
+    </div>
+
+    <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 10px;">
+      <div style="display: flex; flex-direction: column; gap: 5px;">
+        <label for="rd-carrera" style="font-size: 13px; font-weight: 600; display: flex; gap: 8px; align-items: center;">Carrera
+          <sc-if value="{{fromCv}}" hint-placeholder-val="{{true}}"><span style="font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 9999px; background: oklch(0.5584 0.2066 286.65 / 0.12); color: oklch(0.52 0.2 287);">Del CV</span></sc-if>
+        </label>
+        <input id="rd-carrera" value="{{carrera}}" placeholder="Ej. Ingeniería de Sistemas" style="height: 44px; box-sizing: border-box; border-radius: 12px; border: 1px solid oklch(0.8 0.02 272 / 0.8); background: oklch(0.995 0.004 272); color: oklch(0.28 0.05 272); font-family: inherit; font-size: 15px; padding: 0 12px; min-width: 0;">
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 5px;">
+        <label for="rd-egreso" style="font-size: 13px; font-weight: 600;">Egreso</label>
+        <input id="rd-egreso" value="{{egreso}}" inputmode="numeric" placeholder="2028" style="height: 44px; box-sizing: border-box; border-radius: 12px; border: 1px solid oklch(0.8 0.02 272 / 0.8); background: oklch(0.995 0.004 272); color: oklch(0.28 0.05 272); font-family: inherit; font-size: 15px; padding: 0 12px; min-width: 0;">
+      </div>
+    </div>
+
+    <span style="font-size: 12px; line-height: 1.5; color: oklch(0.5 0.03 272);">Si tu universidad o tu ciudad no aparecen en la búsqueda, escríbelas igual.</span>
+  </div>
+
+  <div style="padding: 0 0 36px;">
+    <div style="display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 4px; padding: 0 0 20px;">
+      <div style="height: 4px; background: oklch(0.52 0.2 287);"></div>
+      <div style="height: 4px; background: oklch(0.52 0.2 287);"></div>
+      <div style="height: 4px; background-image: linear-gradient(90deg, oklch(0.5584 0.2066 286.65), oklch(0.487 0.2087 322.04));"></div>
+      <div style="height: 4px; background: oklch(0.9 0.015 272);"></div>
+      <div style="height: 4px; background: oklch(0.9 0.015 272);"></div>
+      <div style="height: 4px; background: oklch(0.9 0.015 272);"></div>
+    </div>
+    <div style="padding: 0 24px; display: flex; justify-content: space-between; align-items: center;">
+      <a href="SubeCV.dc.html" style="font-size: 15px; font-weight: 600; text-decoration: underline; padding: 12px 4px;">Atrás</a>
+      <a href="Skills.dc.html" style="height: 48px; padding: 0 28px; border-radius: 12px; background-image: linear-gradient(120deg, oklch(0.5584 0.2066 286.65), oklch(0.487 0.2087 322.04)); color: #fff; font-weight: 600; font-size: 15px; text-decoration: none; display: flex; align-items: center;">Siguiente</a>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"llegaConCV":{"editor":"boolean","default":true},"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+renderVals() {
+  const cv = this.props.llegaConCV ?? true;
+  return {
+    fromCv: cv,
+    intro: cv ? 'Los llenamos con tu CV. Corrige lo que haga falta.' : 'Solo lo esencial. Lo demás lo puedes agregar después.',
+    nombres: cv ? 'Sofía' : '',
+    apellidos: cv ? 'Ramírez' : '',
+    ciudad: cv ? 'Lima, Lima' : '',
+    universidad: cv ? '[Universidad]' : '',
+    carrera: cv ? 'Ingeniería de Sistemas' : '',
+    egreso: cv ? '2027' : ''
+  };
+}
+}
+</script>
+</body>
+</html>

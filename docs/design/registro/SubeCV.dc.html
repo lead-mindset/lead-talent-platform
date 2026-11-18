@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Sube tu CV</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Montserrat:wght@600;700;800;900&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:oklch(0.28 0.05 272)}a:hover{color:oklch(0.52 0.2 287)}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; background: oklch(0.975 0.008 272); color: oklch(0.28 0.05 272); font-family: 'Geist', system-ui, sans-serif; display: flex; flex-direction: column;">
+
+  <div style="padding: 52px 24px 0; display: flex; justify-content: space-between; align-items: center;">
+    <span style="font-size: 13px; font-weight: 600; letter-spacing: 0.1em; color: oklch(0.5 0.03 272);">PASO 2 DE 6</span>
+    <a href="Bienvenida.dc.html" style="font-size: 14px; padding: 8px 14px; border-radius: 9999px; box-shadow: 0 0 0 1px oklch(0.8 0.02 272); text-decoration: none;">Guardar y salir</a>
+  </div>
+
+  <div style="flex-grow: 1; padding: 24px 24px 0; display: flex; flex-direction: column; gap: 18px;">
+    <div style="display: flex; flex-direction: column; gap: 8px;">
+      <h1 style="margin: 0; font-family: 'Montserrat', sans-serif; font-weight: 800; font-size: 28px; line-height: 1.2;">Sube tu CV</h1>
+      <p style="margin: 0; font-size: 15px; line-height: 1.5; color: oklch(0.5 0.03 272);">Lo leemos y llenamos tu perfil por ti. Tú revisas todo antes de guardar.</p>
+    </div>
+
+    <sc-if value="{{empty}}" hint-placeholder-val="{{true}}">
+      <button type="button" onClick="{{upload}}" style="min-height: 168px; border-radius: 16.8px; border: 2px dashed oklch(0.75 0.06 287); background: oklch(0.5584 0.2066 286.65 / 0.05); color: oklch(0.28 0.05 272); font-family: inherit; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; padding: 20px;">
+        <span style="width: 48px; height: 48px; border-radius: 14px; background: oklch(0.5584 0.2066 286.65 / 0.12); color: oklch(0.52 0.2 287); display: flex; align-items: center; justify-content: center;">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 16V4M7 9l5-5 5 5M4 20h16"></path></svg>
+        </span>
+        <span style="font-size: 16px; font-weight: 600;">Subir mi CV</span>
+        <span style="font-size: 13px; color: oklch(0.5 0.03 272);">PDF, DOC o DOCX · máximo 10 MB</span>
+      </button>
+    </sc-if>
+
+    <sc-if value="{{done}}" hint-placeholder-val="{{false}}">
+      <div style="background: oklch(0.995 0.004 272); border-radius: 16.8px; padding: 14px 16px; display: flex; align-items: center; gap: 12px; box-shadow: 0 0 0 1px oklch(0.28 0.05 272 / 0.1);">
+        <div style="width: 40px; height: 40px; border-radius: 12px; background: oklch(0.57 0.22 24 / 0.12); color: oklch(0.45 0.22 24); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700;">PDF</div>
+        <div style="flex-grow: 1; display: flex; flex-direction: column; gap: 2px;">
+          <span style="font-size: 14px; font-weight: 600;">CV_Sofia_Ramirez.pdf</span>
+          <span style="font-size: 12px; color: oklch(0.42 0.12 155);">Listo. Encontramos educación y 6 skills.</span>
+        </div>
+        <button type="button" onClick="{{reset}}" style="background: none; border: none; color: oklch(0.52 0.2 287); font-family: inherit; font-size: 13px; font-weight: 600; cursor: pointer; padding: 10px 4px;">Cambiar</button>
+      </div>
+      <div style="background-image: linear-gradient(120deg, oklch(0.5584 0.2066 286.65 / 0.14), oklch(0.487 0.2087 322.04 / 0.14)); border-radius: 16.8px; padding: 14px 16px; display: flex; align-items: center; gap: 12px;">
+        <span style="font-family: 'Montserrat', sans-serif; font-weight: 800; font-size: 18px; color: oklch(0.52 0.2 287);">50%</span>
+        <span style="font-size: 13px; line-height: 1.45;">Con tu CV, el perfil ya va a la mitad. En el siguiente paso revisas lo que encontramos.</span>
+      </div>
+    </sc-if>
+
+    <div style="display: flex; align-items: center; gap: 12px;">
+      <span style="height: 1px; flex-grow: 1; background: oklch(0.85 0.02 272);"></span>
+      <span style="font-size: 13px; color: oklch(0.5 0.03 272);">o</span>
+      <span style="height: 1px; flex-grow: 1; background: oklch(0.85 0.02 272);"></span>
+    </div>
+
+    <a href="RevisaDatos.dc.html" style="min-height: 48px; border-radius: 12px; box-shadow: 0 0 0 1px oklch(0.8 0.02 272); background: oklch(0.995 0.004 272); text-decoration: none; font-size: 15px; font-weight: 600; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; padding: 10px;">
+      <span>No tengo CV todavía</span>
+      <span style="font-size: 12px; font-weight: 400; color: oklch(0.5 0.03 272);">Sigo a mano. Lo puedes subir después desde tu perfil.</span>
+    </a>
+
+    <div style="display: flex; gap: 10px; align-items: flex-start; font-size: 12px; line-height: 1.5; color: oklch(0.5 0.03 272);">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0; margin-top: 1px;"><rect x="4" y="11" width="16" height="10" rx="2"></rect><path d="M8 11V7a4 4 0 0 1 8 0v4"></path></svg>
+      <span>Usamos IA para leer tu CV. Tu CV es privado: solo lo ven empresas aliadas si tú lo activas al final.</span>
+    </div>
+  </div>
+
+  <div style="padding: 0 0 36px;">
+    <div style="display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 4px; padding: 0 0 20px;">
+      <div style="height: 4px; background: oklch(0.52 0.2 287);"></div>
+      <div style="height: 4px; background-image: linear-gradient(90deg, oklch(0.5584 0.2066 286.65), oklch(0.487 0.2087 322.04));"></div>
+      <div style="height: 4px; background: oklch(0.9 0.015 272);"></div>
+      <div style="height: 4px; background: oklch(0.9 0.015 272);"></div>
+      <div style="height: 4px; background: oklch(0.9 0.015 272);"></div>
+      <div style="height: 4px; background: oklch(0.9 0.015 272);"></div>
+    </div>
+    <div style="padding: 0 24px; display: flex; justify-content: space-between; align-items: center;">
+      <a href="QuienEres.dc.html" style="font-size: 15px; font-weight: 600; text-decoration: underline; padding: 12px 4px;">Atrás</a>
+      <a href="RevisaDatos.dc.html" style="height: 48px; padding: 0 28px; border-radius: 12px; background-image: linear-gradient(120deg, oklch(0.5584 0.2066 286.65), oklch(0.487 0.2087 322.04)); color: #fff; font-weight: 600; font-size: 15px; text-decoration: none; display: flex; align-items: center;">Siguiente</a>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"cvSubido":{"editor":"boolean","default":false},"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+constructor(props) { super(props); this.state = { done: null }; }
+renderVals() {
+  const done = this.state.done ?? (this.props.cvSubido ?? false);
+  return {
+    empty: !done,
+    done: done,
+    upload: () => this.setState({ done: true }),
+    reset: () => this.setState({ done: false })
+  };
+}
+}
+</script>
+</body>
+</html>
