@@ -9,6 +9,8 @@ const env = {
   NEXT_PUBLIC_SUPABASE_URL: "https://e2e-mock.supabase.co",
   NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: "sb_publishable_e2e",
   NEXT_PUBLIC_API_URL: "http://api.e2e.test",
+  // Por defecto con Google encendido. El config levanta otro servidor con "false" (google-off).
+  NEXT_PUBLIC_AUTH_GOOGLE_ENABLED: process.env.NEXT_PUBLIC_AUTH_GOOGLE_ENABLED ?? "true",
   NEXT_TELEMETRY_DISABLED: "1",
 };
 const opts = { stdio: "inherit", env, shell: process.platform === "win32" };

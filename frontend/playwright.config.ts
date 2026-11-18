@@ -11,6 +11,10 @@ import { defineConfig, devices } from "@playwright/test";
  *   pnpm e2e:server
  */
 const PORT = Number(process.env.E2E_MOCK_PORT ?? 3100);
+// Segundo build con NEXT_PUBLIC_AUTH_GOOGLE_ENABLED=false. Las variables NEXT_PUBLIC quedan fijas al
+// compilar, así que probar Google apagado necesita su propio build (carpeta .next-e2e-google-off).
+const PORT_GOOGLE_OFF = Number(process.env.E2E_MOCK_PORT_GOOGLE_OFF ?? 3101);
+const GOOGLE_OFF_SPECS = /.*\.google-off\.spec\.ts/;
 
 export default defineConfig({
   testDir: "./e2e/mocked",
@@ -22,12 +26,32 @@ export default defineConfig({
     trace: "retain-on-failure",
     screenshot: "only-on-failure",
   },
-  projects: [{ name: "chromium", use: { ...devices["Desktop Chrome"] } }],
-  webServer: {
-    command: "node scripts/e2e-server.mjs",
-    url: `http://localhost:${PORT}/login`,
-    reuseExistingServer: true,
-    timeout: 300_000,
-    env: { E2E_MOCK_PORT: String(PORT) },
-  },
+  projects: [
+    { name: "chromium", use: { ...devices["Desktop Chrome"] }, testIgnore: GOOGLE_OFF_SPECS },
+    {
+      name: "google-off",
+      testMatch: GOOGLE_OFF_SPECS,
+      use: { ...devices["Desktop Chrome"], baseURL: `http://localhost:${PORT_GOOGLE_OFF}` },
+    },
+  ],
+  webServer: [
+    {
+      command: "node scripts/e2e-server.mjs",
+      url: `http://localhost:${PORT}/login`,
+      reuseExistingServer: true,
+      timeout: 300_000,
+      env: { E2E_MOCK_PORT: String(PORT) },
+    },
+    {
+      command: "node scripts/e2e-server.mjs",
+      url: `http://localhost:${PORT_GOOGLE_OFF}/login`,
+      reuseExistingServer: true,
+      timeout: 300_000,
+      env: {
+        E2E_MOCK_PORT: String(PORT_GOOGLE_OFF),
+        NEXT_PUBLIC_AUTH_GOOGLE_ENABLED: "false",
+        NEXT_DIST_DIR: ".next-e2e-google-off",
+      },
+    },
+  ],
 });

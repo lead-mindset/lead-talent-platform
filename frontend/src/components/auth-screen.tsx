@@ -9,6 +9,7 @@ import { BrandMark } from "@/components/brand-mark";
 import { OtpLogin } from "@/components/otp-login";
 import { LoginDivider, SocialLogin } from "@/components/social-login";
 import { useAuth } from "@/lib/auth";
+import { features } from "@/lib/features";
 import { routeAfterLogin } from "@/lib/api";
 
 /** Si ya hay sesión, salta el login. Devuelve si hay que pedir confirmar el correo. */
@@ -27,6 +28,17 @@ function useSkipIfSignedIn(): boolean {
   return mustConfirm;
 }
 
+/** Separador "o" y botón de Google. Con NEXT_PUBLIC_AUTH_GOOGLE_ENABLED apagado no se muestra nada. */
+function GoogleOption({ label }: { label: string }) {
+  if (!features.authGoogle) return null;
+  return (
+    <>
+      <LoginDivider label="o" />
+      <SocialLogin label={label} />
+    </>
+  );
+}
+
 function ConfirmBanner() {
   return (
     <div className="mt-6 rounded-xl border border-brand-purple-light/40 bg-brand-purple/5 p-4 text-small">
@@ -41,15 +53,16 @@ function EmailTip() {
       <Info className="mt-0.5 size-4 shrink-0 text-brand-purple-light" />
       <p>
         <span className="font-medium text-foreground">Entra con tu correo.</span> El código de 6 dígitos funciona con
-        cualquier correo: institucional, Microsoft o personal. Google queda como atajo para quien lo tenga.
+        cualquier correo: institucional, Microsoft o personal.
+        {features.authGoogle && " Google queda como atajo para quien lo tenga."}
       </p>
     </div>
   );
 }
 
 /**
- * Login y registro usan el mismo flujo (código por correo o Google): si la cuenta no existe, se crea.
- * Solo cambia el texto. Así nunca revelamos qué correos existen.
+ * Login y registro usan el mismo flujo (código por correo y, si está encendido, Google): si la
+ * cuenta no existe, se crea. Solo cambia el texto. Así nunca revelamos qué correos existen.
  */
 export function AuthScreen({ mode }: { mode: "login" | "signup" }) {
   const mustConfirm = useSkipIfSignedIn();
@@ -67,8 +80,7 @@ export function AuthScreen({ mode }: { mode: "login" | "signup" }) {
         {mustConfirm && <ConfirmBanner />}
         <div className="card-surface mt-8 rounded-xl border border-border/60 p-6">
           <OtpLogin />
-          <LoginDivider label="o" />
-          <SocialLogin label="Registrarme" />
+          <GoogleOption label="Registrarme" />
         </div>
         <p className="mt-6 text-center text-small text-muted-foreground">
           ¿Ya tienes cuenta?{" "}
@@ -114,8 +126,7 @@ export function AuthScreen({ mode }: { mode: "login" | "signup" }) {
           <p className="mt-1 text-caption text-muted-foreground">Inicia sesión para entrar a tu perfil.</p>
           <div className="mt-4">
             <OtpLogin />
-            <LoginDivider label="o" />
-            <SocialLogin label="Entrar" />
+            <GoogleOption label="Entrar" />
           </div>
         </div>
       </div>

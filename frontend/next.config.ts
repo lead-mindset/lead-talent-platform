@@ -1,6 +1,8 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  // Solo para Playwright mockeado: un segundo build (Google apagado) en otra carpeta.
+  distDir: process.env.NEXT_DIST_DIR || ".next",
   async redirects() {
     // Módulo 1 (registro y resume): todo lo demás queda oculto.
     // Para abrir una sección en un módulo siguiente, quítala de esta lista.
