@@ -54,7 +54,10 @@ def search(repo, country, q):
         ("MX", "mexico city", ("Ciudad de México", "Ciudad de México")),  # nombre original
         ("CL", "santiago de chile", ("Santiago", "Metropolitana")),  # alias, se muestra name
         ("CL", "puerto montt", ("Puerto Montt", "Los Lagos")),  # región corta en español
-        ("PE", "lima", ("Lima", "Lima")),  # región original limpia ("Lima Province")
+        ("PE", "lima", ("Lima", "Lima Metropolitana")),  # override de "Lima Province"
+        ("SV", "usulutan", ("Usulután", "Usulután")),  # override: tilde que GeoNames no trae
+        ("US", "fargo", ("Fargo", "Dakota del Norte")),  # override de "North Dakota"
+        ("CA", "halifax", ("Halifax", "Nueva Escocia")),  # override de "Nova Scotia"
         ("PE", "cuzco", ("Cusco", "Cusco")),  # override de admin1_overrides.csv
         ("BR", "natal", ("Natal", "Rio Grande do Norte")),  # Brasil en portugués
         ("CL", "valparaizo", ("Valparaíso", "Valparaíso")),  # con error de tipeo

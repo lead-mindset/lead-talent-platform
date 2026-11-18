@@ -1,3 +1,48 @@
 country_code,admin1_code,name
-PE,08,Cusco
+AR,07,Ciudad de Buenos Aires
+BR,07,Distrito Federal
+CA,02,Columbia Británica
+CA,04,Nuevo Brunswick
+CA,05,Terranova y Labrador
+CA,07,Nueva Escocia
+CA,09,Isla del Príncipe Eduardo
+CO,23,Quindío
+DO,34,Distrito Nacional
+EC,04,Cañar
+MX,07,Coahuila
+MX,16,Michoacán
+MX,22,Querétaro
 MX,30,Veracruz
+PA,11,Comarca Emberá-Wounaan
+PA,12,Comarca Ngäbe-Buglé
+PE,08,Cusco
+PE,12,Junín
+PE,15,Lima Provincias
+PE,LMA,Lima Metropolitana
+PY,22,Asunción
+SV,01,Ahuachapán
+SV,02,Cabañas
+SV,04,Cuscatlán
+SV,07,La Unión
+SV,08,Morazán
+SV,14,Usulután
+US,HI,Hawái
+US,NC,Carolina del Norte
+US,ND,Dakota del Norte
+US,NJ,Nueva Jersey
+US,NM,Nuevo México
+US,NY,Nueva York
+US,PA,Pensilvania
+US,SC,Carolina del Sur
+US,SD,Dakota del Sur
+US,WV,Virginia Occidental
+VE,04,Aragua
+VE,06,Bolívar
+VE,07,Carabobo
+VE,08,Cojedes
+VE,14,Mérida
+VE,15,Miranda
+VE,16,Monagas
+VE,19,Sucre
+VE,25,Distrito Capital
+VE,26,La Guaira
