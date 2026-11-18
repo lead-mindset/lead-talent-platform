@@ -5,18 +5,7 @@ import { FileText, Upload } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { api, ApiError, type Resume } from "@/lib/api";
-
-const ACCEPT = ".pdf,.doc,.docx";
-const MAX_BYTES = 10 * 1024 * 1024;
-const TYPES = [
-  "application/pdf",
-  "application/msword",
-  "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-];
-
-function formatSize(bytes: number) {
-  return bytes < 1024 * 1024 ? `${Math.round(bytes / 1024)} KB` : `${(bytes / 1024 / 1024).toFixed(1)} MB`;
-}
+import { checkResumeFile, formatSize, RESUME_ACCEPT } from "@/lib/resume-file";
 
 export function CvCard() {
   const [resume, setResume] = useState<Resume | null>(null);
@@ -36,8 +25,8 @@ export function CvCard() {
   const onFile = async (file?: File) => {
     if (!file) return;
     setError(undefined);
-    if (!TYPES.includes(file.type)) return setError("Sube un PDF, DOC o DOCX.");
-    if (file.size > MAX_BYTES) return setError("El archivo supera los 10 MB.");
+    const invalid = checkResumeFile(file);
+    if (invalid) return setError(invalid);
     setUploading(true);
     try {
       await api.uploadResume(file);
@@ -65,7 +54,7 @@ export function CvCard() {
       ref={input}
       type="file"
       className="sr-only"
-      accept={ACCEPT}
+      accept={RESUME_ACCEPT}
       disabled={uploading}
       onChange={(e) => onFile(e.target.files?.[0])}
     />
