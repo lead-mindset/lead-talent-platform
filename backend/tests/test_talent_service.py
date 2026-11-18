@@ -33,6 +33,7 @@ def build(person=None, now=T1):
 def profile_in(**overrides):
     base = {
         "given_names": "Valeria",
+        "country_code": "PE",
         "family_names": "Mendoza",
         "university_id": UNIVERSITY_ID,
         "skills": ["Python", "SQL", "React"],

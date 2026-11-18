@@ -23,7 +23,8 @@ APP = "talent"
 STUDENT_ROLE = "student"
 
 PERSON_FIELDS = {
-    "given_names", "family_names", "city", "country_code", "linkedin_url", "university_id",
+    "given_names", "family_names", "country_code", "city_id", "city_other", "linkedin_url",
+    "university_id",
     "university_other", "major", "graduation_year",
 }
 PROFILE_FIELDS = {"headline", "english_level", "skills", "top_skills", "target_roles", "availability"}
@@ -67,6 +68,12 @@ class TalentService:
         person = self._person(auth_user_id)
         person_id = str(person["id"])
 
+        if not self.core.country_exists(data.country_code):
+            raise TalentError("country_not_found", "Ese país no está en el catálogo")
+        if data.city_id is not None and not self.core.city_in_country(
+            data.city_id, data.country_code
+        ):
+            raise TalentError("city_not_in_country", "Esa ciudad no es del país elegido")
         if data.university_id and not self.core.university_exists(str(data.university_id)):
             raise TalentError("university_not_found", "La universidad no existe")
 

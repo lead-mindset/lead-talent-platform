@@ -55,7 +55,13 @@ def test_full_registration_flow(client):
     r = client.get("/api/v1/talent/profile", headers=auth())
     assert r.status_code == 200 and r.json()["profile"] is None
 
-    body = {"given_names": "Valeria", "family_names": "Mendoza", "university_id": UNIVERSITY_ID, "skills": ["Python"]}
+    body = {
+        "given_names": "Valeria",
+        "family_names": "Mendoza",
+        "country_code": "PE",
+        "university_id": UNIVERSITY_ID,
+        "skills": ["Python"],
+    }
     r = client.put("/api/v1/talent/profile", headers=auth(), json=body)
     assert r.status_code == 200
     assert r.json()["profile"]["recruiter_visible"] is False

@@ -20,8 +20,9 @@ class ProfileIn(BaseModel):
     # core.person
     given_names: str = Field(min_length=1, max_length=80)
     family_names: str | None = Field(default=None, max_length=80)
-    city: str | None = Field(default=None, max_length=80)
-    country_code: str | None = Field(default=None, pattern=r"^[A-Z]{2}$")
+    country_code: str = Field(pattern=r"^[A-Z]{2}$")
+    city_id: int | None = Field(default=None, gt=0)  # core.city (geonameid)
+    city_other: str | None = Field(default=None, max_length=80)  # si no encontró su ciudad
     linkedin_url: HttpUrl | None = None
     university_id: UUID | None = None
     university_other: str | None = Field(default=None, max_length=160)
@@ -36,7 +37,7 @@ class ProfileIn(BaseModel):
     availability: Availability | None = None
     recruiter_visible: bool = False
 
-    @field_validator("given_names", "family_names", "city", "university_other", "major", "headline")
+    @field_validator("given_names", "family_names", "city_other", "university_other", "major", "headline")
     @classmethod
     def strip(cls, v: str | None) -> str | None:
         if v is None:
@@ -58,6 +59,8 @@ class ProfileIn(BaseModel):
     def check_rules(self) -> "ProfileIn":
         if not self.given_names:
             raise ValueError("Escribe tu nombre")
+        if self.city_id is not None and self.city_other:
+            raise ValueError("Elige una ciudad de la lista o escríbela, no las dos")
         if self.university_id is None and not self.university_other:
             raise ValueError("Indica tu universidad")
         if not set(self.top_skills) <= set(self.skills):

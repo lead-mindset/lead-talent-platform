@@ -48,6 +48,8 @@ Base: `/api/v1`. Todas las rutas piden `Authorization: Bearer <access token de S
 |---|---|---|
 | GET | `/me` | Persona y roles. 409 si el email no está confirmado |
 | GET | `/universities?q=` | Busca en el catálogo |
+| GET | `/countries` | Países del catálogo (`code`, `name_es`, `name_en`) |
+| GET | `/cities?country=CL&q=&limit=10` | Busca ciudades de un país, sin tildes. Mínimo 2 letras. Ver `docs/city-catalog.md` |
 | GET | `/talent/profile` | Perfil actual (`profile` es null si no completó el registro) |
 | PUT | `/talent/profile` | Guarda el perfil completo y asigna el rol `student` |
 | POST | `/talent/resume/upload-url` | Valida tipo y tamaño, devuelve URL firmada y ruta |

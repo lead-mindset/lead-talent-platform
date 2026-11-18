@@ -139,7 +139,7 @@ SAMPLE_PROFILE: dict[str, Any] = {
     "given_names": "Prueba E2E",
     "family_names": "LEAD",
     "country_code": "PE",
-    "city": "Lima",
+    "city_other": "Lima",
     "linkedin_url": "https://www.linkedin.com/in/prueba-e2e",
     "university_other": "Universidad de Prueba",
     "major": "Ingeniería de Software",

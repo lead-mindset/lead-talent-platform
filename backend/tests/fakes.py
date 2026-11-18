@@ -16,8 +16,11 @@ def make_person(**overrides: Any) -> dict[str, Any]:
         "given_names": None,
         "family_names": None,
         "full_name": None,
-        "city": None,
         "country_code": None,
+        "city_id": None,
+        "city_name": None,
+        "city_admin1": None,
+        "city_other": None,
         "university_id": None,
         "university_other": None,
         "university_name": None,
@@ -33,6 +36,8 @@ class FakeCore:
         self.persons = {AUTH_ID: person} if person else {}
         self.roles: set[tuple[str, str, str]] = set()
         self.universities = {UNIVERSITY_ID}
+        self.countries = {"CL", "PE", "US", "PR"}
+        self.cities = {3895088: "CL", 3936456: "PE", 4684888: "US"}  # Chillán, Lima, Dallas
 
     def get_person_by_auth_user(self, auth_user_id: str) -> dict[str, Any] | None:
         return self.persons.get(auth_user_id)
@@ -52,6 +57,12 @@ class FakeCore:
 
     def university_exists(self, university_id: str) -> bool:
         return university_id in self.universities
+
+    def country_exists(self, code: str) -> bool:
+        return code in self.countries
+
+    def city_in_country(self, city_id: int, country_code: str) -> bool:
+        return self.cities.get(city_id) == country_code
 
 
 class FakeTalent:

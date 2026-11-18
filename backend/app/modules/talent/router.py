@@ -23,6 +23,8 @@ router = APIRouter(prefix="/talent", tags=["talent"])
 ERROR_STATUS = {
     "email_not_confirmed": status.HTTP_409_CONFLICT,
     "university_not_found": 422,
+    "country_not_found": 422,
+    "city_not_in_country": 422,
     "invalid_file_type": 422,
     "file_too_large": 413,
     "forbidden_path": status.HTTP_403_FORBIDDEN,
