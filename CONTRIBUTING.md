@@ -72,7 +72,7 @@ A PR that changes behavior without a test is not ready.
 
 - **Use pnpm only.** Don't commit a `package-lock.json` or `yarn.lock`; `pnpm-lock.yaml` is the only lockfile.
 - Next.js 16 has breaking changes from older versions. Check `frontend/node_modules/next/dist/docs/` before using an API you aren't sure about (see `frontend/AGENTS.md`).
-- Reuse the design system before building new UI: check `/design-system` and `src/components/`. Use the tokens in `globals.css`, not hard-coded colors.
+- Reuse the design system before building new UI: check `src/components/ui/` and `src/components/` (the `/design-system` page is hidden in Module 1; see the README). Use the tokens in `globals.css`, not hard-coded colors.
 - Forms use `Field` + `useForm` + `validators`.
 - Call the backend through `src/lib/api.ts`. Don't use `fetch` directly from components.
 - Only `NEXT_PUBLIC_*` values reach the browser, and none of them may be secret.

@@ -12,7 +12,7 @@ The repo has three parts:
 
 Design notes and decisions live in [`docs/plans/`](docs/plans/). Testing is covered in detail in [`docs/testing.md`](docs/testing.md).
 
-> **Status:** Module 1 (student registration + resume) is in progress on `feat/student-registration`. Most screens outside that module still use dummy data from `frontend/src/lib/data/`.
+> **Status:** Module 1 (student registration + resume) is in progress on `feat/student-registration`. Only the Module 1 screens are reachable; see [What Module 1 shows](#what-module-1-shows).
 
 ---
 
@@ -208,22 +208,21 @@ docs/
 
 ---
 
-## Prototype features
+## What Module 1 shows
 
-These parts of the frontend are still the clickable prototype with dummy data.
-
-**Roles (View As):** open the "Ver como" panel (bottom right) to simulate each role.
-
-| Role | View |
+| Route | What it is |
 |---|---|
-| Student / Member | `/inicio` · `/eventos` · `/personas` · `/perfil` · `/perfil/nuevo` |
-| Chapter President / E-board | `/admin` |
-| Board (Founders) | `/board` |
-| Company (Recruiter) | `/empresa` |
+| `/` | Landing page |
+| `/login` | Log in with an email code (OTP) or a social account |
+| `/sign-up` | Create an account |
+| `/perfil/nuevo` | Registration wizard (first time) |
+| `/perfil` | Your profile and resume |
+| `/perfil/editar` | Edit your profile |
+| `/terminos` · `/privacidad` · `/cookies` · `/eliminar-datos` · `/reembolsos` | Legal pages |
 
-**Design system:** documented at `/design-system`. Primitives: `StatusBadge`, `Chip`, `IconTile`, `InitialsAvatar`, `FilterChip`, `Segmented`. Forms use `Field` + `useForm` + `validators`.
+The rest of the prototype (`/inicio`, `/eventos`, `/personas`, `/recursos`, `/admin`, `/empresa`, `/board`, `/design-system` and the demo logins under `/login/*`) still exists in the code but is hidden: `frontend/next.config.ts` redirects those routes to `/perfil`. To turn a section back on, remove its entries from the `hidden` list in that file.
 
-**Demo videos:** `DEMO_BASE_URL=http://localhost:3000 pnpm record-demos` records every view (the dev server must be running). Output goes to `~/Videos/lead-demos/`, outside the repo.
+Forms use `Field` + `useForm` + `validators`, and the shared UI primitives live in `frontend/src/components/ui/`.
 
 ---
 

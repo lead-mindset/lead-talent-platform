@@ -1,0 +1,2 @@
+# Este proyecto usa pnpm. Si alguien corre `npm install` por error, no commitear su lockfile.
+package-lock.json
