@@ -1,7 +1,8 @@
 """Cliente mínimo de Supabase Storage.
 
 El navegador sube el archivo directo a Storage con una URL firmada.
-El backend nunca recibe los bytes del resume.
+El backend solo descarga el resume para leerlo con IA (POST /talent/resume/parse),
+lo procesa en memoria y no lo guarda en ningún otro lado.
 """
 
 from typing import Annotated, Protocol
@@ -15,6 +16,7 @@ from app.core.config import Settings, get_settings
 class Storage(Protocol):
     def create_signed_upload_url(self, bucket: str, path: str) -> str: ...
     def create_signed_download_url(self, bucket: str, path: str, expires_in: int) -> str: ...
+    def download(self, bucket: str, path: str) -> bytes: ...
 
 
 class SupabaseStorage:
@@ -41,6 +43,12 @@ class SupabaseStorage:
         )
         r.raise_for_status()
         return f"{self._base}{r.json()['signedURL']}"
+
+    def download(self, bucket: str, path: str) -> bytes:
+        # Con la secret key: el bucket es privado y el backend lee el CV de la persona autenticada.
+        r = httpx.get(f"{self._base}/object/{bucket}/{path}", headers=self._headers, timeout=15)
+        r.raise_for_status()
+        return r.content
 
 
 def get_storage(settings: Annotated[Settings, Depends(get_settings)]) -> Storage:

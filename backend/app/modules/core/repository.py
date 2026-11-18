@@ -55,7 +55,8 @@ stats as (
 select c.id,
        coalesce(c.name_es, c.name) as name,
        coalesce(c.admin1_es, c.admin1) as admin1,
-       c.country_code
+       c.country_code,
+       b.exact
 from best b
 join core.city c on c.id = b.id, stats s
 -- Exactas y de prefijo siempre. Por similitud solo las fuertes, salvo que no haya nada

@@ -7,13 +7,17 @@ from app.core.db import Conn
 from app.core.security import CurrentUser
 from app.core.storage import Storage, get_storage
 from app.modules.core.repository import CoreRepository
+from app.modules.talent.cv_ai import get_cv_model
 from app.modules.talent.repository import TalentRepository
+from app.modules.talent.resume_parse import ResumeParseService
 from app.modules.talent.schemas import (
     FunnelEventIn,
     ProfileIn,
     ProfileOut,
     ResumeConfirmIn,
     ResumeOut,
+    ResumeParseIn,
+    ResumeParseOut,
     ResumeUploadIn,
     ResumeUploadOut,
 )
@@ -41,6 +45,18 @@ def get_service(
 
 
 Service = Annotated[TalentService, Depends(get_service)]
+
+
+def get_parse_service(
+    conn: Conn,
+    storage: Annotated[Storage, Depends(get_storage)],
+    settings: Annotated[Settings, Depends(get_settings)],
+) -> ResumeParseService:
+    model = get_cv_model(settings)
+    return ResumeParseService(CoreRepository(conn), TalentRepository(conn), storage, model, settings)
+
+
+ParseService = Annotated[ResumeParseService, Depends(get_parse_service)]
 
 
 def _http(err: TalentError) -> HTTPException:
@@ -95,3 +111,18 @@ def record_event(body: FunnelEventIn, user: CurrentUser, service: Service) -> Re
     """Evento del embudo de registro. Exige sesión, pero no guarda quién lo mandó."""
     service.record_event(body)
     return Response(status_code=status.HTTP_204_NO_CONTENT)
+
+
+@router.post("/resume/parse", response_model=ResumeParseOut)
+def parse_resume(
+    user: CurrentUser, service: ParseService, body: ResumeParseIn | None = None
+) -> ResumeParseOut:
+    """Lee el CV vigente con IA y devuelve sugerencias. No guarda nada del perfil.
+
+    Siempre responde 200: si la lectura falla, status=failed con un reason y el
+    registro sigue a mano.
+    """
+    try:
+        return ResumeParseOut(**service.parse(user.id, body or ResumeParseIn()))
+    except TalentError as err:
+        raise _http(err) from err

@@ -1,5 +1,6 @@
 """Acceso a datos del schema talent. Solo SQL, sin reglas de negocio."""
 
+from datetime import datetime
 from typing import Any
 
 import psycopg
@@ -58,4 +59,18 @@ class TalentRepository:
             "values (%(session_id)s, %(name)s, %(step)s, %(device)s, "
             "%(seconds_on_step)s, %(reason)s)",
             data,
+        )
+
+    # ------------------------------------------------- límite de lectura con IA
+    def count_parse_attempts(self, person_id: str, since: datetime) -> int:
+        row = self.conn.execute(
+            "select count(*) as n from talent.resume_parse_attempt "
+            "where person_id = %s and created_at >= %s",
+            (person_id, since),
+        ).fetchone()
+        return int(row["n"])
+
+    def insert_parse_attempt(self, person_id: str) -> None:
+        self.conn.execute(
+            "insert into talent.resume_parse_attempt (person_id) values (%s)", (person_id,)
         )
