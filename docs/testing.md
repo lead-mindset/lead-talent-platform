@@ -25,6 +25,19 @@ uv run pytest -k resume  # solo los que mencionan "resume"
 uv run ruff check .      # estilo
 ```
 
+Tests del catálogo de países y ciudades:
+- `test_catalog.py`: servicio y rutas `/countries` y `/cities`, y las reglas de ciudad del perfil (país obligatorio, ciudad del mismo país, `city_id` o `city_other`).
+- `test_load_geonames.py`: parsing de GeoNames y reglas de nombres en español, sin red ni base de datos.
+- `test_city_search_integration.py`: la búsqueda real contra la base ("santiago", "chillan", "mexico city", etc.). **Se salta** si la base de `DATABASE_URL` no tiene el catálogo cargado. Para correrlo contra el Supabase local:
+
+```
+DATABASE_URL=postgresql://postgres:postgres@127.0.0.1:54322/postgres uv run pytest -k integration
+# PowerShell:
+# $env:DATABASE_URL="postgresql://postgres:postgres@127.0.0.1:54322/postgres"; uv run pytest -k integration
+```
+
+Ver [`city-catalog.md`](city-catalog.md) para cargar el catálogo.
+
 ## 2. UI con mocks
 
 Supabase y la API son simulados dentro del navegador. Corre en el puerto 3100, así que no choca con tu `pnpm dev`.
@@ -48,6 +61,7 @@ Archivos en `frontend/e2e/mocked/`:
 - `wizard.spec.ts`: validaciones y el registro completo (revisa el JSON exacto que se envía).
 - `profile.spec.ts`: perfil, subida de CV, archivo inválido, visibilidad, editar.
 - `routes.spec.ts`: rutas ocultas del módulo 1.
+- `city.spec.ts`: país del catálogo y obligatorio, combobox de ciudad (2 letras, sin tildes), "No encuentro mi ciudad", cambiar de país limpia la ciudad, la ciudad se mantiene entre pasos y al editar.
 
 ## 3. E2E real
 
