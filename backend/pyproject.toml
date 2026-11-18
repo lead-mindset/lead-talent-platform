@@ -1,0 +1,28 @@
+[project]
+name = "lead-talent-api"
+version = "0.1.0"
+description = "LEAD Talent API (módulo 1: registro de estudiantes y resume)"
+requires-python = ">=3.12"
+dependencies = [
+  "fastapi>=0.115",
+  "uvicorn[standard]>=0.30",
+  "pydantic>=2.8",
+  "pydantic-settings>=2.4",
+  "pyjwt[crypto]>=2.9",
+  "httpx>=0.27",
+  "psycopg[binary]>=3.2",
+]
+
+[dependency-groups]
+dev = [
+  "pytest>=8",
+  "ruff>=0.6",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
