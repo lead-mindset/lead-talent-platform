@@ -1,6 +1,6 @@
 import { Chip } from "@/components/ui/chip";
 import Link from "next/link";
-import { ArrowRight, BadgeCheck, Building2, CalendarDays, Check, UserPlus, Users } from "lucide-react";
+import { ArrowRight, BadgeCheck, CalendarDays, Check, UserPlus, Users } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { InitialsAvatar } from "@/components/initials-avatar";
@@ -23,12 +23,6 @@ export default function LandingPage() {
           <span className="text-h3 font-bold tracking-tight">LEAD</span>
         </Link>
         <nav className="ml-auto flex items-center gap-2">
-          <Link
-            href="/empresa"
-            className="hidden rounded-md px-3 py-1.5 text-small font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground sm:inline-block"
-          >
-            Para empresas
-          </Link>
           <Link
             href="/login"
             className="hidden rounded-md px-3 py-1.5 text-small font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground sm:inline-block"
@@ -122,13 +116,11 @@ export default function LandingPage() {
       <section className="py-20">
         <h2 className="text-h2 font-semibold">¿Qué puedes hacer en LEAD?</h2>
         <p className="mt-1 text-small text-muted-foreground">Una comunidad para crecer, y un perfil para que te encuentren.</p>
-        <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {[
             { href: "/eventos", icon: CalendarDays, title: "Explorar eventos", text: "Workshops, paneles y networking de tu capítulo y de toda LEAD." },
             { href: "/sign-up", icon: UserPlus, title: "Crear tu perfil", text: "En 2 minutos, y las empresas pueden encontrarte." },
-            { href: "/personas", icon: Users, title: "Conocer personas", text: "Únete a los líderes LEAD en LATAM" },
-            { href: "/empresa", icon: Building2, title: "Para empresas", text: "Talento verificado de la comunidad LEAD." },
-          ].map((action) => (
+            { href: "/personas", icon: Users, title: "Conocer personas", text: "Únete a los líderes LEAD en LATAM" },          ].map((action) => (
             <Link key={action.href} href={action.href} className="card-surface group rounded-xl border border-border/60 p-4 transition-colors hover:border-brand-purple-light/30">
               <action.icon className="size-5 text-brand-purple-light" />
               <p className="mt-3 font-semibold">{action.title}</p>
