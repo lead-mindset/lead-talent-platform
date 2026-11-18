@@ -24,7 +24,6 @@ export function SidebarContent({ className, ...props }: React.ComponentProps<"di
   return (
     <div
       data-slot="sidebar-content"
-      data-lenis-prevent
       className={cn("min-h-0 flex-1 space-y-1 overflow-y-auto overscroll-contain p-2", className)}
       {...props}
     />
@@ -67,7 +66,7 @@ export function SidebarLayout({
   return (
     <div className={cn("flex h-svh overflow-hidden", className)}>
       {sidebar}
-      <main data-lenis-prevent className="min-h-0 flex-1 overflow-y-auto">
+      <main className="min-h-0 flex-1 overflow-y-auto">
         {children}
       </main>
     </div>

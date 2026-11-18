@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono, Montserrat } from "next/font/google";
 import { CookieConsent } from "@/components/cookie-consent";
 import { AmbientBackground } from "@/components/ambient-background";
-import { SmoothScroll } from "@/components/smooth-scroll";
 import { ToastProvider } from "@/components/ui/toast";
 import "./globals.css";
 
@@ -27,7 +26,6 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       <body className="flex min-h-full flex-col overflow-x-hidden bg-background">
         <ToastProvider>
           <AmbientBackground />
-          <SmoothScroll />
           {children}
           <CookieConsent />
         </ToastProvider>

@@ -99,7 +99,6 @@ function DialogBody({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       data-slot="dialog-body"
-      data-lenis-prevent
       className={cn("min-h-0 flex-1 overflow-y-auto overscroll-contain p-5", className)}
       {...props}
     />
