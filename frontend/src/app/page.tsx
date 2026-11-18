@@ -1,24 +1,16 @@
 import { Chip } from "@/components/ui/chip";
 import Link from "next/link";
-import { ArrowRight, BadgeCheck, Building2, CalendarDays, Check, MapPin, UserPlus, Users } from "lucide-react";
+import { ArrowRight, BadgeCheck, Building2, CalendarDays, Check, UserPlus, Users } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { InitialsAvatar } from "@/components/initials-avatar";
 import { BrandMark } from "@/components/brand-mark";
 import { AsciiText } from "@/components/ascii-text";
 import { LogoMarquee } from "@/components/ui/logo-marquee";
-import { events } from "@/lib/data/community";
 import { people } from "@/lib/data/people";
 import { talent } from "@/lib/data/talent";
 import { PARTNER_LOGOS } from "@/lib/data/partners";
 
-const stats = [
-  { value: "13", label: "capítulos universitarios" },
-  { value: "2", label: "países · LATAM" },
-  { value: "100+", label: "estudiantes en Discover Day" },
-];
-
-const featuredEvents = events.filter((event) => ["Discover Day 2027", "Día de la comunidad LEAD"].includes(event.title));
 const featuredPeople = people.slice(0, 3);
 const preview = talent[0];
 
@@ -44,7 +36,7 @@ export default function LandingPage() {
             Iniciar sesión
           </Link>
           <Button asChild size="sm">
-            <Link href="/perfil">Crear mi perfil</Link>
+            <Link href="/sign-up">Crear mi perfil</Link>
           </Button>
         </nav>
       </header>
@@ -62,12 +54,9 @@ export default function LandingPage() {
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
             <Button asChild size="lg" className="gap-1.5">
-              <Link href="/perfil">
+              <Link href="/sign-up">
                 Crear mi perfil en 2 minutos <ArrowRight className="size-4" />
               </Link>
-            </Button>
-            <Button asChild size="lg" variant="outline">
-              <Link href="/eventos">Explorar los eventos</Link>
             </Button>
           </div>
           <div className="mt-10 flex flex-wrap items-center gap-4">
@@ -125,19 +114,8 @@ export default function LandingPage() {
         </div>
       </section>
 
-      <section className="grid grid-cols-1 divide-y divide-border/60 border-y border-border/60 py-7 sm:grid-cols-3 sm:divide-x sm:divide-y-0">
-        {stats.map((stat) => (
-          <div key={stat.label} className="px-6 py-4 text-center sm:py-0 sm:first:pl-0 sm:last:pr-0">
-            <p className="text-h1 font-bold leading-none">{stat.value}</p>
-            <p className="mt-1.5 text-small text-muted-foreground">{stat.label}</p>
-          </div>
-        ))}
-      </section>
-
       <section className="py-16">
-        <p className="text-center text-small font-medium text-muted-foreground">
-          Empresas que confían en el talento LEAD
-        </p>
+        <h2 className="text-center text-h2 font-semibold">Empresas que confían en el talento LEAD</h2>
         <LogoMarquee items={PARTNER_LOGOS} />
       </section>
 
@@ -147,7 +125,7 @@ export default function LandingPage() {
         <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {[
             { href: "/eventos", icon: CalendarDays, title: "Explorar eventos", text: "Workshops, paneles y networking de tu capítulo y de toda LEAD." },
-            { href: "/perfil", icon: UserPlus, title: "Crear tu perfil", text: "En 2 minutos, y las empresas pueden encontrarte." },
+            { href: "/sign-up", icon: UserPlus, title: "Crear tu perfil", text: "En 2 minutos, y las empresas pueden encontrarte." },
             { href: "/personas", icon: Users, title: "Conocer personas", text: "Únete a los líderes LEAD en LATAM" },
             { href: "/empresa", icon: Building2, title: "Para empresas", text: "Talento verificado de la comunidad LEAD." },
           ].map((action) => (
@@ -157,50 +135,6 @@ export default function LandingPage() {
               <p className="mt-1 text-caption text-muted-foreground">{action.text}</p>
               <ArrowRight className="mt-3 size-4 text-muted-foreground transition-transform group-hover:translate-x-0.5 group-hover:text-brand-purple-light" />
             </Link>
-          ))}
-        </div>
-      </section>
-
-      <section className="py-20">
-        <div className="flex items-center justify-between">
-          <div>
-            <h2 className="text-h2 font-semibold">Eventos de la comunidad</h2>
-            <p className="mt-1 text-small text-muted-foreground">Empieza por un evento, quédate por la red.</p>
-          </div>
-          <Link href="/eventos" className="flex items-center gap-1 text-small font-medium text-brand-purple-light hover:underline">
-            Ver todos <ArrowRight className="size-3.5" />
-          </Link>
-        </div>
-        <div className="mt-8 grid gap-10 md:grid-cols-2">
-          {featuredEvents.map((event) => (
-            <article key={event.id}>
-              {event.image ? (
-                <img
-                  src={event.image}
-                  alt={`${event.title} — evento de la comunidad LEAD`}
-                  className="aspect-banner w-full rounded-2xl object-cover"
-                  loading="lazy"
-                />
-              ) : (
-                <div className="flex aspect-banner w-full items-center justify-center rounded-2xl bg-muted">
-                  <CalendarDays className="size-8 text-brand-purple-light" />
-                </div>
-              )}
-              <div className="mt-4">
-                <div className="flex items-center gap-2 text-caption font-medium text-brand-purple-light">
-                  <span>{event.month}</span>
-                  <span>·</span>
-                  <span>{event.day}</span>
-                  <span>·</span>
-                  <span>{event.type}</span>
-                </div>
-                <h3 className="mt-1.5 text-h3 font-semibold">{event.title}</h3>
-                <p className="mt-1 flex items-center gap-1.5 text-small text-muted-foreground">
-                  <MapPin className="size-3.5" /> {event.location}
-                </p>
-                <p className="mt-2 text-small text-muted-foreground">{event.description}</p>
-              </div>
-            </article>
           ))}
         </div>
       </section>
@@ -224,26 +158,6 @@ export default function LandingPage() {
         </div>
       </section>
 
-      <section className="pb-20">
-        <h2 className="text-h2 font-semibold">LEAD en los medios</h2>
-        <p className="mt-1 text-small text-muted-foreground">
-          De Lima al mundo: presencia en eventos y cobertura de la comunidad.
-        </p>
-        <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {[
-            { title: "RAISE Summit 2026", place: "Hackathon en París · ContextCore" },
-            { title: "ALPFA Dallas", place: "Liderazgo y diversidad en tech" },
-            { title: "#SFTechWeek", place: "San Francisco · Talent tech" },
-            { title: "Discover Day UTEC", place: "100+ estudiantes, 13 capítulos" },
-          ].map((item) => (
-            <div key={item.title} className="rounded-xl border border-border/60 bg-card/40 px-4 py-4">
-              <p className="font-semibold">{item.title}</p>
-              <p className="mt-1 text-caption text-muted-foreground">{item.place}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
       <section className="brand-gradient mb-20 rounded-3xl px-8 py-14 text-center">
         <h2 className="mx-auto max-w-lg text-h1 font-bold tracking-tight text-primary-foreground">
           Las empresas ya buscan talento LEAD
@@ -252,7 +166,7 @@ export default function LandingPage() {
           Perfil verificado + resume + idiomas y disponibilidad. Así es como te encuentran.
         </p>
         <Button asChild size="lg" className="mt-6 gap-1.5 bg-primary-foreground text-foreground hover:bg-primary-foreground/90">
-          <Link href="/perfil">
+          <Link href="/sign-up">
             Crear mi perfil ahora <ArrowRight className="size-4" />
           </Link>
         </Button>

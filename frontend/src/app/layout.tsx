@@ -3,7 +3,6 @@ import { Geist, Geist_Mono, Montserrat } from "next/font/google";
 import { CookieConsent } from "@/components/cookie-consent";
 import { AmbientBackground } from "@/components/ambient-background";
 import { SmoothScroll } from "@/components/smooth-scroll";
-import { ViewAs } from "@/components/view-as";
 import { ToastProvider } from "@/components/ui/toast";
 import "./globals.css";
 
@@ -31,7 +30,6 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           <SmoothScroll />
           {children}
           <CookieConsent />
-          <ViewAs />
         </ToastProvider>
       </body>
     </html>

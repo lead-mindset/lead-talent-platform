@@ -3,20 +3,17 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Bell, Menu, X } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { InitialsAvatar } from "@/components/initials-avatar";
 import { BrandMark } from "@/components/brand-mark";
 import { LogoutButton } from "@/components/logout-button";
-import { useCurrentUser } from "@/lib/use-current-user";
+import { initialsOf, useAuth } from "@/lib/auth";
 import { getSocial } from "@/lib/config";
 import { cn } from "cn";
 
-const baseNav = [
-  { label: "Comunidad", href: "/inicio" },
-  { label: "Eventos", href: "/eventos" },
-  { label: "Personas", href: "/personas" },
-];
+// Módulo 1: solo perfil. Comunidad, eventos, personas y admin vuelven en módulos siguientes.
+const baseNav = [{ label: "Mi perfil", href: "/perfil" }];
 
 function InstagramIcon({ className }: { className?: string }) {
   return (
@@ -45,22 +42,16 @@ const socialLinks = [
 
 export function Topbar() {
   const pathname = usePathname();
-  const user = useCurrentUser();
+  const auth = useAuth();
   const [open, setOpen] = useState(false);
-
-  const adminLinks = user.views
-    .filter((view) => view.href.startsWith("/admin"))
-    .map((view) => ({
-      label: view.label,
-      href: view.href,
-      special: true,
-    }));
-  const nav: { label: string; href: string; special?: boolean }[] = [...baseNav, ...adminLinks];
+  const user = auth.status === "signed-in" ? auth.session.user : null;
+  const initials = initialsOf(user?.user_metadata?.full_name ?? user?.user_metadata?.name, user?.email);
+  const nav: { label: string; href: string; special?: boolean }[] = baseNav;
 
   return (
     <header className="sticky top-0 z-40 border-b border-border/60 bg-background/85 backdrop-blur">
       <div className="mx-auto flex h-16 max-w-6xl items-center gap-4 px-6">
-        <Link href="/inicio" className="flex items-center gap-2.5" onClick={() => setOpen(false)}>
+        <Link href="/perfil" className="flex items-center gap-2.5" onClick={() => setOpen(false)}>
           <BrandMark className="h-6" />
           <span className="text-h3 font-bold tracking-tight">LEAD</span>
         </Link>
@@ -100,11 +91,8 @@ export function Topbar() {
               </Button>
             ))}
           </div>
-          <Button variant="ghost" size="icon" aria-label="Notificaciones">
-            <Bell />
-          </Button>
           <Link href="/perfil" aria-label="Mi perfil">
-            <InitialsAvatar initials={user.initials} color={user.avatarColor} className="cursor-pointer" />
+            <InitialsAvatar initials={initials} color="brand-purple" className="cursor-pointer" />
           </Link>
           <LogoutButton iconOnly />
           <Button

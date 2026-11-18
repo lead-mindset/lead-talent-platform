@@ -11,12 +11,6 @@ export default function ComunidadLayout({ children }: { children: React.ReactNod
         <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 px-6 text-small text-muted-foreground">
           <p>© 2026 LEAD · Empoderando estudiantes de las Américas</p>
           <nav className="flex flex-wrap gap-5">
-            <Link href="/recursos" className="hover:text-foreground">
-              Recursos
-            </Link>
-            <Link href="/empresa/login" className="hover:text-foreground">
-              Para empresas
-            </Link>
             <a href={`mailto:${CONTACT_EMAIL}`} className="hover:text-foreground">
               Contacto
             </a>

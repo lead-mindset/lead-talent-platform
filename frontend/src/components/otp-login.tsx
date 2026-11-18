@@ -8,15 +8,16 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Field } from "@/components/form";
 import { buildValidate, email, required } from "@/lib/validators";
-import { login } from "@/lib/session";
+import { getSupabase } from "@/lib/supabase";
+import { describeError, routeAfterLogin } from "@/lib/api";
 
 const validateEmail = buildValidate({ email: [required("Escribe tu correo"), email()] });
 
 const LENGTH = 6;
-const RESEND_SECONDS = 30;
+const RESEND_SECONDS = 60; // Supabase no deja pedir otro código al mismo correo antes de ~60 s
 
-/** Email OTP login: enter email → 6-digit code. Dummy, no backend. */
-export function OtpLogin({ route = "/inicio" }: { route?: string }) {
+/** Login por correo con código de 6 dígitos (Supabase Auth). Crea la cuenta si no existe. */
+export function OtpLogin() {
   const router = useRouter();
   const [step, setStep] = useState<"email" | "code">("email");
   const [value, setValue] = useState("");
@@ -24,6 +25,7 @@ export function OtpLogin({ route = "/inicio" }: { route?: string }) {
   const [errors, setErrors] = useState<{ email?: string; code?: string }>({});
   const [seconds, setSeconds] = useState(0);
   const [submitting, setSubmitting] = useState(false);
+  const [sending, setSending] = useState(false);
   const inputs = useRef<(HTMLInputElement | null)[]>([]);
 
   const code = digits.join("");
@@ -41,25 +43,50 @@ export function OtpLogin({ route = "/inicio" }: { route?: string }) {
     return () => window.clearTimeout(timer);
   }, [seconds]);
 
-  const sendCode = (e: React.FormEvent) => {
+  const requestCode = async () => {
+    const { error } = await getSupabase().auth.signInWithOtp({
+      email: value.trim(),
+      // El correo trae el código y también un enlace. Ambos sirven para entrar.
+      options: { shouldCreateUser: true, emailRedirectTo: `${window.location.origin}/auth/callback` },
+    });
+    return error;
+  };
+
+  const sendCode = async (e: React.FormEvent) => {
     e.preventDefault();
     const err = validateEmail({ email: value });
     setErrors(err as { email?: string });
-    if (Object.keys(err).length === 0) {
-      setDigits(Array(LENGTH).fill(""));
-      setErrors({});
-      setStep("code");
+    if (Object.keys(err).length > 0) return;
+    setSending(true);
+    const error = await requestCode();
+    setSending(false);
+    if (error) {
+      setErrors({ email: error.status === 429 ? "Espera un momento antes de pedir otro código." : "No pudimos enviar el código. Revisa tu correo e intenta de nuevo." });
+      return;
     }
+    setDigits(Array(LENGTH).fill(""));
+    setErrors({});
+    setStep("code");
   };
 
-  const verify = () => {
+  const verify = async () => {
     if (code.length !== LENGTH) {
       setErrors({ code: "El código tiene 6 dígitos" });
       return;
     }
     setSubmitting(true);
-    login(value);
-    router.push(route);
+    const { error } = await getSupabase().auth.verifyOtp({ email: value.trim(), token: code, type: "email" });
+    if (error) {
+      setSubmitting(false);
+      setErrors({ code: "El código no es válido o ya expiró." });
+      return;
+    }
+    try {
+      router.replace(await routeAfterLogin());
+    } catch (err) {
+      setSubmitting(false);
+      setErrors({ code: `Entraste, pero no pudimos cargar tu perfil: ${describeError(err)}` });
+    }
   };
 
   // auto-submit once all boxes are filled
@@ -99,11 +126,13 @@ export function OtpLogin({ route = "/inicio" }: { route?: string }) {
     }
   };
 
-  const resetCode = () => {
+  const resetCode = async () => {
     setDigits(Array(LENGTH).fill(""));
     setErrors({});
     setSeconds(RESEND_SECONDS);
     inputs.current[0]?.focus();
+    const error = await requestCode();
+    if (error) setErrors({ code: "No pudimos reenviar el código. Intenta en un momento." });
   };
 
   if (step === "email") {
@@ -118,8 +147,8 @@ export function OtpLogin({ route = "/inicio" }: { route?: string }) {
         >
           <Input id="otp-email" type="email" autoComplete="email" value={value} onChange={(e) => setValue(e.target.value)} placeholder="tu@correo.com" />
         </Field>
-        <Button type="submit" className="w-full">
-          Enviar código <ArrowRight className="size-3.5" />
+        <Button type="submit" className="w-full" disabled={sending}>
+          {sending ? "Enviando…" : "Enviar código"} <ArrowRight className="size-3.5" />
         </Button>
       </form>
     );
@@ -153,12 +182,12 @@ export function OtpLogin({ route = "/inicio" }: { route?: string }) {
         {errors.code ? (
           <p className="mt-1.5 text-caption text-destructive-light" role="alert">{errors.code}</p>
         ) : (
-          <p className="mt-1.5 text-caption text-muted-foreground">demo: 123456 (sin backend)</p>
+          <p className="mt-1.5 text-caption text-muted-foreground">Revisa tu bandeja de entrada y spam.</p>
         )}
       </div>
 
-      <Button type="submit" className="w-full" disabled={code.length !== LENGTH}>
-        Entrar <ArrowRight className="size-3.5" />
+      <Button type="submit" className="w-full" disabled={code.length !== LENGTH || submitting}>
+        {submitting ? "Entrando…" : "Entrar"} <ArrowRight className="size-3.5" />
       </Button>
 
       <div className="flex items-center justify-between">

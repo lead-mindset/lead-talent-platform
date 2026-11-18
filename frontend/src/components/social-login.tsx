@@ -1,8 +1,8 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { login } from "@/lib/session";
+import { useState } from "react";
+import { getSupabase } from "@/lib/supabase";
 
 function GoogleG({ className }: { className?: string }) {
   return (
@@ -15,22 +15,30 @@ function GoogleG({ className }: { className?: string }) {
   );
 }
 
-export function SocialLogin({ route, label = "Continuar" }: { route: string; label?: string }) {
-  const router = useRouter();
-  const go = () => { login(); router.push(route); };
+/** `route` queda por compatibilidad con pantallas ocultas del módulo 1. El destino lo decide /auth/callback. */
+export function SocialLogin({ label = "Continuar" }: { route?: string; label?: string }) {
+  const [loading, setLoading] = useState(false);
+  const go = async () => {
+    setLoading(true);
+    const { error } = await getSupabase().auth.signInWithOAuth({
+      provider: "google",
+      options: { redirectTo: `${window.location.origin}/auth/callback` },
+    });
+    if (error) setLoading(false);
+  };
 
   return (
-    <Button type="button" variant="outline" className="w-full gap-2.5 font-medium" onClick={go}>
+    <Button type="button" variant="outline" className="w-full gap-2.5 font-medium" onClick={go} disabled={loading}>
       <GoogleG className="size-4 shrink-0" /> {label} con Google
     </Button>
   );
 }
 
-export function LoginDivider() {
+export function LoginDivider({ label = "o con tu correo" }: { label?: string }) {
   return (
     <div className="my-4 flex items-center gap-3">
       <span className="h-px flex-1 bg-border/60" />
-      <span className="text-caption text-muted-foreground">o con tu correo</span>
+      <span className="text-caption text-muted-foreground">{label}</span>
       <span className="h-px flex-1 bg-border/60" />
     </div>
   );
