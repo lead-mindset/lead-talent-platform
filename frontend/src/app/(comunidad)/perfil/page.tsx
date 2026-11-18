@@ -77,6 +77,8 @@ function Profile() {
         university_other: person.university_id ? null : person.university_other,
         major: person.major,
         graduation_year: person.graduation_year,
+        // PUT reemplaza el perfil completo: sin esto se borraría career_stage.
+        career_stage: profile.career_stage,
         headline: profile.headline,
         english_level: profile.english_level,
         skills: profile.skills,

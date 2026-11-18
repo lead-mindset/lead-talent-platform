@@ -1,5 +1,6 @@
 "use client";
 
+import { clearDrafts } from "@/lib/registration";
 import { useEffect, useState } from "react";
 import type { Session } from "@supabase/supabase-js";
 import { getSupabase } from "@/lib/supabase";
@@ -26,6 +27,7 @@ export function useAuth(): AuthState {
 
 export async function signOut() {
   await getSupabase().auth.signOut();
+  clearDrafts(); // el borrador del registro no se queda en un computador compartido
 }
 
 export function initialsOf(name?: string | null, email?: string | null): string {

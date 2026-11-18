@@ -27,7 +27,7 @@ export type Option<T extends string = string> = { value: T; label: string };
 
 export const AVAILABILITY: Option[] = [
   { value: "practicas", label: "Prácticas" },
-  { value: "part", label: "Tiempo parcial" },
+  { value: "part", label: "Medio tiempo" },
   { value: "full", label: "Tiempo completo" },
 ];
 

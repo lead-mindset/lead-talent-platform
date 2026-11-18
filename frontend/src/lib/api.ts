@@ -31,6 +31,7 @@ export type Person = {
 };
 
 export type TalentProfile = {
+  career_stage: CareerStage | null;
   headline: string | null;
   english_level: EnglishLevel | null;
   skills: string[];
@@ -44,6 +45,8 @@ export type TalentProfile = {
 
 export type EnglishLevel = "basico" | "intermedio" | "avanzado" | "nativo";
 export type Availability = "practicas" | "part" | "full";
+/** Paso 1 del registro: "¿Cuál te describe mejor?" */
+export type CareerStage = "estudiante_universitario" | "recien_graduado" | "posgrado" | "profesional_joven";
 
 export type ProfileResponse = { person: Person; profile: TalentProfile | null };
 
@@ -58,6 +61,7 @@ export type ProfileInput = {
   university_other?: string | null;
   major?: string | null;
   graduation_year?: number | null;
+  career_stage?: CareerStage | null;
   headline?: string | null;
   english_level?: EnglishLevel | null;
   skills: string[];
@@ -65,6 +69,25 @@ export type ProfileInput = {
   target_roles: string[];
   availability?: Availability | null;
   recruiter_visible: boolean;
+};
+
+/** Eventos del embudo de registro. El backend solo acepta estos nombres. */
+export type FunnelEventName =
+  | "registro_paso_visto"
+  | "registro_paso_completado"
+  | "cv_subido"
+  | "registro_sin_cv"
+  | "cv_lectura_fallida"
+  | "registro_terminado";
+
+/** Sin datos personales: paso, dispositivo, segundos y un id aleatorio por intento. */
+export type FunnelEvent = {
+  session_id: string;
+  name: FunnelEventName;
+  step: number;
+  device: "mobile" | "tablet" | "desktop";
+  seconds_on_step?: number | null;
+  reason?: string | null;
 };
 
 export type University = { id: string; name: string; country_code: string };
@@ -153,6 +176,10 @@ export const api = {
     ) as Promise<City[]>,
 
   getResume: () => request<Resume>("/talent/resume"),
+
+  /** Evento del embudo. keepalive: llega aunque la página navegue justo después. */
+  sendEvent: (event: FunnelEvent) =>
+    request<null>("/talent/events", { method: "POST", body: JSON.stringify(event), keepalive: true }),
 
   /** Pide URL firmada, sube el archivo directo a Storage y confirma en el backend. */
   async uploadResume(file: File): Promise<Resume> {
